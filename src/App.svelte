@@ -39,28 +39,7 @@
 </script>
 
 <svelte:head>
-  <title>M2NP</title>
-  <meta name="description" content="M2NP is a lazy social network." />
-  <meta name="keywords" content="night, of, fire" />
-  <link
-    href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism-twilight.min.css"
-    rel="stylesheet"
-  />
-  <link
-    rel="stylesheet"
-    href="https://cdn.rawgit.com/konpa/devicon/df6431e323547add1b4cf45992913f15286456d3/devicon.min.css"
-  />
-  <link rel="icon" href="/crystal.png" />
-  <script
-    type="text/javascript"
-    src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/js/all.min.js"></script>
 
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/components/prism-core.min.js"></script>
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/plugins/autoloader/prism-autoloader.min.js"></script>
 </svelte:head>
 <main>
   <menu
@@ -146,34 +125,6 @@
 </main>
 
 <style>
-  #right_container article {
-    padding: 0.7em;
-    border: 1px #ddd solid;
-    border-radius: 0.4em;
-    margin: 0.5em 0 0.5em 0;
-    line-break: normal;
-  }
-  img {
-    max-width: 100%;
-  }
-  pre {
-    overflow: auto;
-  }
-  body {
-    max-width: 1900px;
-  }
-  .sw_all {
-    max-width: calc(100% - 240px);
-  }
-  .sw_800 {
-    max-width: 800px;
-  }
-  menu article {
-    word-break: break-all;
-  }
-  nav a {
-    color: black;
-  }
 
 
 </style>
