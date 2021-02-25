@@ -20,7 +20,7 @@
   let timeline = [];
   let avatars = {};
   let usernames = {};
-
+  
   // Get the data from the api, after the page is mounted.
   onMount(async () => {
     const res = await getMyTimeline();
@@ -29,8 +29,25 @@
     const res2 = await getAvatarUsernameMaps();
     avatars = res2[0];
     usernames = res2[1];
+    
+    setInterval(function(){    
+        timeline = [timeline[8],...timeline]
+    },5000);
+
   });
 
+  function timeConverter(UNIX_timestamp){
+    var a = new Date(UNIX_timestamp * 1000);
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var year = a.getFullYear();
+    var month = months[a.getMonth()];
+    var date = a.getDate();
+    var hour = a.getHours();
+    var min = a.getMinutes();
+    var sec = a.getSeconds();
+    var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+    return time;
+  }
   // const handleOnClick = (event) => {
   //   const name = event.target.name;
   //   getPostDetails(name).then((res) => {
@@ -56,13 +73,13 @@
 
     {#each timeline as v}
       <article
-        style="border-bottom:1px #DDD solid;padding:.3em;max-height:100px;overflow:hidden"
+        style="max-height:100px;overflow:hidden;font-size:10pt"
       >
         <img src={avatars[v["user_id"]]} width="20" alt="avatar" />
         <a href={"/user/" + usernames[v["user_id"]]} use:link
           >{usernames[v["user_id"]]}</a
         >
-        <small>{v.json["created_at"]}</small>
+        <small>{timeConverter(v.json["created_at"])}</small>
         <small>{v.json["post"]}</small>
       </article>
     {/each}
@@ -81,26 +98,17 @@
         <article
           class='card'
         >
-          <div style="padding:.3em;float:left" class="avatar_box">
+          <div  class="avatar_box">
             <img
-              width="32"
-              style="display: block;margin-bottom: .5em;margin-left: 3px;float:left"
+              width="20"
               src={avatars[v["user_id"]]}
               class="avatars"
               alt="avatar"
-            />
-            <small
-              class="ab_desc"
-              style="position: absolute;float: left;padding-left: 1em;background: white;display:none"
-            >
-              {v.json["created_at"]}<br />
-              <small>{usernames[v["user_id"]]}</small>
-            </small>
-            <div style="clear:both" />
+            /><small>{usernames[v["user_id"]]} {timeConverter(v.json["created_at"])}</small>              
+            
           </div>
-          <div style="height:100%;float:left" />
   
-          <div style="float:left;width:calc(100% - 80px);padding-left:.3em;font-size:13px">
+          <div style="padding-left:.3em;font-size:13px">
             {@html marked(v.json["post"], { renderer: renderer })}
   
             {#if isArray(v.json["images"])}
@@ -140,10 +148,12 @@
     background-color: #1E242C;
     
     overflow: hidden;
-    max-height: 150px;
+    height: 150px;
   }
 
-
+  nav a {
+    color:#fbbd2a
+  }
 
   /* Flexbox stuff */
 
@@ -156,7 +166,6 @@
     flex: 1 0 500px;
     box-sizing: border-box;
   }
-
   @media screen and (min-width: 40em) {
     .card {
       max-width: calc(50% - 1em);
@@ -165,7 +174,7 @@
 
   @media screen and (min-width: 60em) {
     .card {
-      max-width: calc(25% - 1em);
+      max-width: calc(25% - .1em);
     }
   }
 	/* :global(body) {
@@ -176,9 +185,15 @@
 	:global(body) {
 		background-image: radial-gradient(circle at 0% 0%,#2c3940,#1b1f27 70%);
 		color: #bfc2c7;
+    font-family:monospace;
 	}
   :global(.card a) {
     color: #f7694d;
     text-decoration: none;
   }
+  :global(article a) {
+    color: #f7694d;
+    text-decoration: none;
+  }
+  
 </style>

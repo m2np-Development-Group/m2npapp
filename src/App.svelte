@@ -18,6 +18,10 @@ import Register from "./Register.svelte";
         if (response.msg != "ok") {
           
           navigate("/login", { replace: false });
+        }else{
+          if(url == ""){
+            navigate("/home", { replace: false })
+          }
         }
       });
     }
