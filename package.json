@@ -4,7 +4,7 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start": "sirv public"
+    "start": "sirv public -s"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
@@ -19,9 +19,12 @@
     "svelte-images": "0.0.95"
   },
   "dependencies": {
+    "@svelte-parts/editor": "0.0.18",
     "marked": "^2.0.0",
+    "qs": "^6.9.6",
     "sirv-cli": "^1.0.0",
     "svelte-carousel": "^1.0.2",
-    "svelte-heatmap": "^1.0.2"
+    "svelte-heatmap": "^1.0.2",
+    "svelte-routing": "^1.5.0"
   }
 }
