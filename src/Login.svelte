@@ -14,7 +14,7 @@
     if (email == "" || password == "") {
       alert("fill in both");
     } else {
-      API.formPost("/login", { email: email, password: password }).then(
+      API.post("/login", { email: email, password: password }).then(
         (res) => {
           if (res.msg == "ok") {
             navigate("/home");

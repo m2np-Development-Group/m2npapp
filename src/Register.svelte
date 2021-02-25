@@ -11,7 +11,7 @@
         if (email == "" || password == "") {
             alert("fill in both");
         } else {
-            API.formPost("/register", {
+            API.post("/register", {
                 email: email,
                 password: password,
             }).then((res) => {

@@ -105,7 +105,7 @@ inlineAttachment.defaults = {
     /**
      * URL where the file will be send
      */
-    uploadUrl: 'upload_attachment.php',
+    uploadUrl: 'https://realblog.zkiz.com/upload_attachment.php',
 
     /**
      * Which method will be used to send the file to the upload URL
@@ -121,7 +121,7 @@ inlineAttachment.defaults = {
      * Extension which will be used when a file extension could not
      * be detected
      */
-    defaultExtension: 'png',
+    defaultExtension: 'jpg',
 
     /**
      * JSON field which refers to the uploaded file URL

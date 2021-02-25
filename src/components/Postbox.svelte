@@ -65,7 +65,7 @@
   <button
     on:click={() => {
       //   jQuery("#postbox_textarea").val("ASDF");
-    }}>Submit</button
+    }}>NP</button
   >
 </div>
 
