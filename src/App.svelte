@@ -7,6 +7,7 @@
   import Logout from "./Logout.svelte";
   import Login from "./Login.svelte";
   import API from "./api/Api";
+import Register from "./Register.svelte";
   export let url = "";
 
   onMount(async () => {
@@ -26,12 +27,8 @@
 <Router {url}>
   <div>
     <!-- <Route path="blog/:id" component="{BlogPost}" /> -->
-    <Route path="login" component={Login} />
-
-    <Route path="register">
-      <h1>Register</h1>
-      <Link to="/login">login</Link>
-    </Route>
+    <Route path="/login" component={Login} />
+    <Route path="/register"  component={Register} />
     <Route path="/home" component={Home} />
     <Route path="/logout" component={Logout} />
   </div>

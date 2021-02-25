@@ -24,4 +24,5 @@
     }
   }}>Login</button
 >
+<hr />
 <Link to="/register">register</Link>
