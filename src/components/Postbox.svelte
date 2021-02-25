@@ -1,8 +1,6 @@
 <script>
   import { onMount } from "svelte";
   import API from "../api/Api";
-
-
   import inlineAttachment from "./inlineAttachment";
   var textContent;
   var overridden = false; //override close window
@@ -19,7 +17,7 @@
     var editor = CodeMirror.fromTextArea(textContent, {
       mode: "markdown",
       theme: "default",
-      extraKeys: {"Enter": "newlineAndIndentContinueMarkdownList"},
+      extraKeys: {"Enter": "newlineAndIndentContinueMarkdownList"}, 
 
       lineNumbers: true,
       matchBrackets: true,
@@ -28,36 +26,36 @@
       enterMode: "keep",
       tabMode: "shift",
     });
-    // inlineAttachment.editors.codemirror4.attach(editor, {
-    //   onFileUploadResponse: function (xhr) {
-    //     var result = JSON.parse(xhr.responseText),
-    //       filename = result[this.settings.jsonFieldName];
+    inlineAttachment.editors.codemirror4.attach(editor, {
+      onFileUploadResponse: function (xhr) {
+        var result = JSON.parse(xhr.responseText),
+          filename = result[this.settings.jsonFieldName];
 
-    //     if (result && filename) {
-    //       var newValue;
-    //       if (typeof this.settings.urlText === "function") {
-    //         newValue = this.settings.urlText.call(this, filename, result);
-    //       } else {
-    //         newValue = this.settings.urlText.replace(
-    //           this.filenameTag,
-    //           filename
-    //         );
-    //       }
-    //       var text = this.editor.getValue().replace(this.lastValue, newValue);
-    //       this.editor.setValue(text);
-    //       this.settings.onFileUploaded.call(this, filename);
-    //     }
-    //     return false;
-    //   },
-    // });
+        if (result && filename) {
+          var newValue;
+          if (typeof this.settings.urlText === "function") {
+            newValue = this.settings.urlText.call(this, filename, result);
+          } else {
+            newValue = this.settings.urlText.replace(
+              this.filenameTag,
+              filename
+            );
+          }
+          var text = this.editor.getValue().replace(this.lastValue, newValue);
+          this.editor.setValue(text);
+          this.settings.onFileUploaded.call(this, filename);
+        }
+        return false;
+      },
+    });
 
-    // window.onbeforeunload = function () {
-    //   if (simplemde.value() != "") {
-    //     if (overridden != true) {
-    //       return "你的文章還沒儲存, 確定要離開嗎?";
-    //     }
-    //   }
-    // };
+    window.onbeforeunload = function () {
+      if (editor.getValue() != "") {
+        if (overridden != true) {
+          return "你的文章還沒儲存, 確定要離開嗎?";
+        }
+      }
+    };
   });
 </script>
 
