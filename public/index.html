@@ -15,6 +15,11 @@
 		href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism-twilight.min.css"
 		rel="stylesheet"
 		/>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css"/>
+		<!-- <link rel="stylesheet" href="https://cdn.rawgit.com/xcatliu/simplemde-theme-dark/master/dist/simplemde-theme-dark.min.css"/> -->
+		
+		<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+
 		<link
 		rel="stylesheet"
 		href="https://cdn.rawgit.com/konpa/devicon/df6431e323547add1b4cf45992913f15286456d3/devicon.min.css"
@@ -24,23 +29,13 @@
 		type="text/javascript"
 		src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 		<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/js/all.min.js"></script>
+		src="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"></script>
 		
 		<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/components/prism-core.min.js"></script>
 		<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/plugins/autoloader/prism-autoloader.min.js"></script>
-		<script>
-			$.getJson("/ajax/check",
-			function(response) {
-				console.log(response)
-				if(response.msg != "OK"){
-					window.location.replace("/?p=login");
-				}
-				
-				return response.json();
-			});
-		</script>
+
 		
 		<script defer src='/build/bundle.js'></script>
 	</head>

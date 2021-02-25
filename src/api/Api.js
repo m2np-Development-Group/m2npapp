@@ -1,9 +1,11 @@
 // Api.js
 import axios from "axios";
+import qs from 'Qs'
 
 // Create a instance of axios to use the same base url.
 const axiosAPI = axios.create({
   baseURL: "https://m2np.com/ajax",
+  withCredentials: true,
   headers: {
     //xabby: "heyhey"
   },
@@ -29,26 +31,40 @@ const apiRequest = (method, url, request) => {
     });
 };
 
-// function to execute the http get request
 const get = (url, request) => apiRequest("get", url, request);
-
-// function to execute the http delete request
 const deleteRequest = (url, request) => apiRequest("delete", url, request);
-
-// function to execute the http post request
 const post = (url, request) => apiRequest("post", url, request);
-
-// function to execute the http put request
+const formPost = (url, request) => {
+  return axiosAPI.post(url, qs.stringify(request))
+    .then((res) => {
+      return Promise.resolve(res.data);
+    })
+    .catch((err) => {
+      return Promise.reject(err);
+    });
+};
+const formPostFile = (url, formData) => {
+  return axiosAPI.post(url, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+    .then((res) => {
+      return Promise.resolve(res.data);
+    })
+    .catch((err) => {
+      return Promise.reject(err);
+    });
+};
 const put = (url, request) => apiRequest("put", url, request);
-
-// function to execute the http path request
 const patch = (url, request) => apiRequest("patch", url, request);
 
-// expose your method to other services or actions
 const API = {
   get,
   delete: deleteRequest,
   post,
+  formPost,
+  formPostFile,
   put,
   patch,
 };

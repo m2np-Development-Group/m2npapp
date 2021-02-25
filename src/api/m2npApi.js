@@ -26,3 +26,12 @@ export const getPostDetails = async(id) => {
       console.error(error);
     }
 };
+
+export const g = async (url) => {
+  try {
+    const response = await Api.get(url);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
