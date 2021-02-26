@@ -5,15 +5,15 @@
   let message;
   onMount(() => {
     API.get("/logout").then((res) => {
-      if(res.msg == "ok"){
+      if (res.msg == "ok") {
         message = "logout success";
-      }else{
+      } else {
         message = "logout not success";
       }
-      
     });
   });
 </script>
+
 <h1>Logout</h1>
 {message}
 <hr />

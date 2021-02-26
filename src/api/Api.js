@@ -1,6 +1,6 @@
 // Api.js
 import axios from "axios";
-import qs from 'Qs'
+import qs from "Qs";
 
 // Create a instance of axios to use the same base url.
 const axiosAPI = axios.create({
@@ -35,7 +35,8 @@ const get = (url, request) => apiRequest("get", url, request);
 const deleteRequest = (url, request) => apiRequest("delete", url, request);
 const post = (url, request) => apiRequest("post", url, request);
 const formPost = (url, request) => {
-  return axiosAPI.post(url, qs.stringify(request))
+  return axiosAPI
+    .post(url, qs.stringify(request))
     .then((res) => {
       return Promise.resolve(res.data);
     })
@@ -44,11 +45,12 @@ const formPost = (url, request) => {
     });
 };
 const formPostFile = (url, formData) => {
-  return axiosAPI.post(url, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  })
+  return axiosAPI
+    .post(url, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
     .then((res) => {
       return Promise.resolve(res.data);
     })

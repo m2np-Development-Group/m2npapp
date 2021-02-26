@@ -4,12 +4,15 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start": "sirv public -s"
+    "start": "sirv public -s",
+    "format": "prettier --write --plugin-search-dir=. --svelte-bracket-new-line false ./src/*"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.0.0",
     "axios": "^0.21.1",
+    "prettier": "^2.2.1",
+    "prettier-plugin-svelte": "^2.1.6",
     "rollup": "^2.3.4",
     "rollup-plugin-css-only": "^3.1.0",
     "rollup-plugin-livereload": "^2.0.0",
@@ -26,6 +29,7 @@
     "sirv-cli": "^1.0.0",
     "svelte-carousel": "^1.0.2",
     "svelte-heatmap": "^1.0.2",
-    "svelte-routing": "^1.5.0"
+    "svelte-routing": "^1.5.0",
+    "svelte-simple-modal": "^0.8.1"
   }
 }
