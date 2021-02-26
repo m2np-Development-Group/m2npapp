@@ -25,19 +25,22 @@
   let timeline = [];
   let avatars = {};
   let usernames = {};
-
+  let articleCards = {};
   // Get the data from the api, after the page is mounted.
   onMount(async () => {
     const res = await getMyTimeline();
     timeline = res;
+    timeline.map((x)=>{x.Active=false});
 
     const res2 = await getAvatarUsernameMaps();
     avatars = res2[0];
     usernames = res2[1];
 
     setInterval(function () {
-      timeline = [timeline[8], ...timeline];
-    }, 10000);
+      var ni = timeline[8];
+      ni.id = ni.id+1000;
+      timeline = [ni, ...timeline];
+    }, 5000);
   });
 
   // const handleOnClick = (event) => {
@@ -54,8 +57,7 @@
     style="width:210px; position:fixed; left:1em; height:calc(100vh - 1em); overflow-y:scroll;padding:0;margin-block-start:0">
     <nav style="border-bottom:1px #CCC solid; margin-right:1em;padding:.4em">
       <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
-      <a href="/logout" use:link
-        ><i class="fa fa-sign-out" aria-hidden="true" /></a>
+      <a href="/logout" use:link><i class="fa fa-sign-out" aria-hidden="true" /></a>
       <a href="/?p=import_from_facebook" target="_blank">Import FB</a>
     </nav>
 
@@ -64,8 +66,7 @@
     {#each timeline as v}
       <article style="max-height:100px;overflow:hidden;font-size:10pt">
         <img src={avatars[v["user_id"]]} width="20" alt="avatar" />
-        <a href={"/user/" + usernames[v["user_id"]]} use:link
-          >{usernames[v["user_id"]]}</a>
+        <a href={"/user/" + usernames[v["user_id"]]} use:link>{usernames[v["user_id"]]}</a>
         <small>{timeConverter(v.json["created_at"])}</small>
         <small>{v.json["post"]}</small>
       </article>
@@ -78,17 +79,25 @@
     <div class="centered">
       <section class="cards">
         {#each timeline as v}
-          <article class="card">
+          <article class="card" bind:this={articleCards[v.id]} class:active={v.Active}>
             <div class="avatar_box">
               <img
                 width="20"
                 src={avatars[v["user_id"]]}
                 class="avatars"
-                alt="avatar" /><small on:click={() => showPostView(v["id"])}
-                >{usernames[v["user_id"]]}
-                {timeConverter(v.json["created_at"])}</small>
+                alt="avatar" />
+              <small on:click={() => showPostView(v["id"])}>
+                {usernames[v["user_id"]]}
+                {timeConverter(v.json["created_at"])}
+              </small>
             </div>
-            <div style="padding-left:.3em;font-size:13px">
+            <div
+              style="padding-left:.3em;font-size:13px"
+              on:click={() => {
+                timeline.map((x)=>{x.Active=x.id==v.id});
+                timeline=timeline;
+                console.log(timeline)
+              }}>
               {@html marked(v.json["post"], { renderer: renderer })}
 
               {#if isArray(v.json["images"])}
@@ -125,7 +134,11 @@
     overflow: hidden;
     height: 150px;
   }
-
+  .card.active {
+    height: 300px;
+    max-width: calc(50%);
+    position:static;
+  }
   nav a {
     color: #fbbd2a;
   }
@@ -138,18 +151,18 @@
   }
 
   .card {
-    flex: 1 0 500px;
+    flex: 0 0 500px;
     box-sizing: border-box;
   }
   @media screen and (min-width: 40em) {
     .card {
-      max-width: calc(50% - 1em);
+      max-width: calc(50%);
     }
   }
 
   @media screen and (min-width: 60em) {
     .card {
-      max-width: calc(25% - 0.1em);
+      max-width: calc(25%);
     }
   }
   /* :global(body) {
