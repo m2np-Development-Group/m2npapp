@@ -14,15 +14,12 @@
     if (email == "" || password == "") {
       alert("fill in both");
     } else {
-      API.post("/login", { email: email, password: password }).then(
-        (res) => {
-          if (res.msg == "ok") {
-            navigate("/home");
-          }
+      API.post("/login", { email: email, password: password }).then((res) => {
+        if (res.msg == "ok") {
+          navigate("/home");
         }
-      );
+      });
     }
-  }}>Login</button
->
+  }}>Login</button>
 <hr />
 <Link to="/register">register</Link>

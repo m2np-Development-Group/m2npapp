@@ -7,8 +7,9 @@
   import Logout from "./Logout.svelte";
   import Login from "./Login.svelte";
   import API from "./api/Api";
-import Register from "./Register.svelte";
+  import Register from "./Register.svelte";
   export let url = "";
+  import Modal from "svelte-simple-modal";
 
   onMount(async () => {
     console.log(url);
@@ -16,11 +17,10 @@ import Register from "./Register.svelte";
       API.get("/check").then(function (response) {
         console.log(response);
         if (response.msg != "ok") {
-          
           navigate("/login", { replace: false });
-        }else{
-          if(url == ""){
-            navigate("/home", { replace: false })
+        } else {
+          if (url == "") {
+            navigate("/home", { replace: false });
           }
         }
       });
@@ -28,18 +28,17 @@ import Register from "./Register.svelte";
   });
 </script>
 
-<Router {url}>
-  <div>
-    <!-- <Route path="blog/:id" component="{BlogPost}" /> -->
+<Router url={url}>
+  <Modal>
     <Route path="/login" component={Login} />
-    <Route path="/register"  component={Register} />
+    <Route path="/register" component={Register} />
     <Route path="/home" component={Home} />
     <Route path="/logout" component={Logout} />
-  </div>
+  </Modal>
 </Router>
 
 <style>
-  h1 {
-    font-size: 14px;
+  :global(a) {
+    color: bisque;
   }
 </style>

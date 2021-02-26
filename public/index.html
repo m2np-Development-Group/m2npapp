@@ -1,50 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset='utf-8'>
-		<meta name='viewport' content='width=device-width,initial-scale=1'>
-		
-		<link rel='icon' type='image/png' href='/assets/crystal.png'>
-		<link rel='stylesheet' href='/assets/global.css'>
-		<link rel='stylesheet' href='/build/bundle.css'>
-		
-		<title>M2NP</title>
-		<meta name="description" content="M2NP is a lazy social network." />
-		<meta name="keywords" content="night, of, fire" />
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-		<link rel="icon" href="/assets/crystal.png" />
-		<script
-		type="text/javascript"
-		src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-		
-		<script src="https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js"></script>
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css">
-		
-		<script defer src='/build/bundle.js'></script>
+    <link rel="icon" type="image/png" href="/assets/crystal.png" />
+    <link rel="stylesheet" href="/assets/global.css" />
+    <link rel="stylesheet" href="/build/bundle.css" />
 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/codemirror.min.js" integrity="sha512-M1DpFDDFHNgGdgVsSkTP1sjfWC7mQFJM3obQo8gyKHbZmbmr95Kl9wPYa5T70BFQBi0+/TlcG6IZDLowJCbKBQ==" crossorigin="anonymous"></script>
+    <title>M2NP</title>
+    <meta name="description" content="M2NP is a lazy social network." />
+    <meta name="keywords" content="night, of, fire" />
 
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/codemirror.min.css" integrity="sha512-xIf9AdJauwKIVtrVRZ0i4nHP61Ogx9fSRAkCLecmE2dL/U8ioWpDvFCAy4dcfecN72HHB9+7FfQj3aiO68aaaw==" crossorigin="anonymous" />
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/mode/markdown/markdown.min.js" integrity="sha512-0K+rqJScVAdCA5qtj1uJ4QR9BVJdqwr5rWidqGKQ/7brmV0ICc2ginZVvjwCPPvIns7Ea8xCkr/X/7rgxe7biw==" crossorigin="anonymous"></script>	
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/addon/edit/continuelist.min.js" integrity="sha512-34RPpK8vvURv85z4a1tZ5BNaF+4D+qLGswcdF+WKAlq25UoD84myy4Ou2RqG6EPhNhYMQl3lxHhiuY3fvqVhvQ==" crossorigin="anonymous"></script>
-		
-		<style>
+    <link rel="icon" href="/assets/crystal.png" />
+    <script
+      type="text/javascript"
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"
+    />
 
-			.CodeMirror {
-				border: 1px solid #eee;
-				height: auto;
-				max-height:100px;
-			}
-			
-			.CodeMirror-scroll {
-				height: auto;
-				max-height:100px;
-			}
+    <script src="https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css"
+    />
 
-		</style>
-	</head>
-	
-	<body>
-	</body>
+    <script defer src="/build/bundle.js"></script>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/codemirror.min.js"
+      integrity="sha512-M1DpFDDFHNgGdgVsSkTP1sjfWC7mQFJM3obQo8gyKHbZmbmr95Kl9wPYa5T70BFQBi0+/TlcG6IZDLowJCbKBQ=="
+      crossorigin="anonymous"
+    ></script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/codemirror.min.css"
+      integrity="sha512-xIf9AdJauwKIVtrVRZ0i4nHP61Ogx9fSRAkCLecmE2dL/U8ioWpDvFCAy4dcfecN72HHB9+7FfQj3aiO68aaaw=="
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/mode/markdown/markdown.min.js"
+      integrity="sha512-0K+rqJScVAdCA5qtj1uJ4QR9BVJdqwr5rWidqGKQ/7brmV0ICc2ginZVvjwCPPvIns7Ea8xCkr/X/7rgxe7biw=="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/addon/edit/continuelist.min.js"
+      integrity="sha512-34RPpK8vvURv85z4a1tZ5BNaF+4D+qLGswcdF+WKAlq25UoD84myy4Ou2RqG6EPhNhYMQl3lxHhiuY3fvqVhvQ=="
+      crossorigin="anonymous"
+    ></script>
+
+    <style>
+      .CodeMirror {
+        border: 1px solid #eee;
+        height: auto;
+        max-height: 100px;
+      }
+
+      .CodeMirror-scroll {
+        height: auto;
+        max-height: 100px;
+      }
+    </style>
+  </head>
+
+  <body></body>
 </html>

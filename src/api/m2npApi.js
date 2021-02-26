@@ -1,4 +1,4 @@
-import Api from "./Api"
+import Api from "./Api";
 
 export const getAvatarUsernameMaps = async () => {
   try {
@@ -10,21 +10,21 @@ export const getAvatarUsernameMaps = async () => {
 };
 
 export const getMyTimeline = async () => {
-    try {
-      const response = await Api.get("/get_timeline");
-      return response;
-    } catch (error) {
-      console.error(error);
-    }
+  try {
+    const response = await Api.get("/get_timeline");
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-export const getPostDetails = async(id) => {
-    try {
-      const response = await Api.get(`/get_post/${id}`);
-      return response;
-    } catch (error) {
-      console.error(error);
-    }
+export const getPostDetails = async (id) => {
+  try {
+    const response = await Api.get(`/get_post/${id}`);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export const g = async (url) => {

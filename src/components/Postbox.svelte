@@ -17,11 +17,11 @@
     var editor = CodeMirror.fromTextArea(textContent, {
       mode: "markdown",
       theme: "default",
-      extraKeys: {"Enter": "newlineAndIndentContinueMarkdownList"}, 
+      extraKeys: { Enter: "newlineAndIndentContinueMarkdownList" },
 
       lineNumbers: true,
       matchBrackets: true,
-      indentUnit: 4,    
+      indentUnit: 4,
       indentWithTabs: true,
       enterMode: "keep",
       tabMode: "shift",
@@ -65,8 +65,7 @@
   <button
     on:click={() => {
       //   jQuery("#postbox_textarea").val("ASDF");
-    }}>NP</button
-  >
+    }}>NP</button>
 </div>
 
 <style>
