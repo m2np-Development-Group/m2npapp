@@ -32,7 +32,12 @@
 
   onMount(function () {
     editor = CodeMirror.fromTextArea(textContent, {
-      mode: "markdown",
+      mode: {
+          name: "gfm",
+          tokenTypeOverrides: {
+            emoji: "emoji"
+          }
+        },
       theme: "monokai",
       extraKeys: { Enter: "newlineAndIndentContinueMarkdownList" },
 
@@ -92,5 +97,15 @@
 <style>
   textarea {
     width: 100%;
+  }
+  :global(.CodeMirror) {
+    border: 1px solid #eee;
+    height: auto;
+    max-height: 100px;
+  }
+
+  :global(.CodeMirror-scroll) {
+    height: auto;
+    max-height: 100px;
   }
 </style>

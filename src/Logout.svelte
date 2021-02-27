@@ -6,7 +6,7 @@
   onMount(() => {
     API.get("/logout").then((res) => {
       if (res.msg == "ok") {
-        message = "logout success";
+        message = "你已成功登出。";
       } else {
         message = "logout not success";
       }

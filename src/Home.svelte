@@ -6,7 +6,8 @@
   import PostView from "./components/PostView.svelte";
   import { timeConverter } from "./utils/util";
   import API from "./api/Api";
-  import App from "./App.svelte";
+  import { autoresize } from "./utils/autoresize.js";
+
   const { open } = getContext("simple-modal");
 
   const showPostView = (id, imageId) => {
@@ -16,7 +17,20 @@
   const renderer = new marked.Renderer();
   renderer.link = (href, title, text) =>
     `<a target="_blank" href="${href}">${text}</a>`; //title="${ title }"
+
   const markedOptions = { renderer: renderer, breaks: true };
+
+  const myMarked = (str) => {
+    if (str == undefined || str == null) {
+      return "";
+    }
+    return marked(str, markedOptions)
+      .replace(/@([a-z\d_]+)/gi, '<a href="/user/$1">@$1</a>')
+      .replace(
+        /\B#([\u4e00-\u9fa5_a-zA-Z0-9]+)/g,
+        '<a href="/hashtag/$1">#$1</a>'
+      );
+  };
 
   const isArray = Array.isArray;
   let postDetail = {};
@@ -57,6 +71,10 @@
   //     postDetail = res;
   //   });
   // };
+
+  function auto_grow(element) {
+    console.log();
+  }
 </script>
 
 <svelte:head />
@@ -70,11 +88,9 @@
     </nav>
 
     <img width="40" src={profile?.user?.avatar} alt="avatar" />
-    Abby Chau <br /><br />
+    {profile?.user?.display_name} <br /><br />
 
-    {@html profile?.user?.description
-      ? marked(profile?.user?.description, markedOptions)
-      : ""}
+    {@html myMarked(profile?.user?.description)}
 
     Followings: {JSON.stringify(profile.followings)} <br />
     Followers: {JSON.stringify(profile.followers)} <br /><br />
@@ -91,6 +107,7 @@
       }} />
     <div class="centered">
       <section class="cards">
+        <i class="fa fa-trash-alt" />
         {#each timeline as v, k}
           <article
             class="card"
@@ -120,7 +137,7 @@
                 timeline = timeline;
                 console.log(timeline);
               }}>
-              {@html marked(v.json["post"], markedOptions)}
+              {@html myMarked(v.json["post"])}
 
               {#if isArray(v.json["images"])}
                 {#each v.json["images"] as image, i}
@@ -133,7 +150,15 @@
               {/if}
             </div>
             {#if v.Active}
-              <textarea />按 Enter 送出
+              <div style="width:700px; margin-top:1em">
+                <textarea use:autoresize class="reply_box" /><br />
+                <span on:click={v.Active && alert("x")}
+                  ><i class="fa fa-smile-o" /></span>
+                <span on:click={v.Active && alert("x")}
+                  ><i class="fa fa-file-image-o" /></span>
+
+                <span style="opacity:0.6">按 Ctrl+Enter 送出</span>
+              </div>
             {/if}
           </article>
         {/each}
@@ -145,6 +170,14 @@
 </main>
 
 <style>
+  .reply_box {
+    height: 19px;
+    resize: none;
+    border: 1px solid #999;
+    color: #bfc2c7;
+    outline: none;
+    background: #2c3940;
+  }
   .card {
     color: #fbbd2a;
     /* border:1px solid red; */
@@ -153,6 +186,7 @@
 
     overflow: hidden;
     height: 150px;
+    padding: 2px;
   }
   .card.active {
     height: 300px;
@@ -194,11 +228,7 @@
 		color: #0084f6;
 		transition: background-color 0.3s
 	} */
-  :global(body) {
-    background-image: radial-gradient(circle at 0% 0%, #2c3940, #1b1f27 70%);
-    color: #bfc2c7;
-    font-family: monospace;
-  }
+
   :global(.card a) {
     color: #f7694d;
     text-decoration: none;
@@ -206,5 +236,17 @@
   :global(article a) {
     color: #f7694d;
     text-decoration: none;
+  }
+  :global(.card th) {
+    border-bottom: #fbbc2a88 1px solid;
+    text-align: left;
+    font-weight: 700;
+  }
+  :global(table) {
+    border-spacing: 0;
+  }
+  :global(table td) {
+    padding-right: 1em;
+    border-bottom: #fbbc2a67 1px solid;
   }
 </style>
