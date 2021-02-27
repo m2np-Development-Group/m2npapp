@@ -1,24 +1,22 @@
 <script>
   import { onMount, getContext } from "svelte";
   import { link, links } from "svelte-routing";
-  import {
-    getMyTimeline,
-    getPostDetails,
-    getAvatarUsernameMaps,
-  } from "./api/m2npApi";
   import marked from "marked";
   import Postbox from "./components/Postbox.svelte";
   import PostView from "./components/PostView.svelte";
   import { timeConverter } from "./utils/util";
+  import API from "./api/Api";
+  import App from "./App.svelte";
   const { open } = getContext("simple-modal");
 
-  const showPostView = () => {
-    open(PostView, { id: "It's a modal!" });
+  const showPostView = (id, imageId) => {
+    open(PostView, { postId: id, imageId: imageId });
   };
 
   const renderer = new marked.Renderer();
   renderer.link = (href, title, text) =>
     `<a target="_blank" href="${href}">${text}</a>`; //title="${ title }"
+  const markedOptions = { renderer: renderer, breaks: true };
 
   const isArray = Array.isArray;
   let postDetail = {};
@@ -26,21 +24,31 @@
   let avatars = {};
   let usernames = {};
   let articleCards = {};
+  let profile = {};
+
   // Get the data from the api, after the page is mounted.
   onMount(async () => {
-    const res = await getMyTimeline();
-    timeline = res;
-    timeline.map((x)=>{x.Active=false});
+    API.get("/get_timeline").then((res) => {
+      timeline = res;
+      timeline.map((x) => {
+        x.Active = false;
+      });
+    });
 
-    const res2 = await getAvatarUsernameMaps();
-    avatars = res2[0];
-    usernames = res2[1];
+    API.get("/get_avatar_username_maps").then((res) => {
+      avatars = res[0];
+      usernames = res[1];
+    });
 
-    setInterval(function () {
-      var ni = timeline[8];
-      ni.id = ni.id+1000;
-      timeline = [ni, ...timeline];
-    }, 5000);
+    API.get("/get_profile").then((res) => {
+      profile = res;
+    });
+
+    // setInterval(function () {
+    //   var ni = timeline[8];
+    //   ni.id = ni.id + 1000;
+    //   timeline = [ni, ...timeline];
+    // }, 30000);
   });
 
   // const handleOnClick = (event) => {
@@ -53,33 +61,41 @@
 
 <svelte:head />
 <main>
-  <menu
-    style="width:210px; position:fixed; left:1em; height:calc(100vh - 1em); overflow-y:scroll;padding:0;margin-block-start:0">
+  <div
+    style="width:200px; position:fixed; left:1em; height:calc(100vh - 1em); padding:0;margin-block-start:0">
     <nav style="border-bottom:1px #CCC solid; margin-right:1em;padding:.4em">
       <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
-      <a href="/logout" use:link><i class="fa fa-sign-out" aria-hidden="true" /></a>
-      <a href="/?p=import_from_facebook" target="_blank">Import FB</a>
+      <a href="/logout" use:link
+        ><i class="fa fa-sign-out" aria-hidden="true" /></a>
     </nav>
 
-    <h3 style="padding:0;margin:.3em 0 0">m2np</h3>
+    <img width="40" src={profile?.user?.avatar} alt="avatar" />
+    Abby Chau <br /><br />
 
-    {#each timeline as v}
-      <article style="max-height:100px;overflow:hidden;font-size:10pt">
-        <img src={avatars[v["user_id"]]} width="20" alt="avatar" />
-        <a href={"/user/" + usernames[v["user_id"]]} use:link>{usernames[v["user_id"]]}</a>
-        <small>{timeConverter(v.json["created_at"])}</small>
-        <small>{v.json["post"]}</small>
-      </article>
-    {/each}
-  </menu>
+    {@html profile?.user?.description
+      ? marked(profile?.user?.description, markedOptions)
+      : ""}
 
-  <section style="margin-left:230px">
-    <Postbox />
+    Followings: {JSON.stringify(profile.followings)} <br />
+    Followers: {JSON.stringify(profile.followers)} <br /><br />
+    Last Login: <strong>{timeConverter(profile.user?.last_login)}</strong><br />
+    Post Count: <strong>{profile.user?.article_count}</strong><br />
+  </div>
 
+  <section style="margin-left:220px">
+    <Postbox
+      finishHandler={(id) => {
+        API.get(`get_post/${id}`).then((res) => {
+          timeline = [res, ...timeline];
+        });
+      }} />
     <div class="centered">
       <section class="cards">
-        {#each timeline as v}
-          <article class="card" bind:this={articleCards[v.id]} class:active={v.Active}>
+        {#each timeline as v, k}
+          <article
+            class="card"
+            bind:this={articleCards[v.id]}
+            class:active={v.Active}>
             <div class="avatar_box">
               <img
                 width="20"
@@ -88,17 +104,23 @@
                 alt="avatar" />
               <small on:click={() => showPostView(v["id"])}>
                 {usernames[v["user_id"]]}
-                {timeConverter(v.json["created_at"])}
+                {timeConverter(v.created_at)}
               </small>
             </div>
             <div
               style="padding-left:.3em;font-size:13px"
               on:click={() => {
-                timeline.map((x)=>{x.Active=x.id==v.id});
-                timeline=timeline;
-                console.log(timeline)
+                if (v.Active) {
+                  timeline[k].Active = false;
+                } else {
+                  timeline.map((x) => {
+                    x.Active = x.id == v.id;
+                  });
+                }
+                timeline = timeline;
+                console.log(timeline);
               }}>
-              {@html marked(v.json["post"], { renderer: renderer })}
+              {@html marked(v.json["post"], markedOptions)}
 
               {#if isArray(v.json["images"])}
                 {#each v.json["images"] as image, i}
@@ -106,15 +128,13 @@
                     width="20%"
                     src={image["src"]}
                     alt={image["alt"]}
-                    on:click={() => {
-                      setTimeout(() => {
-                        open(v.json["images"], i);
-                      }, 0);
-                    }} />
+                    on:click={() => showPostView(v["id"])} />
                 {/each}
               {/if}
             </div>
-            <div style="clear:both" />
+            {#if v.Active}
+              <textarea />按 Enter 送出
+            {/if}
           </article>
         {/each}
       </section>
@@ -136,8 +156,12 @@
   }
   .card.active {
     height: 300px;
-    max-width: calc(50%);
-    position:static;
+    max-width: 100%;
+    width: calc(100% - 1em);
+    flex: 0 0 100%;
+    position: static;
+    border: 2px solid #fbbd2a;
+    overflow-y: scroll;
   }
   nav a {
     color: #fbbd2a;

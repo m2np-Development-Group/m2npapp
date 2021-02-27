@@ -10,6 +10,7 @@
   import Register from "./Register.svelte";
   export let url = "";
   import Modal from "svelte-simple-modal";
+  import Notifications from "svelte-notifications";
 
   onMount(async () => {
     console.log(url);
@@ -30,10 +31,12 @@
 
 <Router url={url}>
   <Modal>
-    <Route path="/login" component={Login} />
-    <Route path="/register" component={Register} />
-    <Route path="/home" component={Home} />
-    <Route path="/logout" component={Logout} />
+    <Notifications>
+      <Route path="/login" component={Login} />
+      <Route path="/register" component={Register} />
+      <Route path="/home" component={Home} />
+      <Route path="/logout" component={Logout} />
+    </Notifications>
   </Modal>
 </Router>
 

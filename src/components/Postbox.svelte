@@ -2,21 +2,38 @@
   import { onMount } from "svelte";
   import API from "../api/Api";
   import inlineAttachment from "./inlineAttachment";
+  import { getNotificationsContext } from 'svelte-notifications';
+
+  const { addNotification } = getNotificationsContext();
+
+
+  export let finishHandler = (id) => {};
+
+  const submitPost = () => {
+    API.post("/post_post",{content:editor.getValue()}).then((res)=>{
+      console.log(res)
+      if(res.msg == "ok"){
+        editor.setValue("");
+        editor.clearHistory();
+        finishHandler(res.id);
+      }else{
+        addNotification({
+          text: res.msg,
+          position: 'top-right',
+          type: 'warning',
+          removeAfter: 3000
+        })
+      }
+    })
+  }
   var textContent;
   var overridden = false; //override close window
-
-  //   const onSubmit = function () {
-  //     if (simplemde.value() == "") {
-  //       alert("請輸入內文");
-  //       return false;
-  //     }
-  //     alert("submit");
-  //   };
+  var editor;
 
   onMount(function () {
-    var editor = CodeMirror.fromTextArea(textContent, {
+    editor = CodeMirror.fromTextArea(textContent, {
       mode: "markdown",
-      theme: "default",
+      theme: "monokai",
       extraKeys: { Enter: "newlineAndIndentContinueMarkdownList" },
 
       lineNumbers: true,
@@ -25,6 +42,15 @@
       indentWithTabs: true,
       enterMode: "keep",
       tabMode: "shift",
+      extraKeys: {
+          'Ctrl-Enter': (cm) => {
+            submitPost()
+          },
+          'Cmd-Enter': (cm) => {
+            submitPost()
+          },
+          
+        },
     });
     inlineAttachment.editors.codemirror4.attach(editor, {
       onFileUploadResponse: function (xhr) {
@@ -61,11 +87,6 @@
 
 <div>
   <textarea name="content" bind:this={textContent} />
-
-  <button
-    on:click={() => {
-      //   jQuery("#postbox_textarea").val("ASDF");
-    }}>NP</button>
 </div>
 
 <style>
