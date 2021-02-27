@@ -43,5 +43,19 @@
 <style>
   :global(a) {
     color: bisque;
+    text-decoration: none;
+  }
+  :global(a:hover) {
+    text-decoration: underline;
+  }
+  :global(body) {
+    background-image: radial-gradient(circle at 0% 0%, #2c3940, #1b1f27 70%);
+    color: #bfc2c7;
+    font-family: monospace;
+  }
+  :global(hr) {
+    height: 0px;
+    border: none;
+    border-top: 1px solid #bfc2c7;
   }
 </style>

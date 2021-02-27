@@ -6,7 +6,7 @@
   let password = "";
 </script>
 
-<h1>Login</h1>
+<h1>Login M2NP</h1>
 <input type="email" placeholder="E-Mail" bind:value={email} />
 <input type="password" placeholder="Password" bind:value={password} />
 <button
@@ -22,4 +22,5 @@
     }
   }}>Login</button>
 <hr />
-<Link to="/register">register</Link>
+<Link to="/register">未有賬戶？按此登記。</Link><br />
+<Link to="/reset_password">忘記密碼？按此重設。</Link>

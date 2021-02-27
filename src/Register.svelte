@@ -1,10 +1,12 @@
 <script>
   import API from "./api/Api";
   import { navigate, Link } from "svelte-routing";
+  import { getNotificationsContext } from "svelte-notifications";
+
+  const { addNotification } = getNotificationsContext();
 
   let email = "";
   let password = "";
-  let message = "";
   let beforeReg = true;
 
   const register = () => {
@@ -16,7 +18,12 @@
         password: password,
       }).then((res) => {
         if (res.msg == "duplicated") {
-          message = "email is already exists";
+          addNotification({
+            text: res.msg,
+            position: "top-right",
+            type: "warning",
+            removeAfter: 3000,
+          });
         }
         if (res.msg == "ok") {
           beforeReg = false;
@@ -26,10 +33,10 @@
   };
 </script>
 
-<h1>Register</h1>
+<h1>Register M2NP</h1>
 
 {#if beforeReg}
-  <div>{message}</div>
+  <input type="username" placeholder="Username" bind:value={email} />
   <input type="email" placeholder="E-Mail" bind:value={email} />
   <input type="password" placeholder="Password" bind:value={password} />
   <button on:click={register}>Register</button>
