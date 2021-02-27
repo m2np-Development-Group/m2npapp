@@ -7,7 +7,7 @@
   export let postId;
   let post;
   onMount(() => {
-    API.get("/get_post", { id: postId }).then((res) => {
+    API.get(`/get_post/${postId}`).then((res) => {
       post = res;
     });
   });
