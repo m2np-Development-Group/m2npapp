@@ -12,7 +12,7 @@ const axiosAPI = axios.create({
 });
 
 // implement a method to execute all the request from here.
-const apiRequest = (method, url, request) => {
+const apiRequest = (method, url, params, data) => {
   const headers = {
     authorization: "",
   };
@@ -20,8 +20,9 @@ const apiRequest = (method, url, request) => {
   return axiosAPI({
     method,
     url,
-    data: request,
+    data: data,
     headers,
+    params: params,
   })
     .then((res) => {
       return Promise.resolve(res.data);
@@ -31,9 +32,9 @@ const apiRequest = (method, url, request) => {
     });
 };
 
-const get = (url, request) => apiRequest("get", url, request);
-const deleteRequest = (url, request) => apiRequest("delete", url, request);
-const post = (url, request) => apiRequest("post", url, request);
+const get = (url, params) => apiRequest("get", url, params , null);
+const deleteRequest = (url, request) => apiRequest("delete", url, request, null);
+const post = (url, request) => apiRequest("post", url, null, request);
 const formPost = (url, request) => {
   return axiosAPI
     .post(url, qs.stringify(request))
@@ -58,8 +59,8 @@ const formPostFile = (url, formData) => {
       return Promise.reject(err);
     });
 };
-const put = (url, request) => apiRequest("put", url, request);
-const patch = (url, request) => apiRequest("patch", url, request);
+const put = (url, request) => apiRequest("put", url, null, request);
+const patch = (url, request) => apiRequest("patch", url, null, request);
 
 const API = {
   get,
