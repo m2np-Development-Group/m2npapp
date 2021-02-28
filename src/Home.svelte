@@ -7,6 +7,46 @@
   import { timeConverter } from "./utils/util";
   import API from "./api/Api";
   import { autoresize } from "./utils/autoresize.js";
+	import InfiniteScroll from "./components/InfiniteScroll.svelte";
+
+  let maxID = 0;
+  let minID = 0;
+
+  let coinSound = new Audio("/assets/coin.mp3");;
+  let flipCoinSound = new Audio("/assets/flipcoin.mp3");;
+  
+  let newBatch = [];
+  let timeline = [];
+  let previousMaxID;
+  let previousMinID;
+
+  async function fetchData(isAppend) {
+    API.get(
+      "/get_personal_timeline",
+      isAppend
+        ? { less_than_id: previousMinID } //append : fetch older posts
+        : { more_than_id: previousMaxID } //append : fetch newer posts
+    ).then((res) => {
+      newBatch = res;
+      timeline = isAppend
+        ? [...timeline, ...newBatch]
+        : [...newBatch, ...timeline];
+        
+      previousMaxID = timeline[0].id;
+      previousMinID = timeline[timeline.length - 1].id;
+      timeline.map((x) => {
+        x.Active = x.Active?true:false;
+      });
+       
+      if(isAppend){
+        coinSound.play()
+      }else{
+        flipCoinSound.play()
+      }
+
+
+    });
+  }
 
   const { open } = getContext("simple-modal");
 
@@ -33,8 +73,6 @@
   };
 
   const isArray = Array.isArray;
-  let postDetail = {};
-  let timeline = [];
   let avatars = {};
   let usernames = {};
   let articleCards = {};
@@ -42,12 +80,8 @@
 
   // Get the data from the api, after the page is mounted.
   onMount(async () => {
-    API.get("/get_timeline").then((res) => {
-      timeline = res;
-      timeline.map((x) => {
-        x.Active = false;
-      });
-    });
+    
+    fetchData()
 
     API.get("/get_avatar_username_maps").then((res) => {
       avatars = res[0];
@@ -80,11 +114,13 @@
 <svelte:head />
 <main>
   <div
-    style="width:200px; position:fixed; left:1em; height:calc(100vh - 1em); padding:0;margin-block-start:0">
+    style="width:200px; position:fixed; left:1em; height:calc(100vh - 1em); padding:0;margin-block-start:0"
+  >
     <nav style="border-bottom:1px #CCC solid; margin-right:1em;padding:.4em">
       <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
       <a href="/logout" use:link
-        ><i class="fa fa-sign-out" aria-hidden="true" /></a>
+        ><i class="fa fa-sign-out" aria-hidden="true" /></a
+      >
     </nav>
 
     <img width="40" src={profile?.user?.avatar} alt="avatar" />
@@ -98,27 +134,29 @@
     Post Count: <strong>{profile.user?.article_count}</strong><br />
   </div>
 
-  <section style="margin-left:220px">
-    <Postbox
-      finishHandler={(id) => {
-        API.get(`get_post/${id}`).then((res) => {
-          timeline = [res, ...timeline];
-        });
-      }} />
-    <div class="centered">
+  <Postbox
+  style="position:fixed;width:calc(100vw - 220px);left:200px;z-index:100"
+  finishHandler={(id) => {
+    API.get(`get_post/${id}`).then((res) => {
+      timeline = [res, ...timeline];
+    });
+  }}
+/>
       <section class="cards">
         <i class="fa fa-trash-alt" />
         {#each timeline as v, k}
           <article
             class="card"
             bind:this={articleCards[v.id]}
-            class:active={v.Active}>
+            class:active={v.Active}
+          >
             <div class="avatar_box">
               <img
                 width="20"
                 src={avatars[v["user_id"]]}
                 class="avatars"
-                alt="avatar" />
+                alt="avatar"
+              />
               <small on:click={() => showPostView(v["id"])}>
                 {usernames[v["user_id"]]}
                 {timeConverter(v.created_at)}
@@ -136,7 +174,8 @@
                 }
                 timeline = timeline;
                 console.log(timeline);
-              }}>
+              }}
+            >
               {@html myMarked(v.json["post"])}
 
               {#if isArray(v.json["images"])}
@@ -145,7 +184,8 @@
                     width="20%"
                     src={image["src"]}
                     alt={image["alt"]}
-                    on:click={() => showPostView(v["id"])} />
+                    on:click={() => showPostView(v["id"])}
+                  />
                 {/each}
               {/if}
             </div>
@@ -153,20 +193,27 @@
               <div style="width:700px; margin-top:1em">
                 <textarea use:autoresize class="reply_box" /><br />
                 <span on:click={v.Active && alert("x")}
-                  ><i class="fa fa-smile-o" /></span>
+                  ><i class="fa fa-smile-o" /></span
+                >
                 <span on:click={v.Active && alert("x")}
-                  ><i class="fa fa-file-image-o" /></span>
+                  ><i class="fa fa-file-image-o" /></span
+                >
 
                 <span style="opacity:0.6">按 Ctrl+Enter 送出</span>
               </div>
             {/if}
           </article>
         {/each}
+        
+        <InfiniteScroll
+          hasMore={newBatch.length>0}
+          threshold={500}
+          on:loadMore={() => {
+            console.log("load more")
+            fetchData(true);
+          }}
+        />
       </section>
-      <!-- .cards -->
-    </div>
-    <!-- .centered -->
-  </section>
 </main>
 
 <style>
@@ -179,6 +226,7 @@
     background: #2c3940;
   }
   .card {
+    
     color: #fbbd2a;
     /* border:1px solid red; */
     box-shadow: 0 0 0 1px #8a463c;
@@ -204,6 +252,12 @@
   /* Flexbox stuff */
 
   .cards {
+    top:40px;
+    bottom:10px;
+    left:220px;
+    position: fixed;
+    width: calc(100vw - 236px);
+    overflow-y: scroll;
     display: flex;
     flex-wrap: wrap;
   }
@@ -223,12 +277,9 @@
       max-width: calc(25%);
     }
   }
-  /* :global(body) {
-		background-color: #f2eee2;
-		color: #0084f6;
-		transition: background-color 0.3s
-	} */
-
+  :global(body) {
+    overflow:hidden
+  }
   :global(.card a) {
     color: #f7694d;
     text-decoration: none;

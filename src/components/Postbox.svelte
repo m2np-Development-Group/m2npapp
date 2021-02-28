@@ -8,7 +8,7 @@
 
 
   export let finishHandler = (id) => {};
-
+  export let style = "";
   const submitPost = () => {
     API.post("/post_post",{content:editor.getValue()}).then((res)=>{
       console.log(res)
@@ -90,7 +90,7 @@
   });
 </script>
 
-<div>
+<div style={style}>
   <textarea name="content" bind:this={textContent} />
 </div>
 
@@ -98,14 +98,5 @@
   textarea {
     width: 100%;
   }
-  :global(.CodeMirror) {
-    border: 1px solid #eee;
-    height: auto;
-    max-height: 100px;
-  }
 
-  :global(.CodeMirror-scroll) {
-    height: auto;
-    max-height: 100px;
-  }
 </style>
