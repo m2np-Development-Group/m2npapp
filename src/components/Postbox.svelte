@@ -2,30 +2,29 @@
   import { onMount } from "svelte";
   import API from "../api/Api";
   import inlineAttachment from "./inlineAttachment";
-  import { getNotificationsContext } from 'svelte-notifications';
+  import { getNotificationsContext } from "svelte-notifications";
 
   const { addNotification } = getNotificationsContext();
-
 
   export let finishHandler = (id) => {};
   export let style = "";
   const submitPost = () => {
-    API.post("/post_post",{content:editor.getValue()}).then((res)=>{
-      console.log(res)
-      if(res.msg == "ok"){
+    API.post("/post_post", { content: editor.getValue() }).then((res) => {
+      console.log(res);
+      if (res.msg == "ok") {
         editor.setValue("");
         editor.clearHistory();
         finishHandler(res.id);
-      }else{
+      } else {
         addNotification({
           text: res.msg,
-          position: 'top-right',
-          type: 'warning',
-          removeAfter: 3000
-        })
+          position: "top-right",
+          type: "warning",
+          removeAfter: 3000,
+        });
       }
-    })
-  }
+    });
+  };
   var textContent;
   var overridden = false; //override close window
   var editor;
@@ -33,11 +32,11 @@
   onMount(function () {
     editor = CodeMirror.fromTextArea(textContent, {
       mode: {
-          name: "gfm",
-          tokenTypeOverrides: {
-            emoji: "emoji"
-          }
+        name: "gfm",
+        tokenTypeOverrides: {
+          emoji: "emoji",
         },
+      },
       theme: "monokai",
       extraKeys: { Enter: "newlineAndIndentContinueMarkdownList" },
 
@@ -48,14 +47,13 @@
       enterMode: "keep",
       tabMode: "shift",
       extraKeys: {
-          'Ctrl-Enter': (cm) => {
-            submitPost()
-          },
-          'Cmd-Enter': (cm) => {
-            submitPost()
-          },
-          
+        "Ctrl-Enter": (cm) => {
+          submitPost();
         },
+        "Cmd-Enter": (cm) => {
+          submitPost();
+        },
+      },
     });
     inlineAttachment.editors.codemirror4.attach(editor, {
       onFileUploadResponse: function (xhr) {
@@ -98,5 +96,4 @@
   textarea {
     width: 100%;
   }
-
 </style>

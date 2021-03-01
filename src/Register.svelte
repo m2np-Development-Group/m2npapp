@@ -16,7 +16,7 @@
     } else {
       API.post("/register", {
         email: email,
-        username:username,
+        username: username,
         password: password,
       }).then((res) => {
         if (res.msg != "ok") {
@@ -26,7 +26,7 @@
             type: "warning",
             removeAfter: 3000,
           });
-        }else{
+        } else {
           beforeReg = false;
         }
       });

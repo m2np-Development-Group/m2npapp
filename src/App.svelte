@@ -28,13 +28,12 @@
     }
   });
 
-  const typeSound = new Audio('/assets/type.mp3');
-  document.addEventListener('keydown', function(e) {
-    
-  if(!typeSound.paused){
-    typeSound.currentTime = 0;
-  }
-  typeSound.play();
+  const typeSound = new Audio("/assets/type.mp3");
+  document.addEventListener("keydown", function (e) {
+    if (!typeSound.paused) {
+      typeSound.currentTime = 0;
+    }
+    typeSound.play();
   });
 </script>
 

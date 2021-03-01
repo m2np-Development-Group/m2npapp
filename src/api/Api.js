@@ -32,8 +32,9 @@ const apiRequest = (method, url, params, data) => {
     });
 };
 
-const get = (url, params) => apiRequest("get", url, params , null);
-const deleteRequest = (url, request) => apiRequest("delete", url, request, null);
+const get = (url, params) => apiRequest("get", url, params, null);
+const deleteRequest = (url, request) =>
+  apiRequest("delete", url, request, null);
 const post = (url, request) => apiRequest("post", url, null, request);
 const formPost = (url, request) => {
   return axiosAPI

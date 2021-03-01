@@ -42,6 +42,7 @@ export default {
 				hydratable: true,
 				// enable run-time checks when not in production
 				dev: !production,
+				cssHash: ({ css, hash })=>{`abby-${hash(css)}`}
 			}
 		}),
 		// we'll extract any component CSS out into
