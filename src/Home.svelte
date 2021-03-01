@@ -31,21 +31,23 @@
         ? { less_than_ts: minTS } //append : fetch older posts
         : { more_than_ts: maxTS } //append : fetch newer posts
     ).then((res) => {
-      newBatch = res;
-      timeline = isAppend
-        ? [...timeline, ...newBatch]
-        : [...newBatch, ...timeline];
+      if(res){
+        newBatch = res;
+        timeline = isAppend
+          ? [...timeline, ...newBatch]
+          : [...newBatch, ...timeline];
 
-      maxTS = timeline[0].created_at;
-      minTS = timeline[timeline.length - 1].created_at;
-      timeline.map((x) => {
-        x.isActive = x.isActive ? true : false;
-      });
+        maxTS = timeline[0].created_at;
+        minTS = timeline[timeline.length - 1].created_at;
+        timeline.map((x) => {
+          x.isActive = x.isActive ? true : false;
+        });
 
-      if (isAppend) {
-        coinSound.play();
-      } else {
-        flipCoinSound.play();
+        if (isAppend) {
+          coinSound.play();
+        } else {
+          flipCoinSound.play();
+        }
       }
     });
   }
