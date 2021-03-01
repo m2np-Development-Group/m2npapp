@@ -21,6 +21,8 @@
   let timeline = [];
   let maxTS;
   let minTS;
+  let replyContent = "";
+  let replies = [];
 
   async function fetchData(isAppend) {
     API.get(
@@ -34,10 +36,10 @@
         ? [...timeline, ...newBatch]
         : [...newBatch, ...timeline];
 
-        maxTS = timeline[0].created_at;
-        minTS = timeline[timeline.length - 1].created_at;
+      maxTS = timeline[0].created_at;
+      minTS = timeline[timeline.length - 1].created_at;
       timeline.map((x) => {
-        x.Active = x.Active ? true : false;
+        x.isActive = x.isActive ? true : false;
       });
 
       if (isAppend) {
@@ -105,9 +107,24 @@
   //     postDetail = res;
   //   });
   // };
-
-  function auto_grow(element) {
-    console.log();
+  function refreshReplies(post_id) {
+    API.get("/get_replies", { post_id: post_id }).then((res) => {
+      replies = res;
+      console.log(replies);
+    });
+  }
+  function openGrid(k, v) {
+    if (v.isActive) {
+      timeline[k].isActive = false;
+    } else {
+      timeline.map((x) => {
+        x.isActive = x.id == v.id;
+        if (x.isActive) {
+          refreshReplies(v.id);
+        }
+      });
+    }
+    timeline = timeline;
   }
 </script>
 
@@ -132,21 +149,21 @@
     Post Count: <strong>{profile.user?.article_count}</strong><br />
   </div>
 
-  <div class='postbox'>
-  <Postbox
-    finishHandler={(id) => {
-      API.get(`get_post/${id}`).then((res) => {
-        timeline = [res, ...timeline];
-      });
-    }} />
-    </div>
+  <div class="postbox">
+    <Postbox
+      finishHandler={(id) => {
+        API.get(`get_post/${id}`).then((res) => {
+          timeline = [res, ...timeline];
+        });
+      }} />
+  </div>
   <section class="cards">
     <i class="fa fa-trash-alt" />
     {#each timeline as v, k}
       <article
         class="card"
         bind:this={articleCards[v.id]}
-        class:active={v.Active ? true : false}>
+        class:active={v.isActive ? true : false}>
         <div class="avatar_box">
           <img
             width="20"
@@ -160,26 +177,36 @@
         </div>
         <div
           style="padding-left:.3em;font-size:13px"
-          on:click={() => {
-            if (v.Active) {
-              timeline[k].Active = false;
-            } else {
-              timeline.map((x) => {
-                x.Active = x.id == v.id;
-              });
-            }
-            timeline = timeline;
-            console.log(timeline);
-          }}>
+          on:click={() => openGrid(k, v)}>
           {@html myMarked(v["content"])}
-
         </div>
-        {#if v.Active}
+
+        {#if v.isActive}
+          <div class="replies">
+            {#each replies as reply}
+              {reply.user_id}: {reply.content}
+            {/each}
+          </div>
           <div style="width:700px; margin-top:1em">
-            <textarea use:autoresize class="reply_box" /><br />
-            <span on:click={v.Active && alert("x")}
+            <textarea
+              use:autoresize
+              bind:value={replyContent}
+              on:keyup={(e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key == "Enter") {
+                  API.post("/post_reply", {
+                    post_id: v.id,
+                    content: replyContent,
+                  }).then((res) => {
+                    if (res.msg == "ok") {
+                      replyContent = "";
+                    }
+                  });
+                }
+              }}
+              class="reply_box" /><br />
+            <span on:click={v.isActive && alert("x")}
               ><i class="fa fa-smile-o" /></span>
-            <span on:click={v.Active && alert("x")}
+            <span on:click={v.isActive && alert("x")}
               ><i class="fa fa-file-image-o" /></span>
 
             <span style="opacity:0.6">按 Ctrl+Enter 送出</span>
@@ -199,7 +226,12 @@
 </main>
 
 <style>
-  .postbox{position:fixed;width:calc(100vw - 236px);left:220px;z-index:100}
+  .postbox {
+    position: fixed;
+    width: calc(100vw - 236px);
+    left: 220px;
+    z-index: 100;
+  }
   .reply_box {
     height: 19px;
     resize: none;
