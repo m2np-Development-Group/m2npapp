@@ -24,4 +24,3 @@ export const timeConverter = (UNIX_timestamp) => {
     date + " " + month + " " + year + " " + hour + ":" + min + ":" + sec;
   return time;
 };
-
