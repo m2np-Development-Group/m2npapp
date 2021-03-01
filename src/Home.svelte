@@ -19,23 +19,23 @@
 
   let newBatch = [];
   let timeline = [];
-  let previousMaxID;
-  let previousMinID;
+  let maxTS;
+  let minTS;
 
   async function fetchData(isAppend) {
     API.get(
       "/get_personal_timeline",
       isAppend
-        ? { less_than_id: previousMinID } //append : fetch older posts
-        : { more_than_id: previousMaxID } //append : fetch newer posts
+        ? { less_than_ts: minTS } //append : fetch older posts
+        : { more_than_ts: maxTS } //append : fetch newer posts
     ).then((res) => {
       newBatch = res;
       timeline = isAppend
         ? [...timeline, ...newBatch]
         : [...newBatch, ...timeline];
 
-      previousMaxID = timeline[0].id;
-      previousMinID = timeline[timeline.length - 1].id;
+        maxTS = timeline[0].created_at;
+        minTS = timeline[timeline.length - 1].created_at;
       timeline.map((x) => {
         x.Active = x.Active ? true : false;
       });
@@ -132,13 +132,14 @@
     Post Count: <strong>{profile.user?.article_count}</strong><br />
   </div>
 
+  <div class='postbox'>
   <Postbox
-    style="position:fixed;width:calc(100vw - 220px);left:200px;z-index:100"
     finishHandler={(id) => {
       API.get(`get_post/${id}`).then((res) => {
         timeline = [res, ...timeline];
       });
     }} />
+    </div>
   <section class="cards">
     <i class="fa fa-trash-alt" />
     {#each timeline as v, k}
@@ -170,17 +171,8 @@
             timeline = timeline;
             console.log(timeline);
           }}>
-          {@html myMarked(v.json["post"])}
+          {@html myMarked(v["content"])}
 
-          {#if isArray(v.json["images"])}
-            {#each v.json["images"] as image, i}
-              <img
-                width="20%"
-                src={image["src"]}
-                alt={image["alt"]}
-                on:click={() => showPostView(v["id"])} />
-            {/each}
-          {/if}
         </div>
         {#if v.Active}
           <div style="width:700px; margin-top:1em">
@@ -207,6 +199,7 @@
 </main>
 
 <style>
+  .postbox{position:fixed;width:calc(100vw - 236px);left:220px;z-index:100}
   .reply_box {
     height: 19px;
     resize: none;
