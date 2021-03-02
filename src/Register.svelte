@@ -10,9 +10,17 @@
   let username = "";
   let beforeReg = true;
 
+
+  const onKp = (e)=>{if (e.key === "Enter") register();}
+
   const register = () => {
     if (email == "" || password == "" || username == "") {
-      alert("fill in both");
+      addNotification({
+            text: "請填入所有的欄位。",
+            position: "top-right",
+            type: "warning",
+            removeAfter: 3000,
+          });
     } else {
       API.post("/register", {
         email: email,
@@ -37,9 +45,9 @@
 <h1>Register M2NP</h1>
 
 {#if beforeReg}
-  <input type="username" placeholder="Username" bind:value={username} />
-  <input type="email" placeholder="E-Mail" bind:value={email} />
-  <input type="password" placeholder="Password" bind:value={password} />
+  <input type="username" placeholder="Username" bind:value={username}  on:keypress={onKp} />
+  <input type="email" placeholder="E-Mail" bind:value={email} on:keypress={onKp} />
+  <input type="password" placeholder="Password" bind:value={password} on:keypress={onKp} />
   <button on:click={register}>Register</button>
 {:else}
   Success.

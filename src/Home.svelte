@@ -59,10 +59,12 @@
   };
 
   const renderer = new marked.Renderer();
-  renderer.link = (href, title, text) =>
-    `<a target="_blank" href="${href}">${text}</a>`; //title="${ title }"
-
+  renderer.link = (href, title, text) => `<a target="_blank" href="${href}">${text}</a>`;
   const markedOptions = { renderer: renderer, breaks: true };
+  const renderer2 = new marked.Renderer();
+  renderer2.link = (href, title, text) => `<a target="_blank" href="${href}">${text}</a>`;
+  renderer2.paragraph = (text) => text+"<br />";
+  const markedOptions2 = { renderer: renderer2, breaks: true };
 
   const myMarked = (str) => {
     if (str == undefined || str == null) {
@@ -71,12 +73,25 @@
     return marked(str, markedOptions)
       .replace("&#39;", "&apos;")
       .replace(/@([a-z\d_]+)/gi, '<a href="/user/$1">@$1</a>')
+      .replace("<p>","")
+      .replace("</p>","")
       .replace(
         /\B#([\u4e00-\u9fa5_a-zA-Z0-9]+)/g,
         '<a href="/hashtag/$1">#$1</a>'
       );
   };
-
+  const myMarkedForReplies = (str) => {
+    if (str == undefined || str == null) {
+      return "";
+    }
+    return marked(str, markedOptions2)
+      .replace("&#39;", "&apos;")
+      .replace(/@([a-z\d_]+)/gi, '<a href="/user/$1">@$1</a>')
+      .replace(
+        /\B#([\u4e00-\u9fa5_a-zA-Z0-9]+)/g,
+        '<a href="/hashtag/$1">#$1</a>'
+      );
+  };
   const isArray = Array.isArray;
   let avatars = {};
   let usernames = {};
@@ -112,7 +127,6 @@
   function refreshReplies(post_id) {
     API.get("/get_replies", { post_id: post_id }).then((res) => {
       replies = res;
-      console.log(replies);
     });
   }
   function openGrid(k, v) {
@@ -134,14 +148,14 @@
 <main>
   <div
     style="width:200px; position:fixed; left:1em; height:calc(100vh - 1em); padding:0;margin-block-start:0">
-    <nav style="border-bottom:1px #CCC solid; margin-right:1em;padding:.4em">
+    <nav style="border-bottom:1px #CCC solid; padding:.4em; font-size:1.2em; margin-bottom:1.2em">
       <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
       <a href="/logout" use:link
         ><i class="fa fa-sign-out" aria-hidden="true" /></a>
     </nav>
 
     <img width="40" src={profile?.user?.avatar} alt="avatar" />
-    {profile?.user?.display_name} <br /><br />
+    {profile?.user?.display_name} <br />
 
     {@html myMarked(profile?.user?.description)}
 
@@ -177,16 +191,24 @@
             {timeConverter(v.created_at)}
           </small>
         </div>
-        <div
-          style="padding-left:.3em;font-size:13px"
+        <div class="post_content"
           on:click={() => openGrid(k, v)}>
           {@html myMarked(v["content"])}
         </div>
 
         {#if v.isActive}
-          <div class="replies">
+          <div class:replies={v.isActive}>
             {#each replies as reply}
-              {reply.user_id}: {reply.content}
+            <table>
+              <tr>
+                <td >
+                  {usernames[reply.user_id]}
+                </td>
+                <td style='width:100%'>
+                  {@html myMarked(reply.content)}
+                </td>
+              </tr>
+            </table>
             {/each}
           </div>
           <div style="width:700px; margin-top:1em">
@@ -228,6 +250,14 @@
 </main>
 
 <style>
+  :global(.replies table){
+    width:100%
+  }
+  :global(.replies td){
+    vertical-align: top;
+    white-space: nowrap;
+  }
+
   .postbox {
     position: fixed;
     width: calc(100vw - 236px);
@@ -239,7 +269,6 @@
     resize: none;
     border: 1px solid #999;
     color: #bfc2c7;
-    outline: none;
     background: #2c3940;
   }
   .card {
@@ -309,10 +338,13 @@
     text-align: left;
     font-weight: 700;
   }
-  :global(table) {
+  .post_content{
+    padding-left:.3em;font-size:13px
+  }
+  :global(.post_content table) {
     border-spacing: 0;
   }
-  :global(table td) {
+  :global(.post_content table td) {
     padding-right: 1em;
     border-bottom: #fbbc2a67 1px solid;
   }
