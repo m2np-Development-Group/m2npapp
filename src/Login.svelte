@@ -1,26 +1,36 @@
 <script>
   import API from "./api/Api";
   import { navigate, Link } from "svelte-routing";
+  import { getNotificationsContext } from "svelte-notifications";
 
+  const { addNotification } = getNotificationsContext();
   let email = "";
   let password = "";
-</script>
-
-<h1>Login M2NP</h1>
-<input type="email" placeholder="E-Mail" bind:value={email} />
-<input type="password" placeholder="Password" bind:value={password} />
-<button
-  on:click={() => {
+  const login = () => {
     if (email == "" || password == "") {
       alert("fill in both");
     } else {
       API.post("/login", { email: email, password: password }).then((res) => {
         if (res.msg == "ok") {
           navigate("/home");
+        }else{
+          addNotification({
+            text: "賬戶或密碼有誤。",
+            position: "top-right",
+            type: "warning",
+            removeAfter: 3000,
+          });
         }
       });
     }
-  }}>Login</button>
+  }
+  const onKp = (e)=>{if (e.key === "Enter") login();}
+</script>
+
+<h1>Login M2NP</h1>
+<input on:keypress={onKp} type="email" placeholder="E-Mail" bind:value={email} />
+<input on:keypress={onKp} type="password" placeholder="Password" bind:value={password} />
+<button on:click={login}>Login</button>
 <hr />
 <Link to="/register">未有賬戶？按此登記。</Link><br />
 <Link to="/reset_password">忘記密碼？按此重設。</Link>

@@ -2,7 +2,7 @@
   import { link } from "svelte-routing";
   import { onMount } from "svelte";
   import API from "./api/Api";
-  let message;
+  let message = "登出中。";
   onMount(() => {
     API.get("/logout").then((res) => {
       if (res.msg == "ok") {
