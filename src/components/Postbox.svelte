@@ -37,6 +37,7 @@
           emoji: "emoji",
         },
       },
+      lineWrapping: true,
       theme: "monokai",
       extraKeys: { Enter: "newlineAndIndentContinueMarkdownList" },
 
@@ -90,6 +91,8 @@
 
 <div style={style}>
   <textarea name="content" bind:this={textContent} />
+  <span on:click={()=>alert("x")}><i class="fa fa-smile-o" /></span>
+  <span on:click={()=>alert("x")}><i class="fa fa-file-image-o" /></span>
 </div>
 
 <style>
