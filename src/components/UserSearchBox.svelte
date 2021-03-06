@@ -1,5 +1,5 @@
 <script>
-  import AutoComplete from "simple-svelte-autocomplete";
+  import AutoComplete from "./SimpleAutocomplete.svelte";
   import API from "../api/Api";
 
   let fetch = async (event) => {
@@ -7,8 +7,22 @@
       return res;
     });
   };
-  export let selectedValue;
+  let selected;
+
+  export let value;
+  $: {
+console.log(value);
+console.log(selected);
+    }
+    function keyDownHandler(e) {
+    if (e.key === 'Enter'){
+      console.log(value);
+console.log(selected);
+    }
+  }
 </script>
+
+<svelte:window on:keydown={keyDownHandler}/>
 
 <AutoComplete
   noResultsText=""
@@ -18,4 +32,6 @@
   searchFunction={fetch}
   labelFieldName="username"
   valueFieldName="id"
-  bind:selectedItem={selectedValue} />
+  bind:text={value}
+  bind:selectedItem={selected}
+  onChange={(e)=>console.log(e)} />
