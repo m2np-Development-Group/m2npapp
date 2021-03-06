@@ -131,6 +131,7 @@
       replies = res;
     });
   }
+  let userSearchText;
 </script>
 
 <svelte:head />
@@ -144,9 +145,8 @@
       <i class="fa fa-bell" aria-hidden="true" />
 
       <Hoverable let:hovering={isSearchBoxShowing}>
-        {#if isSearchBoxShowing}
-          <UserSearchBox />
-
+        {#if isSearchBoxShowing || userSearchText!=""}
+          <UserSearchBox bind:value={userSearchText} />
         {:else}
           <i class="fa fa-search" aria-hidden="true" />
         {/if}
