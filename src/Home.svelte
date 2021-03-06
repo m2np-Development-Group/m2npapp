@@ -10,7 +10,8 @@
   import InfiniteScroll from "./components/InfiniteScroll.svelte";
   import { parse } from "QS";
   import Popover from "svelte-popover";
-
+	import Hoverable from './components/Hoverable.svelte';
+  import UserSearchBox from './components/UserSearchBox.svelte'
   export let location;
   let queryParams;
   $: queryParams = console.log(parse(location.search.replace("?", "")));
@@ -33,7 +34,7 @@
         ? { less_than_ts: minTS } //append : fetch older posts
         : { more_than_ts: maxTS } //append : fetch newer posts
     ).then((res) => {
-      if (res) {
+      if (isArray(res) && res.length>0) {
         newBatch = res;
         timeline = isAppend
           ? [...timeline, ...newBatch]
@@ -139,9 +140,19 @@
     <nav
       style="border-bottom:1px #CCC solid; padding:.4em; font-size:1.2em; margin-bottom:1.2em">
       <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
-      <a href="/logout" use:link
-        ><i class="fa fa-sign-out" aria-hidden="true" /></a>
+      <a href="/logout" use:link><i class="fa fa-sign-out" aria-hidden="true" /></a>
       <i class="fa fa-bell" aria-hidden="true" />
+
+      <Hoverable let:hovering={isSearchBoxShowing}>
+        {#if isSearchBoxShowing}
+          <UserSearchBox />
+
+        {:else}
+          <i class="fa fa-search" aria-hidden="true" />
+        {/if}
+      </Hoverable>
+
+      
     </nav>
 
     <img width="40" src={profile?.user?.avatar} alt="avatar" />
@@ -197,13 +208,15 @@
           <table>
             <tr>
               <td>
-                {usernames[reply.user_id]}
+                
               </td>
               <td style="width:100%">
-                {@html myMarked(reply.content)}
+                
               </td>
             </tr>
           </table>
+          {usernames[reply.user_id]}<br/>
+          {@html myMarked(reply.content)}
         {/each}
         {#if replies.length == 0}
           No Replies.
@@ -216,7 +229,7 @@
           on:keyup={(e) => {
             if ((e.ctrlKey || e.metaKey) && e.key == "Enter") {
               API.post("/post_reply", {
-                post_id: v.id,
+                post_id: showingArticle.id,
                 content: replyContent,
               }).then((res) => {
                 if (res.msg == "ok") {
