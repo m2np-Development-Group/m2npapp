@@ -13,8 +13,16 @@
 	import Hoverable from './components/Hoverable.svelte';
   import UserSearchBox from './components/UserSearchBox.svelte'
   export let location;
+  import { userInfoStore } from './stores.js';
+  
+  let myInfo={};//followings , followers , user
+  userInfoStore.subscribe(value=>{
+    myInfo = value;
+    console.log("myinfo set")
+    console.log(myInfo)
+  })
   let queryParams;
-  $: queryParams = console.log(parse(location.search.replace("?", "")));
+  $: queryParams = console.log(parse(location?.search.replace("?", "")));
 
   let coinSound = new Audio("/assets/coin.mp3");
   let flipCoinSound = new Audio("/assets/flipcoin.mp3");
@@ -27,15 +35,22 @@
   let replyContent = "";
   let replies = [];
 
+  export let username = "";
+
   async function fetchData(isAppend) {
     API.get(
       "/get_personal_timeline",
       isAppend
-        ? { less_than_ts: minTS } //append : fetch older posts
-        : { more_than_ts: maxTS } //append : fetch newer posts
+        ? { less_than_ts: minTS, username: username } //append : fetch older posts
+        : { more_than_ts: maxTS, username: username } //append : fetch newer posts
     ).then((res) => {
-      if (isArray(res) && res.length>0) {
-        newBatch = res;
+      res.users?.forEach((v)=>{
+        avatars[v.id] = v.avatar
+        usernames[v.id] = v.username
+        displaynames[v.id] = v.display_name
+      })
+      if (isArray(res.posts) && res.posts.length>0) {
+        newBatch = res.posts;
         timeline = isAppend
           ? [...timeline, ...newBatch]
           : [...newBatch, ...timeline];
@@ -62,11 +77,11 @@
   renderer.link = (href, title, text) =>
     `<a target="_blank" href="${href}">${text}</a>`;
   const markedOptions = { renderer: renderer, breaks: true };
-  const renderer2 = new marked.Renderer();
-  renderer2.link = (href, title, text) =>
-    `<a target="_blank" href="${href}">${text}</a>`;
-  renderer2.paragraph = (text) => text + "<br />";
-  const markedOptions2 = { renderer: renderer2, breaks: true };
+  // const renderer2 = new marked.Renderer();
+  // renderer2.link = (href, title, text) =>
+  //   `<a target="_blank" href="${href}">${text}</a>`;
+  // renderer2.paragraph = (text) => text + "<br />";
+  // const markedOptions2 = { renderer: renderer2, breaks: true };
 
   const myMarked = (str) => {
     if (str == undefined || str == null) {
@@ -82,21 +97,22 @@
         '<a href="/hashtag/$1">#$1</a>'
       );
   };
-  const myMarkedForReplies = (str) => {
-    if (str == undefined || str == null) {
-      return "";
-    }
-    return marked(str, markedOptions2)
-      .replace("&#39;", "&apos;")
-      .replace(/@([a-z\d_]+)/gi, '<a href="/user/$1">@$1</a>')
-      .replace(
-        /\B#([\u4e00-\u9fa5_a-zA-Z0-9]+)/g,
-        '<a href="/hashtag/$1">#$1</a>'
-      );
-  };
+  // const myMarkedForReplies = (str) => {
+  //   if (str == undefined || str == null) {
+  //     return "";
+  //   }
+  //   return marked(str, markedOptions2)
+  //     .replace("&#39;", "&apos;")
+  //     .replace(/@([a-z\d_]+)/gi, '<a href="/user/$1">@$1</a>')
+  //     .replace(
+  //       /\B#([\u4e00-\u9fa5_a-zA-Z0-9]+)/g,
+  //       '<a href="/hashtag/$1">#$1</a>'
+  //     );
+  // };
   const isArray = Array.isArray;
   let avatars = {};
   let usernames = {};
+  let displaynames = {};
   let articleCards = {};
   let profile = {};
 
@@ -104,14 +120,21 @@
   onMount(async () => {
     fetchData();
 
-    API.get("/get_avatar_username_maps").then((res) => {
-      avatars = res[0];
-      usernames = res[1];
-    });
-
     API.get("/get_profile").then((res) => {
-      profile = res;
+      userInfoStore.set(res);
+      //my timeline
+      if(username==""){
+        profile = res;
+      }
     });
+    if(username!=""){
+      API.get("/get_profile",{
+        username : username
+      }).then((res) => {
+        profile = res;
+        console.log(profile)
+      });
+    }
 
     // setInterval(function () {
     //   var ni = timeline[8];
@@ -155,15 +178,36 @@
       
     </nav>
 
-    <img width="40" src={profile?.user?.avatar} alt="avatar" />
-    {profile?.user?.display_name} <br />
+    {#if profile.user != undefined && myInfo.followings != undefined}
+      <img width="40" src={profile?.user?.avatar} alt="avatar" />
+      {profile?.user?.display_name} <br />
+      {#if username!=""}
+        {#if myInfo?.followings?.map(x=>x.username).includes(profile.user.username) }
+          <button on:click={()=>{API.post("/unfollow",{username: profile.user.username}).then((res)=>{
+            if(res.msg=='ok'){
+              myInfo.followings=myInfo.followings.filter(x=>x.username!=profile.user.username)
+            }else{
+              alert('error')
+            }
+          })}}>Unfollow</button>
+        {:else}
+          <button on:click={()=>{API.post("/follow",{username: profile.user.username}).then((res)=>{
+            if(res.msg=='ok'){
+              myInfo.followings=[...myInfo.followings,{username:profile.user.username, display_name:profile.user.display_name}]
+            }else{
+              alert('error')
+            }
+          })}}>Follow</button>
+        {/if}
+        <br />
+      {/if}
+      {@html myMarked(profile?.user?.description)}
 
-    {@html myMarked(profile?.user?.description)}
-
-    Followings: {JSON.stringify(profile.followings)} <br />
-    Followers: {JSON.stringify(profile.followers)} <br /><br />
-    Last Login: <strong>{getDateDiff(profile.user?.last_login)}</strong><br />
-    Post Count: <strong>{profile.user?.article_count}</strong><br />
+      Followings: {JSON.stringify(profile.followings)} <br />
+      Followers: {JSON.stringify(profile.followers)} <br /><br />
+      Last Login: <strong>{getDateDiff(profile.user?.last_login)}</strong><br />
+      Post Count: <strong>{profile.user?.article_count}</strong><br />
+    {/if}
   </div>
 
   <div class="postbox">
@@ -186,7 +230,7 @@
                 src={avatars[showingArticle["user_id"]]}
                 class="avatars"
                 alt="avatar" />
-              {usernames[showingArticle["user_id"]]}
+              {displaynames[showingArticle["user_id"]]}
             </div>
             <div slot="content" class="content">Content</div>
           </Popover>
@@ -215,7 +259,7 @@
               </td>
             </tr>
           </table>
-          {usernames[reply.user_id]}<br/>
+          {displaynames[reply.user_id]}<br/>
           {@html myMarked(reply.content)}
         {/each}
         {#if replies.length == 0}
@@ -258,7 +302,7 @@
             class="avatars"
             alt="avatar" />
           <small on:click={() => showPostView(v["id"])}>
-            {usernames[v["user_id"]]}
+            {displaynames[v["user_id"]]}
             {getDateDiff(v.created_at)}
           </small>
         </div>

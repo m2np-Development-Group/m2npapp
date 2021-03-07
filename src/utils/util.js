@@ -1,3 +1,5 @@
+import { writable } from "svelte/store"
+
 export const timeConverter = (UNIX_timestamp) => {
   var a = new Date(UNIX_timestamp * 1000);
   var months = [
@@ -24,6 +26,9 @@ export const timeConverter = (UNIX_timestamp) => {
     date + " " + month + " " + year + " " + hour + ":" + min + ":" + sec;
   return time;
 };
+
+export const currentPath = writable(window.location.pathname)
+
 export const getDateDiff = (dateTimeStamp) => {
 	dateTimeStamp = dateTimeStamp*1000
 	var minute = 1000 * 60;
