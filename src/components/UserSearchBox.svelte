@@ -1,6 +1,7 @@
 <script>
   import AutoComplete from "./SimpleAutocomplete.svelte";
   import API from "../api/Api";
+import { navigate } from "svelte-routing";
 
   let fetch = async (event) => {
     return await API.get("/search?username=" + event).then((res) => {
@@ -10,14 +11,9 @@
   let selected;
 
   export let value;
-  $: {
-console.log(value);
-console.log(selected);
-    }
     function keyDownHandler(e) {
     if (e.key === 'Enter'){
-      console.log(value);
-console.log(selected);
+//console.log(selected);
     }
   }
 </script>
@@ -34,4 +30,8 @@ console.log(selected);
   valueFieldName="id"
   bind:text={value}
   bind:selectedItem={selected}
-  onChange={(e)=>console.log(e)} />
+  onChange={(e)=>{
+    if(e?.username){
+      navigate(`/user/${e?.username}`)}
+    }
+  } />
