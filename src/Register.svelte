@@ -1,10 +1,7 @@
 <script>
   import API from "./api/Api";
   import { navigate, Link } from "svelte-routing";
-  import { getNotificationsContext } from "svelte-notifications";
-
-  const { addNotification } = getNotificationsContext();
-
+  import { warning } from "./components/Notification";
   let email = "";
   let password = "";
   let username = "";
@@ -15,12 +12,7 @@
 
   const register = () => {
     if (email == "" || password == "" || username == "") {
-      addNotification({
-            text: "請填入所有的欄位。",
-            position: "top-right",
-            type: "warning",
-            removeAfter: 3000,
-          });
+      warning("請填入所有的欄位。");
     } else {
       API.post("/register", {
         email: email,
@@ -28,12 +20,7 @@
         password: password,
       }).then((res) => {
         if (res.msg != "ok") {
-          addNotification({
-            text: res.msg,
-            position: "top-right",
-            type: "warning",
-            removeAfter: 3000,
-          });
+          warning("請填入所有的欄位。");
         } else {
           beforeReg = false;
         }
