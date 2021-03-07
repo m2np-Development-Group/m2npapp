@@ -5,22 +5,23 @@
   import Postbox from "./components/Postbox.svelte";
   import PostView from "./components/PostView.svelte";
   import { timeConverter, getDateDiff } from "./utils/util";
+  import { warning } from "./components/Notification";
   import API from "./api/Api";
   import { autoresize } from "./utils/autoresize.js";
   import InfiniteScroll from "./components/InfiniteScroll.svelte";
   import { parse } from "QS";
   import Popover from "svelte-popover";
-	import Hoverable from './components/Hoverable.svelte';
-  import UserSearchBox from './components/UserSearchBox.svelte'
+  import Hoverable from "./components/Hoverable.svelte";
+  import UserSearchBox from "./components/UserSearchBox.svelte";
   export let location;
-  import { userInfoStore } from './stores.js';
-  
-  let myInfo={};//followings , followers , user
-  userInfoStore.subscribe(value=>{
+  import { userInfoStore } from "./stores.js";
+
+  let myInfo = {}; //followings , followers , user
+  userInfoStore.subscribe((value) => {
     myInfo = value;
-    console.log("myinfo set")
-    console.log(myInfo)
-  })
+    console.log("myinfo set");
+    console.log(myInfo);
+  });
   let queryParams;
   $: queryParams = console.log(parse(location?.search.replace("?", "")));
 
@@ -36,29 +37,39 @@
   let replies = [];
 
   export let username = "";
-
-  async function fetchData(isAppend) {
+function fetchOthersProfile(){
+  if (username != "") {
+      API.get("/get_profile", {
+        username: username,
+      }).then((res) => {
+        profile = res;
+        console.log(profile);
+      });
+    }
+}
+  function fetchData(mode="fresh") {
     API.get(
       "/get_personal_timeline",
-      isAppend
-        ? { less_than_ts: minTS, username: username } //append : fetch older posts
-        : { more_than_ts: maxTS, username: username } //append : fetch newer posts
+      mode=="append" ? { less_than_ts: minTS, username: username }:
+      mode=="prepend" ? { more_than_ts: maxTS, username: username } :
+      {username: username}
     ).then((res) => {
-      res.users?.forEach((v)=>{
-        avatars[v.id] = v.avatar
-        usernames[v.id] = v.username
-        displaynames[v.id] = v.display_name
-      })
-      if (isArray(res.posts) && res.posts.length>0) {
+      res.users?.forEach((v) => {
+        avatars[v.id] = v.avatar;
+        usernames[v.id] = v.username;
+        displaynames[v.id] = v.display_name;
+      });
+      if (isArray(res.posts) && res.posts.length > 0) {
         newBatch = res.posts;
-        timeline = isAppend
-          ? [...timeline, ...newBatch]
-          : [...newBatch, ...timeline];
+        timeline = 
+        mode=="append" ? [...timeline, ...newBatch] :
+        mode=="prepend" ? [...newBatch, ...timeline] :
+        newBatch;
 
         maxTS = timeline[0].created_at;
         minTS = timeline[timeline.length - 1].created_at;
 
-        if (isAppend) {
+        if ( mode=="append" ) {
           coinSound.play();
         } else {
           flipCoinSound.play();
@@ -119,22 +130,16 @@
   // Get the data from the api, after the page is mounted.
   onMount(async () => {
     fetchData();
+    fetchOthersProfile();
 
     API.get("/get_profile").then((res) => {
       userInfoStore.set(res);
       //my timeline
-      if(username==""){
+      if (username == "") {
         profile = res;
       }
     });
-    if(username!=""){
-      API.get("/get_profile",{
-        username : username
-      }).then((res) => {
-        profile = res;
-        console.log(profile)
-      });
-    }
+
 
     // setInterval(function () {
     //   var ni = timeline[8];
@@ -155,6 +160,32 @@
     });
   }
   let userSearchText;
+  const unfollow = (username) => {
+    API.post("/unfollow", { username: username }).then((res) => {
+      if (res.msg == "ok") {
+        myInfo.followings = myInfo.followings.filter(
+          (x) => x.username != username
+        );
+      } else {
+        warning(res.msg);
+      }
+    });
+  };
+  const follow = (username) => {
+    API.post("/follow", { username: profile.user.username }).then((res) => {
+      if (res.msg == "ok") {
+        myInfo.followings = [
+          ...myInfo.followings,
+          {
+            username: profile.user.username,
+            display_name: profile.user.display_name,
+          },
+        ];
+      } else {
+        warning(res.msg);
+      }
+    });
+  };
 </script>
 
 <svelte:head />
@@ -164,47 +195,47 @@
     <nav
       style="border-bottom:1px #CCC solid; padding:.4em; font-size:1.2em; margin-bottom:1.2em">
       <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
-      <a href="/logout" use:link><i class="fa fa-sign-out" aria-hidden="true" /></a>
+      <a href="/logout" use:link
+        ><i class="fa fa-sign-out" aria-hidden="true" /></a>
       <i class="fa fa-bell" aria-hidden="true" />
 
       <Hoverable let:hovering={isSearchBoxShowing}>
-        {#if isSearchBoxShowing || userSearchText!=""}
+        {#if isSearchBoxShowing || userSearchText != ""}
           <UserSearchBox bind:value={userSearchText} />
         {:else}
           <i class="fa fa-search" aria-hidden="true" />
         {/if}
       </Hoverable>
-
-      
     </nav>
 
     {#if profile.user != undefined && myInfo.followings != undefined}
       <img width="40" src={profile?.user?.avatar} alt="avatar" />
       {profile?.user?.display_name} <br />
-      {#if username!=""}
-        {#if myInfo?.followings?.map(x=>x.username).includes(profile.user.username) }
-          <button on:click={()=>{API.post("/unfollow",{username: profile.user.username}).then((res)=>{
-            if(res.msg=='ok'){
-              myInfo.followings=myInfo.followings.filter(x=>x.username!=profile.user.username)
-            }else{
-              alert('error')
-            }
-          })}}>Unfollow</button>
+      {JSON.stringify(myInfo.user.username)}
+      {#if username != "" && username != myInfo.user.username}
+        {#if myInfo?.followings
+          ?.map((x) => x.username)
+          .includes(profile.user.username)}
+          <button
+            on:click={() => {
+              unfollow(profile.user.username);
+            }}>Unfollow</button>
         {:else}
-          <button on:click={()=>{API.post("/follow",{username: profile.user.username}).then((res)=>{
-            if(res.msg=='ok'){
-              myInfo.followings=[...myInfo.followings,{username:profile.user.username, display_name:profile.user.display_name}]
-            }else{
-              alert('error')
-            }
-          })}}>Follow</button>
+          <button
+            on:click={() => {
+              follow(profile.user.username);
+            }}>Follow</button>
         {/if}
         <br />
       {/if}
       {@html myMarked(profile?.user?.description)}
 
-      Followings: {JSON.stringify(profile.followings)} <br />
-      Followers: {JSON.stringify(profile.followers)} <br /><br />
+      Followings: {#each profile.followings as v} 
+      <a href="/user/{v.username}" on:click={()=>{fetchData()}} use:link>{v.display_name}</a>
+    {/each} <br />
+      Followers: {#each profile.followers as v} 
+        <a href="/user/{v.username}" on:click={()=>{fetchData()}}  use:link>{v.display_name}</a>
+      {/each}<br />
       Last Login: <strong>{getDateDiff(profile.user?.last_login)}</strong><br />
       Post Count: <strong>{profile.user?.article_count}</strong><br />
     {/if}
@@ -251,15 +282,11 @@
         {#each replies as reply}
           <table>
             <tr>
-              <td>
-                
-              </td>
-              <td style="width:100%">
-                
-              </td>
+              <td />
+              <td style="width:100%" />
             </tr>
           </table>
-          {displaynames[reply.user_id]}<br/>
+          {displaynames[reply.user_id]}<br />
           {@html myMarked(reply.content)}
         {/each}
         {#if replies.length == 0}
@@ -322,7 +349,7 @@
       threshold={500}
       on:loadMore={() => {
         console.log("load more");
-        fetchData(true);
+        fetchData("append");
       }} />
   </section>
 </main>

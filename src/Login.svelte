@@ -1,9 +1,7 @@
 <script>
   import API from "./api/Api";
   import { navigate, Link } from "svelte-routing";
-  import { getNotificationsContext } from "svelte-notifications";
-
-  const { addNotification } = getNotificationsContext();
+  import { warning } from "./components/Notification";
   let email = "";
   let password = "";
   const login = () => {
@@ -14,12 +12,7 @@
         if (res.msg == "ok") {
           navigate("/home");
         }else{
-          addNotification({
-            text: "賬戶或密碼有誤。",
-            position: "top-right",
-            type: "warning",
-            removeAfter: 3000,
-          });
+          warning("賬戶或密碼有誤。");
         }
       });
     }

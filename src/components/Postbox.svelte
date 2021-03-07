@@ -2,9 +2,7 @@
   import { onMount } from "svelte";
   import API from "../api/Api";
   import inlineAttachment from "./inlineAttachment";
-  import { getNotificationsContext } from "svelte-notifications";
-
-  const { addNotification } = getNotificationsContext();
+  import { warning } from "../components/Notification";
 
   export let finishHandler = (id) => {};
   export let style = "";
@@ -16,12 +14,7 @@
         editor.clearHistory();
         finishHandler(res.id);
       } else {
-        addNotification({
-          text: res.msg,
-          position: "top-right",
-          type: "warning",
-          removeAfter: 3000,
-        });
+        warning(res.msg);
       }
     });
   };
