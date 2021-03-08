@@ -6,9 +6,13 @@
 
   export let finishHandler = (id) => {};
   export let style = "";
+  export let onSubmit = (txt)=>{};
+  // export let afterSubmit = (res)=>{};
+
   const submitPost = () => {
-    API.post("/post_post", { content: editor.getValue() }).then((res) => {
-      console.log(res);
+    onSubmit(editor.getValue()).then((res)=>{        
+      editor.setValue("");
+      editor.clearHistory();
       if (res.msg == "ok") {
         editor.setValue("");
         editor.clearHistory();
@@ -86,6 +90,7 @@
   <textarea name="content" bind:this={textContent} />
   <span on:click={()=>alert("x")}><i class="fa fa-smile-o" /></span>
   <span on:click={()=>alert("x")}><i class="fa fa-file-image-o" /></span>
+  <span style="opacity:0.6">按 Ctrl+Enter 送出</span>
 </div>
 
 <style>

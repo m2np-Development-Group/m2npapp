@@ -13,14 +13,13 @@
   import Popover from "svelte-popover";
   import Hoverable from "./components/Hoverable.svelte";
   import UserSearchBox from "./components/UserSearchBox.svelte";
-  export let location;
   import { userInfoStore } from "./stores.js";
+
+  export let location;
 
   let myInfo = {}; //followings , followers , user
   userInfoStore.subscribe((value) => {
     myInfo = value;
-    console.log("myinfo set");
-    console.log(myInfo);
   });
   let queryParams;
   $: queryParams = console.log(parse(location?.search.replace("?", "")));
@@ -37,22 +36,27 @@
   let replies = [];
 
   export let username = "";
-function fetchOthersProfile(){
-  if (username != "") {
-      API.get("/get_profile", {
-        username: username,
-      }).then((res) => {
-        profile = res;
-        console.log(profile);
-      });
-    }
-}
-  function fetchData(mode="fresh") {
+  $: if (username) {
+    fetchData();
+    fetchProfile();
+  }
+  function fetchProfile() {
+    API.get("/get_profile", {
+      username: username,
+    }).then((res) => {
+      profile = res;
+      console.log(profile);
+    });
+  }
+
+  function fetchData(mode = "fresh") {
     API.get(
       "/get_personal_timeline",
-      mode=="append" ? { less_than_ts: minTS, username: username }:
-      mode=="prepend" ? { more_than_ts: maxTS, username: username } :
-      {username: username}
+      mode == "append"
+        ? { less_than_ts: minTS, username: username }
+        : mode == "prepend"
+        ? { more_than_ts: maxTS, username: username }
+        : { username: username }
     ).then((res) => {
       res.users?.forEach((v) => {
         avatars[v.id] = v.avatar;
@@ -61,15 +65,17 @@ function fetchOthersProfile(){
       });
       if (isArray(res.posts) && res.posts.length > 0) {
         newBatch = res.posts;
-        timeline = 
-        mode=="append" ? [...timeline, ...newBatch] :
-        mode=="prepend" ? [...newBatch, ...timeline] :
-        newBatch;
+        timeline =
+          mode == "append"
+            ? [...timeline, ...newBatch]
+            : mode == "prepend"
+            ? [...newBatch, ...timeline]
+            : newBatch;
 
         maxTS = timeline[0].created_at;
         minTS = timeline[timeline.length - 1].created_at;
 
-        if ( mode=="append" ) {
+        if (mode == "append") {
           coinSound.play();
         } else {
           flipCoinSound.play();
@@ -129,17 +135,12 @@ function fetchOthersProfile(){
 
   // Get the data from the api, after the page is mounted.
   onMount(async () => {
-    fetchData();
-    fetchOthersProfile();
+    fetchData("fresh");
+    fetchProfile();
 
     API.get("/get_profile").then((res) => {
       userInfoStore.set(res);
-      //my timeline
-      if (username == "") {
-        profile = res;
-      }
     });
-
 
     // setInterval(function () {
     //   var ni = timeline[8];
@@ -190,8 +191,7 @@ function fetchOthersProfile(){
 
 <svelte:head />
 <main>
-  <div
-    style="width:300px; position:fixed; left:1em; height:calc(100vh - 1em); padding:0;margin-block-start:0">
+  <div class="left_bar">
     <nav
       style="border-bottom:1px #CCC solid; padding:.4em; font-size:1.2em; margin-bottom:1.2em">
       <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
@@ -209,9 +209,10 @@ function fetchOthersProfile(){
     </nav>
 
     {#if profile.user != undefined && myInfo.followings != undefined}
-      <img width="40" src={profile?.user?.avatar} alt="avatar" />
+      {#if profile?.user?.avatar}
+        <img width="40" src={profile?.user?.avatar} alt="avatar" />
+      {/if}
       {profile?.user?.display_name} <br />
-      {JSON.stringify(myInfo.user.username)}
       {#if username != "" && username != myInfo.user.username}
         {#if myInfo?.followings
           ?.map((x) => x.username)
@@ -228,13 +229,24 @@ function fetchOthersProfile(){
         {/if}
         <br />
       {/if}
-      {@html myMarked(profile?.user?.description)}
-
-      Followings: {#each profile.followings as v} 
-      <a href="/user/{v.username}" on:click={()=>{fetchData()}} use:link>{v.display_name}</a>
-    {/each} <br />
-      Followers: {#each profile.followers as v} 
-        <a href="/user/{v.username}" on:click={()=>{fetchData()}}  use:link>{v.display_name}</a>
+      <div class="marked">
+        {@html myMarked(profile?.user?.description)}
+      </div>
+      Followings: {#each profile.followings as v}
+        <a
+          href="/user/{v.username}"
+          on:click={() => {
+            username = v.username;
+          }}
+          use:link>{v.display_name}</a>
+      {/each} <br />
+      Followers: {#each profile.followers as v}
+        <a
+          href="/user/{v.username}"
+          on:click={() => {
+            username = v.username;
+          }}
+          use:link>{v.display_name}</a>
       {/each}<br />
       Last Login: <strong>{getDateDiff(profile.user?.last_login)}</strong><br />
       Post Count: <strong>{profile.user?.article_count}</strong><br />
@@ -244,6 +256,9 @@ function fetchOthersProfile(){
   <div class="postbox">
     {#if showingArticle.id === undefined}
       <Postbox
+        onSubmit={(txt) => {
+          return API.post("/post_post", { content: txt });
+        }}
         finishHandler={(id) => {
           API.get(`get_post/${id}`).then((res) => {
             timeline = [res, ...timeline];
@@ -270,7 +285,7 @@ function fetchOthersProfile(){
             {getDateDiff(showingArticle.created_at)}
           </small>
         </div>
-        <div class="post_content">
+        <div class="post_content marked">
           {@html myMarked(showingArticle["content"])}
         </div>
         <span on:click={() => alert("retweet")}
@@ -280,41 +295,24 @@ function fetchOthersProfile(){
 
       <div class="replies">
         {#each replies as reply}
-          <table>
-            <tr>
-              <td />
-              <td style="width:100%" />
-            </tr>
-          </table>
           {displaynames[reply.user_id]}<br />
-          {@html myMarked(reply.content)}
+          <div class="marked">{@html myMarked(reply.content)}</div>
         {/each}
         {#if replies.length == 0}
           No Replies.
         {/if}
       </div>
       <div style="width:100%; margin-top:1em">
-        <textarea
-          use:autoresize
-          bind:value={replyContent}
-          on:keyup={(e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key == "Enter") {
-              API.post("/post_reply", {
-                post_id: showingArticle.id,
-                content: replyContent,
-              }).then((res) => {
-                if (res.msg == "ok") {
-                  replyContent = "";
-                }
-              });
-            }
+        <Postbox
+          onSubmit={(txt) => {
+            return API.post("/post_reply", {
+              post_id: showingArticle.id,
+              content: txt,
+            });
           }}
-          class="reply_box" /><br />
-        <span on:click={() => alert("x")}><i class="fa fa-smile-o" /></span>
-        <span on:click={() => alert("x")}
-          ><i class="fa fa-file-image-o" /></span>
-
-        <span style="opacity:0.6">按 Ctrl+Enter 送出</span>
+          finishHandler={(id) => {
+            refreshReplies(showingArticle.id);
+          }} />
       </div>
     {/if}
   </div>
@@ -334,7 +332,7 @@ function fetchOthersProfile(){
           </small>
         </div>
         <div
-          class="post_content"
+          class="post_content marked"
           on:click={() => {
             showingArticle = v;
             refreshReplies(v.id);
@@ -348,39 +346,43 @@ function fetchOthersProfile(){
       hasMore={newBatch.length > 0}
       threshold={500}
       on:loadMore={() => {
-        console.log("load more");
         fetchData("append");
       }} />
   </section>
 </main>
 
 <style>
-  :global(.replies table) {
-    width: 100%;
-  }
-  :global(.replies td) {
-    vertical-align: top;
-    white-space: nowrap;
-  }
-  .replies {
-    max-height: 200px;
-    overflow-y: auto;
+  .marked {
+    word-break: break-all;
   }
 
+  .replies {
+    max-height: calc(100vh - 300px);
+
+    overflow-y: scroll;
+  }
+
+  .left_bar {
+    width: 300px;
+    position: fixed;
+    left: 1em;
+    height: 200px;
+    padding: 0;
+    margin-block-start: 0;
+    top: 2px;
+  }
   .postbox {
     position: fixed;
-    width: 280px;
-    left: 20px;
+    width: 300px;
+
+    left: 1em;
     bottom: 2px;
     z-index: 100;
   }
+  .postbox :global(article) {
+    max-height: calc(100vh - 400px);
 
-  .reply_box {
-    height: 19px;
-    resize: none;
-    border: 1px solid #999;
-    color: #bfc2c7;
-    background: #2c3940;
+    overflow-y: scroll;
   }
   .card {
     color: #fbbd2a;
