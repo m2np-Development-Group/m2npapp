@@ -51,7 +51,7 @@
 
   function fetchData(mode = "fresh") {
     API.get(
-      "/get_personal_timeline",
+      username == "" ? "/get_inbox" : "/get_outbox",
       mode == "append"
         ? { less_than_ts: minTS, username: username }
         : mode == "prepend"
@@ -105,10 +105,10 @@
       return "";
     }
     return marked(str, markedOptions)
-      .replace("&#39;", "&apos;")
+      .replaceAll("&#39;", "&apos;")
       .replace(/@([a-z\d_]+)/gi, '<a href="/user/$1">@$1</a>')
-      .replace("<p>", "")
-      .replace("</p>", "")
+      .replaceAll("<p>", "")
+      .replaceAll("</p>", "")
       .replace(
         /\B#([\u4e00-\u9fa5_a-zA-Z0-9]+)/g,
         '<a href="/hashtag/$1">#$1</a>'
@@ -265,6 +265,7 @@
           });
         }} />
     {:else}
+      <button on:click={()=>{showingArticle={}}}>close</button>
       <article
         style="border-bottom:1px solid #BBB"
         bind:this={articleCards[showingArticle.id]}>
@@ -330,6 +331,7 @@
             {displaynames[v["user_id"]]}
             {getDateDiff(v.created_at)}
           </small>
+          <small class='reply_count' class:red={v.nor > 0}>{v.nor}</small>
         </div>
         <div
           class="post_content marked"
@@ -388,10 +390,20 @@
     color: #fbbd2a;
     /* border:1px solid red; */
     box-shadow: 0 0 0 1px #8a463c;
-
+    position: relative;
     overflow: hidden;
     height: 150px;
     padding: 2px;
+  }
+  .card .reply_count{
+    position:absolute;
+    padding:3px;
+    right:2px;
+    top:2px;
+  }
+  .card .red{
+    background: red;
+    color:aliceblue;
   }
   nav a {
     color: #fbbd2a;
