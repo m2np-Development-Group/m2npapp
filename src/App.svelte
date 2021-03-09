@@ -12,6 +12,7 @@
   import Modal from "svelte-simple-modal";
   import Notifications from "svelte-notifications";
   import { currentPath } from "./utils/util";
+import { init } from "svelte/internal";
   let unsub;
 
   const urlMiddleware = (url) => {
@@ -30,9 +31,10 @@
           }
         });
       }
-  }
-
+  };
+  
   onMount(async () => {
+    console.log('%cM2NP WebFrontEnd v0.1', 'font-weight:bold')
     unsub = globalHistory.listen(({ location, action }) => {
       console.log(location, action);
       $currentPath = location.pathname;
