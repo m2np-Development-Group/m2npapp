@@ -191,14 +191,13 @@
 
 <svelte:head />
 <main>
-  <div class="left_bar">
-    <nav
-      style="border-bottom:1px #CCC solid; padding:.4em; font-size:1.2em; margin-bottom:1.2em">
-      <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
-      <a href="/logout" use:link
-        ><i class="fa fa-sign-out" aria-hidden="true" /></a>
-      <i class="fa fa-bell" aria-hidden="true" />
-
+  <nav
+    style=" padding:5px; height:50px; font-size:1.2em; margin-bottom:1.2em; display:fixed;top:0px;"
+    class="flex">
+    <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
+    <a href="/logout" use:link><i class="fa fa-sign-out" aria-hidden="true" /></a>
+    <i class="fa fa-bell" aria-hidden="true" />
+    <div>
       <Hoverable let:hovering={isSearchBoxShowing}>
         {#if isSearchBoxShowing || userSearchText != ""}
           <UserSearchBox bind:value={userSearchText} />
@@ -206,8 +205,9 @@
           <i class="fa fa-search" aria-hidden="true" />
         {/if}
       </Hoverable>
-    </nav>
-
+    </div>
+  </nav>
+  <div class="left_bar">
     {#if profile.user != undefined && myInfo.followings != undefined}
       {#if profile?.user?.avatar}
         <img width="40" src={profile?.user?.avatar} alt="avatar" />
@@ -265,7 +265,10 @@
           });
         }} />
     {:else}
-      <button on:click={()=>{showingArticle={}}}>close</button>
+      <button
+        on:click={() => {
+          showingArticle = {};
+        }}>close</button>
       <article
         style="border-bottom:1px solid #BBB"
         bind:this={articleCards[showingArticle.id]}>
@@ -331,7 +334,7 @@
             {displaynames[v["user_id"]]}
             {getDateDiff(v.created_at)}
           </small>
-          <small class='reply_count' class:red={v.nor > 0}>{v.nor}</small>
+          <small class="reply_count" class:red={v.nor > 0}>{v.nor}</small>
         </div>
         <div
           class="post_content marked"
@@ -367,16 +370,16 @@
   .left_bar {
     width: 300px;
     position: fixed;
+    top: 50px;
     left: 1em;
     height: 200px;
     padding: 0;
     margin-block-start: 0;
-    top: 2px;
   }
   .postbox {
     position: fixed;
     width: 300px;
-
+    background-color: darkslateblue;
     left: 1em;
     bottom: 2px;
     z-index: 100;
@@ -395,24 +398,25 @@
     height: 150px;
     padding: 2px;
   }
-  .card .reply_count{
-    position:absolute;
-    padding:3px;
-    right:2px;
-    top:2px;
+  .card .reply_count {
+    position: absolute;
+    padding: 3px;
+    right: 2px;
+    top: 2px;
   }
-  .card .red{
+  .card .red {
     background: red;
-    color:aliceblue;
+    color: aliceblue;
   }
   nav a {
     color: #fbbd2a;
   }
 
-  /* Flexbox stuff */
-
+  .flex {
+    display: flex;
+  }
   .cards {
-    top: 10px;
+    top: 50px;
     bottom: 10px;
     left: 320px;
     position: fixed;

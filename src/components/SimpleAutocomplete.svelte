@@ -519,7 +519,7 @@
       max-width: 100%;
       position: relative;
       vertical-align: top;
-      height: 2.25em;
+      height: 1.5em;
     }
     .autocomplete:not(.hide-arrow)::after {
       border: 3px solid transparent;
@@ -552,7 +552,8 @@
       font: inherit;
       width: 100%;
       height: 100%;
-      padding: 5px 11px;
+      padding: 2px 6px;
+      font-size:12px;
     }
     .autocomplete:not(.hide-arrow) .autocomplete-input {
       padding-right: 2em;
@@ -569,7 +570,7 @@
       width: 100%;
       overflow-y: auto;
       z-index: 99;
-      padding: 10px 0;
+      padding: 5px 0;
       top: 0px;
       border: 1px solid #999;
       max-height: calc(15 * (1rem + 10px) + 15px);
@@ -579,7 +580,7 @@
       padding: 0;
     }
     .autocomplete-list-item {
-      padding: 5px 15px;
+      padding: 2px 7px;
       color: #333;
       cursor: pointer;
       line-height: 1;
@@ -602,7 +603,7 @@
       text-align: center;
       position: absolute;
       right: 0.1em;
-      padding: 0.3em 0.6em;
+      padding: 0.1em 0.3em;
       top: 50%;
       -webkit-transform: translateY(-50%);
       -ms-transform: translateY(-50%);
