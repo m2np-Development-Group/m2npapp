@@ -108,7 +108,7 @@
       .replaceAll("&#39;", "&apos;")
       .replace(/@([a-z\d_]+)/gi, '<a href="/user/$1">@$1</a>')
       .replaceAll("<p>", "")
-      .replaceAll("</p>", "")
+      .replaceAll("</p>", "<br />")
       .replace(
         /\B#([\u4e00-\u9fa5_a-zA-Z0-9]+)/g,
         '<a href="/hashtag/$1">#$1</a>'
@@ -187,6 +187,7 @@
       }
     });
   };
+  let notifications = [];
 </script>
 
 <svelte:head />
@@ -195,8 +196,26 @@
     style=" padding:5px; height:50px; font-size:1.2em; margin-bottom:1.2em; display:fixed;top:0px;"
     class="flex">
     <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
-    <a href="/logout" use:link><i class="fa fa-sign-out" aria-hidden="true" /></a>
-    <i class="fa fa-bell" aria-hidden="true" />
+    <a href="/logout" use:link
+      ><i class="fa fa-sign-out" aria-hidden="true" /></a>
+    <Popover
+      arrow={false}
+      placement="bottom-start"
+      on:open={() => {
+        API.get("/notifications").then((res) => {
+          notifications = [...res, { url: "/user/follow2", message: "test" }];
+        });
+      }}
+      overlayColor="transparent">
+      <i class="fa fa-bell" slot="target" aria-hidden="true" />
+      <div
+        slot="content"
+        style="background:white;padding:0; width:300px;height:300px">
+        {#each notifications as v}
+          <a href={v.url} use:link>{v.message}</a>
+        {/each}
+      </div>
+    </Popover>
     <div>
       <Hoverable let:hovering={isSearchBoxShowing}>
         {#if isSearchBoxShowing || userSearchText != ""}
@@ -259,6 +278,7 @@
         onSubmit={(txt) => {
           return API.post("/post_post", { content: txt });
         }}
+        placeholder="發新噗"
         finishHandler={(id) => {
           API.get(`get_post/${id}`).then((res) => {
             timeline = [res, ...timeline];
@@ -268,18 +288,20 @@
       <button
         on:click={() => {
           showingArticle = {};
-        }}>close</button>
+        }}>關閉</button>
       <article
         style="border-bottom:1px solid #BBB"
         bind:this={articleCards[showingArticle.id]}>
         <div class="avatar_box">
           <Popover arrowColor="#fff">
             <div slot="target">
-              <img
-                width="20"
-                src={avatars[showingArticle["user_id"]]}
-                class="avatars"
-                alt="avatar" />
+              {#if avatars[showingArticle["user_id"]] != null}
+                <img
+                  width="20"
+                  src={avatars[showingArticle["user_id"]]}
+                  class="avatars"
+                  alt="avatar" />
+              {/if}
               {displaynames[showingArticle["user_id"]]}
             </div>
             <div slot="content" class="content">Content</div>
@@ -314,6 +336,7 @@
               content: txt,
             });
           }}
+          placeholder="回覆噗"
           finishHandler={(id) => {
             refreshReplies(showingArticle.id);
           }} />
@@ -325,12 +348,14 @@
     {#each timeline as v, k}
       <article class="card" bind:this={articleCards[v.id]}>
         <div class="avatar_box">
-          <img
-            width="20"
-            src={avatars[v["user_id"]]}
-            class="avatars"
-            alt="avatar" />
-          <small on:click={() => showPostView(v["id"])}>
+          {#if avatars[v["user_id"]]}
+            <img
+              width="20"
+              src={avatars[v["user_id"]]}
+              class="avatars"
+              alt="avatar" />
+          {/if}
+          <small>
             {displaynames[v["user_id"]]}
             {getDateDiff(v.created_at)}
           </small>
@@ -408,8 +433,12 @@
     background: red;
     color: aliceblue;
   }
-  nav a {
+  :global(nav a),
+  :global(nav i) {
     color: #fbbd2a;
+    display: block;
+    width: 30px;
+    height: 20px;
   }
 
   .flex {
@@ -440,6 +469,12 @@
     .card {
       max-width: calc(25%);
     }
+  }
+
+  :global(.popover .content) {
+    padding: 0;
+    border: 1px solid #333;
+    border-radius: 3px;
   }
   :global(body) {
     overflow: hidden;

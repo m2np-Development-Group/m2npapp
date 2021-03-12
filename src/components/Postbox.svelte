@@ -6,6 +6,7 @@
 
   export let finishHandler = (id) => {};
   export let style = "";
+  export let placeholder = "";
   export let onSubmit = (txt)=>{};
   // export let afterSubmit = (res)=>{};
 
@@ -87,7 +88,7 @@
 </script>
 
 <div style={style}>
-  <textarea name="content" bind:this={textContent} />
+  <textarea name="content" bind:this={textContent} placeholder={placeholder} />
   <span on:click={()=>alert("x")}><i class="fa fa-smile-o" /></span>
   <span on:click={()=>alert("x")}><i class="fa fa-file-image-o" /></span>
   <span style="opacity:0.6">按 Ctrl+Enter 送出</span>
