@@ -6,22 +6,21 @@ import qs from "Qs";
 const axiosAPI = axios.create({
   baseURL: "https://m2np.com/api",
   withCredentials: true,
-  headers: {
-    //xabby: "heyhey"
-  },
+  // headers:{"m2np-token": "TEST"}
 });
 
 // implement a method to execute all the request from here.
 const apiRequest = (method, url, params, data) => {
   const headers = {
-    authorization: "",
+    "m2np-token": localStorage.getItem("M2NP_TOKEN"),
   };
   //using the axios instance to perform the request that received from each http method
   return axiosAPI({
     method,
     url,
     data: data,
-    headers,
+    params: {'HTTP_CONTENT_LANGUAGE': "ABB"},
+    headers: headers,
     params: params,
   })
     .then((res) => {

@@ -1,6 +1,6 @@
 <script>
   import API from "./api/Api";
-  import { navigate, Link } from "svelte-routing";
+  import { navigate, Link } from "svelte-navigator";
   import { warning } from "./components/Notification";
   let email = "";
   let password = "";

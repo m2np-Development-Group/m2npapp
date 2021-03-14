@@ -1,22 +1,32 @@
 <script>
   import API from "./api/Api";
-  import { navigate, Link } from "svelte-routing";
+  import { useNavigate, useLocation, Link } from "svelte-navigator";
   import { warning } from "./components/Notification";
+  import { userInfoStore } from "./stores";
+
   let email = "";
   let password = "";
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const login = () => {
     if (email == "" || password == "") {
       alert("fill in both");
     } else {
       API.post("/login", { email: email, password: password }).then((res) => {
         if (res.msg == "ok") {
+          
+          $userInfoStore=res.user;
+          console.log($userInfoStore);
+          localStorage.setItem("M2NP_TOKEN",res.token);
+          // const from = ($location.state && $location.state.from) || "/home";
           navigate("/home");
         }else{
           warning("賬戶或密碼有誤。");
         }
       });
     }
-  }
+  };
   const onKp = (e)=>{if (e.key === "Enter") login();}
 </script>
 

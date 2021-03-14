@@ -1,4 +1,6 @@
 import { writable } from "svelte/store"
+import marked from "marked";
+
 
 export const timeConverter = (UNIX_timestamp) => {
   var a = new Date(UNIX_timestamp * 1000);
@@ -63,3 +65,24 @@ export const getDateDiff = (dateTimeStamp) => {
 	result="剛剛";
 	return result;
 }
+
+
+const renderer = new marked.Renderer();
+renderer.link = (href, title, text) =>
+  `<a target="_blank" href="${href}">${text}</a>`;
+const markedOptions = { renderer: renderer, breaks: true };
+
+export const myMarked = (str) => {
+  if (str == undefined || str == null) {
+	return "";
+  }
+  return marked(str, markedOptions)
+	.replaceAll("&#39;", "&apos;")
+	.replace(/@([a-z\d_]+)/gi, '<a href="/user/$1">@$1</a>')
+	.replaceAll("<p>", "")
+	.replaceAll("</p>", "<br />")
+	.replace(
+	  /\B#([\u4e00-\u9fa5_a-zA-Z0-9]+)/g,
+	  '<a href="/hashtag/$1">#$1</a>'
+	);
+};

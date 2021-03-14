@@ -1,28 +1,36 @@
 <script>
   import { onMount, getContext } from "svelte";
-  import { link, links } from "svelte-routing";
-  import marked from "marked";
+  import { link, links } from "svelte-navigator";
   import Postbox from "./components/Postbox.svelte";
   import PostView from "./components/PostView.svelte";
-  import { timeConverter, getDateDiff } from "./utils/util";
+  import { timeConverter, getDateDiff, myMarked } from "./utils/util";
   import { warning } from "./components/Notification";
   import API from "./api/Api";
-  import { autoresize } from "./utils/autoresize.js";
   import InfiniteScroll from "./components/InfiniteScroll.svelte";
-  import { parse } from "QS";
+  // import { parse } from "QS";
   import Popover from "svelte-popover";
   import Hoverable from "./components/Hoverable.svelte";
   import UserSearchBox from "./components/UserSearchBox.svelte";
-  import { userInfoStore } from "./stores.js";
+  import { userInfoStore, usernameStore, avatarStore,displaynameStore } from "./stores.js";
+  import ArticleDetail from "./components/ArticleDetail.svelte";
+  import Settings from "./Settings.svelte"
+  const { open } = getContext("simple-modal");
 
-  export let location;
 
-  let myInfo = {}; //followings , followers , user
-  userInfoStore.subscribe((value) => {
-    myInfo = value;
-  });
-  let queryParams;
-  $: queryParams = console.log(parse(location?.search.replace("?", "")));
+  // export let location;
+  let avatars = {};
+  avatarStore.subscribe((value) => {avatars = value;});
+  let usernames = {};
+  usernameStore.subscribe((value) => {usernames = value;});
+  let displaynames = {};
+  displaynameStore.subscribe((value) => {displaynames = value;});
+
+
+  let articlecells = {};
+  let profile = {};
+
+  // let queryParams;
+  // $: queryParams = console.log(parse(location?.search.replace("?", "")));
 
   let coinSound = new Audio("/assets/coin.mp3");
   let flipCoinSound = new Audio("/assets/flipcoin.mp3");
@@ -32,8 +40,7 @@
   let timeline = [];
   let maxTS;
   let minTS;
-  let replyContent = "";
-  let replies = [];
+  let replies;
 
   export let username = "";
   $: if (username) {
@@ -63,7 +70,10 @@
         usernames[v.id] = v.username;
         displaynames[v.id] = v.display_name;
       });
-      if (isArray(res.posts) && res.posts.length > 0) {
+      avatarStore.set(avatars)
+      usernameStore.set(usernames)
+      displaynameStore.set(displaynames)
+      if (Array.isArray(res.posts) && res.posts.length > 0) {
         newBatch = res.posts;
         timeline =
           mode == "append"
@@ -84,87 +94,29 @@
     });
   }
 
-  const { open } = getContext("simple-modal");
-
-  const showPostView = (id, imageId) => {
-    open(PostView, { postId: id, imageId: imageId });
-  };
-
-  const renderer = new marked.Renderer();
-  renderer.link = (href, title, text) =>
-    `<a target="_blank" href="${href}">${text}</a>`;
-  const markedOptions = { renderer: renderer, breaks: true };
-  // const renderer2 = new marked.Renderer();
-  // renderer2.link = (href, title, text) =>
-  //   `<a target="_blank" href="${href}">${text}</a>`;
-  // renderer2.paragraph = (text) => text + "<br />";
-  // const markedOptions2 = { renderer: renderer2, breaks: true };
-
-  const myMarked = (str) => {
-    if (str == undefined || str == null) {
-      return "";
-    }
-    return marked(str, markedOptions)
-      .replaceAll("&#39;", "&apos;")
-      .replace(/@([a-z\d_]+)/gi, '<a href="/user/$1">@$1</a>')
-      .replaceAll("<p>", "")
-      .replaceAll("</p>", "<br />")
-      .replace(
-        /\B#([\u4e00-\u9fa5_a-zA-Z0-9]+)/g,
-        '<a href="/hashtag/$1">#$1</a>'
-      );
-  };
-  // const myMarkedForReplies = (str) => {
-  //   if (str == undefined || str == null) {
-  //     return "";
-  //   }
-  //   return marked(str, markedOptions2)
-  //     .replace("&#39;", "&apos;")
-  //     .replace(/@([a-z\d_]+)/gi, '<a href="/user/$1">@$1</a>')
-  //     .replace(
-  //       /\B#([\u4e00-\u9fa5_a-zA-Z0-9]+)/g,
-  //       '<a href="/hashtag/$1">#$1</a>'
-  //     );
-  // };
-  const isArray = Array.isArray;
-  let avatars = {};
-  let usernames = {};
-  let displaynames = {};
-  let articleCards = {};
-  let profile = {};
 
   // Get the data from the api, after the page is mounted.
   onMount(async () => {
     fetchData("fresh");
     fetchProfile();
 
-    API.get("/get_profile").then((res) => {
-      userInfoStore.set(res);
-    });
+  });
 
     // setInterval(function () {
     //   var ni = timeline[8];
     //   ni.id = ni.id + 1000;
     //   timeline = [ni, ...timeline];
     // }, 30000);
-  });
-
-  // const handleOnClick = (event) => {
-  //   const name = event.target.name;
-  //   getPostDetails(name).then((res) => {
-  //     postDetail = res;
-  //   });
-  // };
   function refreshReplies(post_id) {
     API.get("/get_replies", { post_id: post_id }).then((res) => {
       replies = res;
     });
   }
-  let userSearchText;
+  let userSearchText = "";
   const unfollow = (username) => {
     API.post("/unfollow", { username: username }).then((res) => {
       if (res.msg == "ok") {
-        myInfo.followings = myInfo.followings.filter(
+        $userInfoStore.followings = $userInfoStore.followings.filter(
           (x) => x.username != username
         );
       } else {
@@ -175,8 +127,8 @@
   const follow = (username) => {
     API.post("/follow", { username: profile.user.username }).then((res) => {
       if (res.msg == "ok") {
-        myInfo.followings = [
-          ...myInfo.followings,
+        $userInfoStore.followings = [
+          ...$userInfoStore.followings,
           {
             username: profile.user.username,
             display_name: profile.user.display_name,
@@ -196,8 +148,11 @@
     style=" padding:5px; height:50px; font-size:1.2em; margin-bottom:1.2em; display:fixed;top:0px;"
     class="flex">
     <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
-    <a href="/logout" use:link
-      ><i class="fa fa-sign-out" aria-hidden="true" /></a>
+    <a href="/logout" use:link><i class="fa fa-sign-out-alt" aria-hidden="true" /></a>
+    <i class="fa fa-cog" aria-hidden="true" on:click={() => {
+      open(Settings, { });
+    }} />
+    
     <Popover
       arrow={false}
       placement="bottom-start"
@@ -227,13 +182,13 @@
     </div>
   </nav>
   <div class="left_bar">
-    {#if profile.user != undefined && myInfo.followings != undefined}
+    {#if profile.user && ($userInfoStore.followings != undefined)}
       {#if profile?.user?.avatar}
         <img width="40" src={profile?.user?.avatar} alt="avatar" />
       {/if}
       {profile?.user?.display_name} <br />
-      {#if username != "" && username != myInfo.user.username}
-        {#if myInfo?.followings
+      <!-- {#if username != "" && username != $userInfoStore.user.username} -->
+        {#if $userInfoStore?.followings
           ?.map((x) => x.username)
           .includes(profile.user.username)}
           <button
@@ -247,7 +202,7 @@
             }}>Follow</button>
         {/if}
         <br />
-      {/if}
+      <!-- {/if} -->
       <div class="marked">
         {@html myMarked(profile?.user?.description)}
       </div>
@@ -289,45 +244,7 @@
         on:click={() => {
           showingArticle = {};
         }}>關閉</button>
-      <article
-        style="border-bottom:1px solid #BBB"
-        bind:this={articleCards[showingArticle.id]}>
-        <div class="avatar_box">
-          <Popover arrowColor="#fff">
-            <div slot="target">
-              {#if avatars[showingArticle["user_id"]] != null}
-                <img
-                  width="20"
-                  src={avatars[showingArticle["user_id"]]}
-                  class="avatars"
-                  alt="avatar" />
-              {/if}
-              {displaynames[showingArticle["user_id"]]}
-            </div>
-            <div slot="content" class="content">Content</div>
-          </Popover>
-
-          <small on:click={() => showPostView(showingArticle["id"])}>
-            {getDateDiff(showingArticle.created_at)}
-          </small>
-        </div>
-        <div class="post_content marked">
-          {@html myMarked(showingArticle["content"])}
-        </div>
-        <span on:click={() => alert("retweet")}
-          ><i class="fa fa-retweet" /></span>
-        <span on:click={() => alert("like")}><i class="fa fa-heart-o" /></span>
-      </article>
-
-      <div class="replies">
-        {#each replies as reply}
-          {displaynames[reply.user_id]}<br />
-          <div class="marked">{@html myMarked(reply.content)}</div>
-        {/each}
-        {#if replies.length == 0}
-          No Replies.
-        {/if}
-      </div>
+      <ArticleDetail {showingArticle} {replies} />
       <div style="width:100%; margin-top:1em">
         <Postbox
           onSubmit={(txt) => {
@@ -343,10 +260,9 @@
       </div>
     {/if}
   </div>
-  <section class="cards">
-    <i class="fa fa-trash-alt" />
+  <section class="cells">
     {#each timeline as v, k}
-      <article class="card" bind:this={articleCards[v.id]}>
+      <article class="cell" bind:this={articlecells[v.id]}>
         <div class="avatar_box">
           {#if avatars[v["user_id"]]}
             <img
@@ -386,11 +302,7 @@
     word-break: break-all;
   }
 
-  .replies {
-    max-height: calc(100vh - 300px);
 
-    overflow-y: scroll;
-  }
 
   .left_bar {
     width: 300px;
@@ -404,7 +316,8 @@
   .postbox {
     position: fixed;
     width: 300px;
-    background-color: darkslateblue;
+    background-color:black;
+    border-radius: .5em;
     left: 1em;
     bottom: 2px;
     z-index: 100;
@@ -414,7 +327,7 @@
 
     overflow-y: scroll;
   }
-  .card {
+  .cell {
     color: #fbbd2a;
     /* border:1px solid red; */
     box-shadow: 0 0 0 1px #8a463c;
@@ -423,13 +336,13 @@
     height: 150px;
     padding: 2px;
   }
-  .card .reply_count {
+  .cell .reply_count {
     position: absolute;
     padding: 3px;
     right: 2px;
     top: 2px;
   }
-  .card .red {
+  .cell .red {
     background: red;
     color: aliceblue;
   }
@@ -444,7 +357,7 @@
   .flex {
     display: flex;
   }
-  .cards {
+  .cells {
     top: 50px;
     bottom: 10px;
     left: 320px;
@@ -455,18 +368,18 @@
     flex-wrap: wrap;
   }
 
-  .card {
+  .cell {
     flex: 0 0 500px;
     box-sizing: border-box;
   }
   @media screen and (min-width: 40em) {
-    .card {
+    .cell {
       max-width: calc(50%);
     }
   }
 
   @media screen and (min-width: 60em) {
-    .card {
+    .cell {
       max-width: calc(25%);
     }
   }
@@ -479,7 +392,7 @@
   :global(body) {
     overflow: hidden;
   }
-  :global(.card a) {
+  :global(.cell a) {
     color: #f7694d;
     text-decoration: none;
   }
@@ -487,7 +400,7 @@
     color: #f7694d;
     text-decoration: none;
   }
-  :global(.card th) {
+  :global(.cell th) {
     border-bottom: #fbbc2a88 1px solid;
     text-align: left;
     font-weight: 700;

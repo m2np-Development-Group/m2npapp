@@ -3,7 +3,7 @@
   import API from "../api/Api";
   import inlineAttachment from "./inlineAttachment";
   import { warning } from "../components/Notification";
-
+  import {Popover} from "sveltestrap"
   export let finishHandler = (id) => {};
   export let style = "";
   export let placeholder = "";
@@ -89,7 +89,15 @@
 
 <div style={style}>
   <textarea name="content" bind:this={textContent} placeholder={placeholder} />
-  <span on:click={()=>alert("x")}><i class="fa fa-smile-o" /></span>
+  
+  <Popover placement="right" target="btn">
+    <div slot="title">
+      <i>Hello</i> <b>World!</b>
+    </div>
+    This Popover has HTML in the title passed as a slot.
+  </Popover>
+
+  <span id="btn" on:click={()=>alert("x")}><i class="fa fa-smile-o" /></span>
   <span on:click={()=>alert("x")}><i class="fa fa-file-image-o" /></span>
   <span style="opacity:0.6">按 Ctrl+Enter 送出</span>
 </div>
