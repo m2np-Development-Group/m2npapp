@@ -1,5 +1,5 @@
 <script>
-  import { link } from "svelte-routing";
+  import { link } from "svelte-navigator";
   import { onMount } from "svelte";
   import API from "./api/Api";
   let message = "登出中。";

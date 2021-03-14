@@ -1,7 +1,7 @@
 <script>
   import AutoComplete from "./SimpleAutocomplete.svelte";
   import API from "../api/Api";
-import { navigate } from "svelte-routing";
+import { navigate } from "svelte-navigator";
 
   let fetch = async (event) => {
     return await API.get("/search?username=" + event).then((res) => {

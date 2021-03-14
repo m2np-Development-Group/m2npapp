@@ -42,7 +42,7 @@ export default {
 				hydratable: true,
 				// enable run-time checks when not in production
 				dev: !production,
-				cssHash: ({ css, hash })=>{`abby-${hash(css)}`}
+				cssHash: ({ css, hash })=>`abby-${hash(css)}`
 			}
 		}),
 		// we'll extract any component CSS out into
@@ -56,7 +56,7 @@ export default {
 		// https://github.com/rollup/plugins/tree/master/packages/commonjs
 		resolve({
 			browser: true,
-			dedupe: ['svelte']
+			dedupe: ['svelte', 'svelte/transition', 'svelte/internal']
 		}),
 		commonjs(),
 
