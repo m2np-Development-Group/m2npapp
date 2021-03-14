@@ -61,6 +61,6 @@
       .replies {
     max-height: calc(100vh - 300px);
 
-    overflow-y: scroll;
+    overflow-y: auto;
   }
 </style>

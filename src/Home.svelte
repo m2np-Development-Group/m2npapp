@@ -1,8 +1,7 @@
 <script>
   import { onMount, getContext } from "svelte";
-  import { link, links } from "svelte-navigator";
+  import { link } from "svelte-navigator";
   import Postbox from "./components/Postbox.svelte";
-  import PostView from "./components/PostView.svelte";
   import { timeConverter, getDateDiff, myMarked } from "./utils/util";
   import { warning } from "./components/Notification";
   import API from "./api/Api";
@@ -11,7 +10,7 @@
   import Popover from "svelte-popover";
   import Hoverable from "./components/Hoverable.svelte";
   import UserSearchBox from "./components/UserSearchBox.svelte";
-  import { userInfoStore, usernameStore, avatarStore,displaynameStore } from "./stores.js";
+  import { userInfoStore, usernameStore, avatarStore,displaynameStore, docClicked } from "./stores.js";
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./Settings.svelte"
   const { open } = getContext("simple-modal");
@@ -85,10 +84,12 @@
         maxTS = timeline[0].created_at;
         minTS = timeline[timeline.length - 1].created_at;
 
-        if (mode == "append") {
-          coinSound.play();
-        } else {
-          flipCoinSound.play();
+        if($docClicked){
+          if (mode == "append") {
+            coinSound.play();
+          } else {
+            flipCoinSound.play();
+          }
         }
       }
     });
@@ -144,9 +145,7 @@
 
 <svelte:head />
 <main>
-  <nav
-    style=" padding:5px; height:50px; font-size:1.2em; margin-bottom:1.2em; display:fixed;top:0px;"
-    class="flex">
+  <nav class="flex" style="padding:5px; height:50px; font-size:1.2em; margin-bottom:1.2em; position:fixed;top:0px;;left:2px">
     <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
     <a href="/logout" use:link><i class="fa fa-sign-out-alt" aria-hidden="true" /></a>
     <i class="fa fa-cog" aria-hidden="true" on:click={() => {
@@ -154,21 +153,20 @@
     }} />
     
     <Popover
-      arrow={false}
+      arrow={true}
       placement="bottom-start"
       on:open={() => {
         API.get("/notifications").then((res) => {
           notifications = [...res, { url: "/user/follow2", message: "test" }];
         });
-      }}
-      overlayColor="transparent">
+      }}>
       <i class="fa fa-bell" slot="target" aria-hidden="true" />
-      <div
-        slot="content"
-        style="background:white;padding:0; width:300px;height:300px">
+      <div slot="content">
+        <div style="background:white;padding:0; width:300px;height:300px">
         {#each notifications as v}
           <a href={v.url} use:link>{v.message}</a>
         {/each}
+      </div>
       </div>
     </Popover>
     <div>
@@ -325,7 +323,6 @@
   .postbox :global(article) {
     max-height: calc(100vh - 400px);
 
-    overflow-y: scroll;
   }
   .cell {
     color: #fbbd2a;
@@ -350,7 +347,7 @@
   :global(nav i) {
     color: #fbbd2a;
     display: block;
-    width: 30px;
+    padding:1px 5px;
     height: 20px;
   }
 

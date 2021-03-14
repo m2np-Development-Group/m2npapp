@@ -4,7 +4,6 @@
   import { globalHistory } from "svelte-navigator/src/history";
   import { Router, Link, Route, navigate, links } from "svelte-navigator";
 
-  import API from "./api/Api";
   import PrivateRoute from "./PrivateRoute.svelte";
 
   import Home from "./Home.svelte";
@@ -12,7 +11,7 @@
   import Login from "./Login.svelte";
   import Register from "./Register.svelte";
   import Settings from "./Settings.svelte";
-  
+  import {docClicked} from "./stores"
   import Modal from "svelte-simple-modal";
   import Notifications from "svelte-notifications";
   import { currentPath } from "./utils/util";
@@ -53,6 +52,9 @@
   onDestroy(() => {
     unsub();
   });
+  document.addEventListener("click", function(){
+    $docClicked=true;
+  });
   // const typeSound = new Audio("/assets/type.mp3");
   // document.addEventListener("keydown", function (e) {
   //   if (!typeSound.paused) {
@@ -87,8 +89,8 @@
 </Router>
 
 <style>
-  @import "https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css";
-  
+  /* @import "https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"; */
+
   :global(a) {
     color: bisque;
     text-decoration: none;
