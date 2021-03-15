@@ -2,6 +2,7 @@
     import Popover from "svelte-popover";
     import {getDateDiff,myMarked} from "../utils/util";
     import { userInfoStore, usernameStore, avatarStore,displaynameStore } from "../stores.js";
+import API from "../api/Api";
 
 
     let avatars = {};
@@ -11,14 +12,18 @@
   let displaynames = {};
   displaynameStore.subscribe((value) => {displaynames = value;});
 
-
+let userPopoverDetail;
     export let showingArticle;
 
     export let replies = [];
 </script>
 <article>
   <div class="avatar_box">
-    <Popover arrowColor="#fff">
+    <Popover on:open={() => {
+      API.get("/get_profile",{user_id:showingArticle["user_id"]}).then((res)=>{
+        userPopoverDetail=res
+      });
+    }} arrowColor="#fff">
       <div slot="target">
         {#if avatars[showingArticle["user_id"]] != null}
           <img
@@ -29,7 +34,9 @@
         {/if}
         {displaynames[showingArticle["user_id"]]}
       </div>
-      <div slot="content" class="content">Content</div>
+      <div slot="content" style='background:white;width:300px;height:200px;overflow:auto;font-size:12px;color:black'>
+        {JSON.stringify(userPopoverDetail)}
+      </div>
     </Popover>
 
     <small>
