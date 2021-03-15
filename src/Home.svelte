@@ -14,7 +14,7 @@
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./Settings.svelte"
   const { open } = getContext("simple-modal");
-
+  import tooltip from 'svelte-tooltip-action'
 
   // export let location;
   let avatars = {};
@@ -145,7 +145,7 @@
 
 <svelte:head />
 <main>
-  <nav class="flex" style="padding:5px; height:50px; font-size:1.2em; margin-bottom:1.2em; position:fixed;top:0px;;left:2px">
+  <nav class="flex" style="padding:5px; height:50px; font-size:1.2em; margin-bottom:1.2em; position:fixed;top:0px;z-index:3;left:2px">
     <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
     <a href="/logout" use:link><i class="fa fa-sign-out-alt" aria-hidden="true" /></a>
     <i class="fa fa-cog" aria-hidden="true" on:click={() => {
@@ -160,7 +160,7 @@
           notifications = [...res, { url: "/user/follow2", message: "test" }];
         });
       }}>
-      <i class="fa fa-bell" slot="target" aria-hidden="true" />
+      <i class="fa fa-bell" slot="target" aria-hidden="true" use:tooltip={{ text: "Notifications", style: 'left: 0; bottom: -40px;' }} />
       <div slot="content">
         <div style="background:white;padding:0; width:300px;height:300px">
         {#each notifications as v}
