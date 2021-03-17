@@ -68,8 +68,7 @@ export const getDateDiff = (dateTimeStamp) => {
 
 
 const renderer = new marked.Renderer();
-renderer.link = (href, title, text) =>
-  `<a target="_blank" href="${href}">${text}</a>`;
+renderer.link = (href, title, text) => `<a target="_blank" href="${href}">${text}</a>`;
 const markedOptions = { renderer: renderer, breaks: true };
 
 export const myMarked = (str) => {

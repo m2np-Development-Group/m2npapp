@@ -1,16 +1,13 @@
 <script>
   import API from "./api/Api";
-  import { navigate, useLocation, Link } from "svelte-navigator";
+  import { navigate, Link } from "svelte-navigator";
   import { Warning } from "./components/Notification";
   import { userInfoStore } from "./stores";
   import { onMount } from "svelte";
   import { Field, Input,Button } from 'svelma'
-  import { slide } from 'svelte/transition'
 
   let email = "";
   let password = "";
-  // const navigate = useNavigate();
-  // const location = useLocation();
   onMount(() => {
     if ($userInfoStore) {
       navigate("/home");
@@ -56,7 +53,7 @@
   </div>
 </section>
 <div style='padding:1em'>
-<Field label="Email" type:is-danger={false} message={invalidEmailMessage}>
+<Field label="E-Mail" type:is-danger={false} message={invalidEmailMessage}>
   <Input
   on:keypress={onKp}
   type="email"
@@ -67,10 +64,10 @@
   
 </Field>
 
-<Field label="Password" message={invalidPasswordMessage}> 
+<Field label="密碼" message={invalidPasswordMessage}> 
   <Input on:keypress={onKp} placeholder="Password" type="password" bind:value={password} passwordReveal={true} />
 </Field>
-<Button type="is-primary" on:click={login}>登入</Button>
+<Button type="is-primary" on:click={login}><i class="fa fa-sign-in-alt" /> 登入</Button>
 
 <hr />
 <Link to="/register">未有賬戶？按此登記。</Link><br />

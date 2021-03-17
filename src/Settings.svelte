@@ -6,20 +6,24 @@
   import { Warning } from "./components/Notification";
 
   let description = "";
-  let color = "";
+  let color = 3;
   let displayName = "";
   let isLoading = true;
   onMount(() => {
     API.get("/get_profile", {}).then((res) => {
-      description = res.description;
-      color = res.color;
-      displayName = res.display_name;
+      description = res.user.description;
+      // color = res.user.color;
+      displayName = res.user.display_name;
       isLoading = false;
+
+      // console.log(color)
     });
   });
 
   const submitChanges = () => {
-    API.post("/update_profile", {
+    console.log(displayName)
+    console.log(description)
+    API.post("/update_personal_info", {
       description: description,
       color: color,
       display_name: displayName,
@@ -34,36 +38,38 @@
 {#if !isLoading}
   <div>
     <h1>Settings</h1>
-    <Field label="Password">
+    <Field grouped>
+    <Field label="舊密碼">
       <Input
         type="password"
         bind:value={oldPassword}
         placeholder="舊密碼"
         passwordReveal={true} />
     </Field>
-    <Field label="Password">
+    <Field label="新密碼">
       <Input
         type="password"
         bind:value={newPassword}
         placeholder="新密碼"
         passwordReveal={true} />
     </Field>
-    <Button>更改</Button>
-
+  </Field>
+    <Button type="is-primary">更改</Button>
+  
     <hr />
 
-    <input value={displayName} type="text" placeholder="暱稱" /><br />
+    <Input bind:value={displayName} type="text" placeholder="暱稱" /><br />
 
-    <textarea value={description} placeholder="關於您自己" /><br />
+    <Input type="textarea" bind:value={description} placeholder="關於您自己" /><br />
     <Field>
-      <Select placeholder="您的暱稱顏色" icon="paint-roller" iconPack="fas">
-        <option value="1">紅</option>
-        <option value="2">黃</option>
-        <option value="3">藍</option>
-        <option value="4">綠</option>
+      <Select placeholder="您的暱稱顏色" bind:selected={color} icon="paint-roller" iconPack="fas">
+        <option value="1" selected={1 == color}>紅</option>
+        <option value="2" selected={2 == color}>黃</option>
+        <option value="3" selected={3 == color}>藍</option>
+        <option value="4" selected={4 == color}>綠</option>
       </Select>
     </Field>
 
-    <button on:click={submitChanges}>更改</button>
+    <Button on:click={submitChanges} type="is-primary">更改</Button>
   </div>
 {/if}
