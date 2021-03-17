@@ -2,9 +2,9 @@
     import API from "./api/Api";
     import { navigate, useLocation, Link } from "svelte-navigator";
     import { Warning } from "./components/Notification";
-    import { userInfoStore } from "./stores";
+    import { myInfoStore } from "./stores";
     import { onMount } from "svelte";
-    import { Field, Input } from 'svelma'
+    import { Field, Input } from "@abbychau/svelma"
     import { slide } from 'svelte/transition'
   
     let email = "";
@@ -12,7 +12,7 @@
     // const navigate = useNavigate();
     // const location = useLocation();
     onMount(() => {
-      if ($userInfoStore) {
+      if ($myInfoStore) {
         navigate("/home");
       }
     });

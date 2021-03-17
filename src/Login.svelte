@@ -2,14 +2,15 @@
   import API from "./api/Api";
   import { navigate, Link } from "svelte-navigator";
   import { Warning } from "./components/Notification";
-  import { userInfoStore } from "./stores";
+  import { myInfoStore } from "./stores";
   import { onMount } from "svelte";
-  import { Field, Input,Button } from 'svelma'
+  import { Field, Input,Button } from "@abbychau/svelma"
+  export let location;
 
   let email = "";
   let password = "";
   onMount(() => {
-    if ($userInfoStore) {
+    if ($myInfoStore) {
       navigate("/home");
     }
   });
@@ -21,8 +22,8 @@
     } else {
       API.post("/login", { email: email, password: password }).then((res) => {
         if (res.msg == "ok") {
-          $userInfoStore = res.user;
-          console.log($userInfoStore);
+          $myInfoStore = res.user;
+          console.log($myInfoStore);
           localStorage.setItem("M2NP_TOKEN", res.token);
           // const from = ($location.state && $location.state.from) || "/home";
           navigate("/home");

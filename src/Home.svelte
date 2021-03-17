@@ -13,17 +13,15 @@
   import UserSearchBox from "./components/UserSearchBox.svelte";
   
   import {
-    userInfoStore,
-    usernameStore,
-    avatarStore,
-    displaynameStore,
+    myInfoStore,
+    userStore,
     docClicked,
   } from "./stores.js";
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./Settings.svelte";
-  const { open } = getContext("simple-modal");
+  
   import tooltip from "svelte-tooltip-action";
-  import { Button } from "svelma";
+  import { Button, Modal } from "@abbychau/svelma";
 
 
   let articlecells = {};
@@ -63,9 +61,9 @@
         : { username: username }
     ).then((res) => {
       res.users?.forEach((v) => {
-        $avatarStore[v.id] = v.avatar;
-        $usernameStore[v.id] = v.username;
-        $displaynameStore[v.id] = v.display_name;
+        $userStore.avatar[v.id] = v.avatar;
+        $userStore.username[v.id] = v.username;
+        $userStore.displayname[v.id] = v.display_name;
       });
       if (Array.isArray(res.posts) && res.posts.length > 0) {
         newBatch = res.posts;
@@ -110,7 +108,7 @@
   const unfollow = (username) => {
     API.post("/unfollow", { username: username }).then((res) => {
       if (res.msg == "ok") {
-        $userInfoStore.followings = $userInfoStore.followings.filter(
+        $myInfoStore.followings = $myInfoStore.followings.filter(
           (x) => x.username != username
         );
       } else {
@@ -121,8 +119,8 @@
   const follow = (username) => {
     API.post("/follow", { username: profile.user.username }).then((res) => {
       if (res.msg == "ok") {
-        $userInfoStore.followings = [
-          ...$userInfoStore.followings,
+        $myInfoStore.followings = [
+          ...$myInfoStore.followings,
           {
             username: profile.user.username,
             display_name: profile.user.display_name,
@@ -134,10 +132,21 @@
     });
   };
   let notifications = [];
+  let active = false
+
 </script>
 
-<svelte:head />
+
+
+
 <main>
+
+  <Modal bind:active={active}>
+    <div style='background:white;padding:1em;border-radius:1em'>
+    <Settings />
+  </div>
+  </Modal>
+
   <nav
     class="flex"
     style="padding:10px; height:50px; margin-bottom:1.2em; position:fixed;top:0px;z-index:3;left:2px;font-size:18px">
@@ -147,7 +156,7 @@
       class="fa fa-cog"
       aria-hidden="true"
       on:click={() => {
-        open(Settings, {});
+        active = !active
       }} />
 
     <Popover
@@ -191,13 +200,13 @@
     </div>
   </nav>
   <div class="left_bar">
-    {#if profile.user && $userInfoStore.followings != undefined}
+    {#if profile.user && $myInfoStore.followings != undefined}
       {#if profile?.user?.avatar}
         <img width="40" src={profile?.user?.avatar} alt="avatar" />
       {/if}
       {profile?.user?.display_name}
-      <!-- {#if username != "" && username != $userInfoStore.user.username} -->
-      {#if $userInfoStore?.followings
+      <!-- {#if username != "" && username != $myInfoStore.user.username} -->
+      {#if $myInfoStore?.followings
         ?.map((x) => x.username)
         .includes(profile.user.username)}
         <Button

@@ -3,7 +3,7 @@
   import API from "../api/Api";
   import inlineAttachment from "./inlineAttachment";
   import { Warning } from "../components/Notification";
-  import {Popover} from "sveltestrap"
+  import Popover from "svelte-popover"
   export let finishHandler = (id) => {};
   export let style = "";
   export let placeholder = "";
@@ -89,14 +89,27 @@
 <div style={style}>
   <textarea name="content" bind:this={textContent} placeholder={placeholder} />
   
-  <Popover overlayColor="rgba(0,0,0,0.1)" placement="right" target="btn">
-    <div slot="title">
-      <i>Hello</i> <b>World!</b>
+  <Popover
+  overlayColor="rgba(0,0,0,0.1)"
+    on:open={() => {
+alert("X")
+    }}
+    arrowColor="#fff">
+
+    <div slot="target" style='display:flex'>
+      <div>
+        <i class="far fa-smile" />
+        <span on:click={()=>alert("x")}><i class="far fa-file-image" /></span>
+      </div>
     </div>
-    This Popover has HTML in the title passed as a slot.
+    <div slot="content">
+      <div class="popover_content">
+        asdf
+      </div>
+    </div>
   </Popover>
 
-  <span id="btn" on:click={()=>alert("x")}><i class="fa fa-smile-o" /></span>
+
   <span on:click={()=>alert("x")}><i class="fa fa-file-image-o" /></span>
   <span style="opacity:0.6">按 Ctrl+Enter 送出</span>
 </div>

@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { Select, Field, Input, Button } from "svelma";
+  import { Select, Field, Input, Button } from "@abbychau/svelma";
 
   import API from "./api/Api";
   import { Warning } from "./components/Notification";
@@ -34,10 +34,11 @@
   let oldPassword;
   let newPassword;
 </script>
-
+<h1 class="title">
+  Settings
+</h1>
 {#if !isLoading}
   <div>
-    <h1>Settings</h1>
     <Field grouped>
     <Field label="舊密碼">
       <Input

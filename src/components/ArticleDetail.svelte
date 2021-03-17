@@ -1,16 +1,19 @@
 <script>
   import { getDateDiff, myMarked } from "../utils/util";
   import {
-    displaynameStore,
+    userStore,
   } from "../stores.js";
   import API from "../api/Api";
   import { Warning } from "./Notification";
   import AvatarBox from "./AvatarBox.svelte";
-
+  import {getContext} from "svelte"
+  const { open } = getContext("simple-modal");
 
   export let showingArticle;
 
   export let replies = [];
+
+  
 </script>
 
 <article>
@@ -25,6 +28,10 @@
   <div class="post_content marked">
     {@html myMarked(showingArticle["content"])}
   </div>
+
+  <i class="fa fa-pencil-alt" on:click={() => {
+    // open(Settings, {});
+  }} />
   <i class="fa fa-trash-alt" />
   <span on:click={() => Warning("retweet")}><i class="fa fa-retweet" /></span>
   <span on:click={() => Warning("like")}><i class="fa fa-heart-o" /></span>
@@ -32,7 +39,7 @@
 
 <div class="replies">
   {#each replies as reply}
-    {$displaynameStore[reply.user_id]}:
+    {$userStore.displayname[reply.user_id]}:
     <span class="marked">{@html myMarked(reply.content)}</span>
   {/each}
   {#if replies.length == 0}
@@ -41,9 +48,13 @@
 </div>
 
 <style>
-  .marked {
+  :global(.marked) {
     word-break: break-all;
   }
+  :global(.marked hr) {
+    display:none;
+  }
+
   article {
     border-bottom: 1px solid;
   }

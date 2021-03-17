@@ -1,6 +1,6 @@
 <script>
     import { useNavigate, useLocation } from "svelte-navigator";
-    import { userInfoStore } from "./stores";
+    import { myInfoStore } from "./stores";
     import API from "./api/Api"
     const navigate = useNavigate();
     const location = useLocation();
@@ -12,17 +12,17 @@
         state: { from: $location.pathname },
         replace: true,
       });
-    }else if(!$userInfoStore){
+    }else if(!$myInfoStore){
       API.get("/get_profile").then((res) => {
-        $userInfoStore=res;
+        $myInfoStore=res;
       });
     }
   </script>
   
-  {#if localStorage.getItem("M2NP_TOKEN") && $userInfoStore}
+  {#if localStorage.getItem("M2NP_TOKEN") && $myInfoStore}
     <slot />
   {/if}
   
-  {#if !$userInfoStore}
+  {#if !$myInfoStore}
     Loading User Info.
   {/if}

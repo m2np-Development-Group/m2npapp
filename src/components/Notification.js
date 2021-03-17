@@ -1,4 +1,4 @@
-import { Button, Notification } from 'svelma';
+import { Button, Notification } from "@abbychau/svelma";
 
 export const Alert = (message,type) => {
   Notification.create({

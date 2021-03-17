@@ -3,8 +3,7 @@
   import API from "../api/Api";
 
   import {
-    avatarStore,
-    displaynameStore,
+    userStore
   } from "../stores.js";
   export let userId;
 
@@ -24,15 +23,15 @@
 
       <div slot="target" style='display:flex'>
         <div>
-        {#if $avatarStore[userId] != null}
-          <img width="30" src={$avatarStore[userId]} class="avatars" alt="avatar" />
-        {/if}
-      </div>
-      <div class='names'>
-        <small>{$displaynameStore[userId]}</small> 
-        <br />
-        <slot />
-      </div>
+          {#if $userStore.avatar[userId] != null}
+            <img width="30" src={$userStore.avatar[userId]} class="avatars" alt="avatar" />
+          {/if}
+        </div>
+        <div class='names'>
+          <small>{$userStore.displayname[userId]}</small> 
+          <br />
+          <slot />
+        </div>
       </div>
       <div slot="content">
         <div class="popover_content">

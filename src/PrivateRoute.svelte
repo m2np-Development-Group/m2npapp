@@ -4,10 +4,11 @@
   
     export let path;
   </script>
-  
-  <Route {path} let:params let:location let:navigate>
+   <!-- let:location let:navigate -->
+  <Route {path} let:params>
     <PrivateRouteGuard>
-      <slot {params} {location} {navigate} />
+      <slot {params} {location} />
+      <!-- {navigate} -->
     </PrivateRouteGuard>
   </Route>
   
