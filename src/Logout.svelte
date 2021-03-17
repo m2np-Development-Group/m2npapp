@@ -10,6 +10,7 @@
       } else {
         message = "logout not success";
       }
+      localStorage.removeItem("M2NP_TOKEN");
     });
   });
 </script>
@@ -17,5 +18,5 @@
 <h1>Logout</h1>
 {message}
 <hr />
-<a href="/login" use:link>Login</a>
+<a href="/login">Login</a>
 <a href="/register" use:link>Register</a>

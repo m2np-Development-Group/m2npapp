@@ -1,12 +1,11 @@
-import { getNotificationsContext } from "svelte-notifications";
+import { Button, Notification } from 'svelma';
 
-export const warning = (msg)=> {
-    const { addNotification } = getNotificationsContext();
-    addNotification({
-        text: msg,
-        position: "top-right",
-        type: "warning",
-        removeAfter: 3000,
-    });
-
+export const Alert = (message,type) => {
+  Notification.create({
+    message: message,
+    type: type
+  })
+}
+export const Warning = (message) => {
+    Alert(message,"is-warning");
 }
