@@ -3,20 +3,11 @@
   import API from "../api/Api";
 
   import {
-    userInfoStore,
-    usernameStore,
     avatarStore,
     displaynameStore,
   } from "../stores.js";
   export let userId;
-  let avatars = {};
-  avatarStore.subscribe((value) => {
-    avatars = value;
-  });
-  let displaynames = {};
-  displaynameStore.subscribe((value) => {
-    displaynames = value;
-  });
+
   let userPopoverDetail;
 </script>
 
@@ -33,12 +24,12 @@
 
       <div slot="target" style='display:flex'>
         <div>
-        {#if avatars[userId] != null}
-          <img width="30" src={avatars[userId]} class="avatars" alt="avatar" />
+        {#if $avatarStore[userId] != null}
+          <img width="30" src={$avatarStore[userId]} class="avatars" alt="avatar" />
         {/if}
       </div>
       <div class='names'>
-        <small>{displaynames[userId]}</small> 
+        <small>{$displaynameStore[userId]}</small> 
         <br />
         <slot />
       </div>

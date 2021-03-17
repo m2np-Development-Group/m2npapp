@@ -11,8 +11,7 @@
   import Hoverable from "./components/Hoverable.svelte";
   import AvatarBox from "./components/AvatarBox.svelte";
   import UserSearchBox from "./components/UserSearchBox.svelte";
-  import BackToTop from "./components/BackToTop.svelte";
-
+  
   import {
     userInfoStore,
     usernameStore,
@@ -25,25 +24,10 @@
   const { open } = getContext("simple-modal");
   import tooltip from "svelte-tooltip-action";
   import { Button } from "svelma";
-  // export let location;
-  let avatars = {};
-  avatarStore.subscribe((value) => {
-    avatars = value;
-  });
-  let usernames = {};
-  usernameStore.subscribe((value) => {
-    usernames = value;
-  });
-  let displaynames = {};
-  displaynameStore.subscribe((value) => {
-    displaynames = value;
-  });
+
 
   let articlecells = {};
   let profile = {};
-
-  // let queryParams;
-  // $: queryParams = console.log(parse(location?.search.replace("?", "")));
 
   let coinSound = new Audio("/assets/coin.mp3");
   let flipCoinSound = new Audio("/assets/flipcoin.mp3");
@@ -79,13 +63,10 @@
         : { username: username }
     ).then((res) => {
       res.users?.forEach((v) => {
-        avatars[v.id] = v.avatar;
-        usernames[v.id] = v.username;
-        displaynames[v.id] = v.display_name;
+        $avatarStore[v.id] = v.avatar;
+        $usernameStore[v.id] = v.username;
+        $displaynameStore[v.id] = v.display_name;
       });
-      avatarStore.set(avatars);
-      usernameStore.set(usernames);
-      displaynameStore.set(displaynames);
       if (Array.isArray(res.posts) && res.posts.length > 0) {
         newBatch = res.posts;
         timeline =
@@ -159,7 +140,7 @@
 <main>
   <nav
     class="flex"
-    style="padding:10px; height:50px; margin-bottom:1.2em; position:fixed;top:0px;z-index:3;left:2px">
+    style="padding:10px; height:50px; margin-bottom:1.2em; position:fixed;top:0px;z-index:3;left:2px;font-size:18px">
     <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
     <a href="/logout" use:link><i class="fa fa-sign-out-alt" aria-hidden="true" /></a>
     <i
@@ -281,7 +262,7 @@
         }} />
     {:else}
       <Button
-        style="position: absolute;right: 0; z-index:4;"
+        style="position: absolute;right: .3em; z-index:4;"
         size="is-small"
         on:click={() => {
           showingArticle = {};
@@ -356,6 +337,7 @@
     left: 1em;
     bottom: 2px;
     z-index: 100;
+    padding: .3em
   }
   .postbox :global(article) {
     max-height: calc(100vh - 400px);
@@ -364,7 +346,7 @@
     /* color: #fbbd2a; */
     /* border:1px solid #DEDEDE; */
 
-    box-shadow: 0 0 0 1px #666;
+    box-shadow: 1px 3px 3px 1px #DEDEDE;
     border-radius: 0.5em;
     padding: 0.5em;
     position: relative;
@@ -372,15 +354,11 @@
     height: 150px;
     margin: 0;
   }
-  .cell .reply_count {
-    /* position: absolute;
-    padding: 3px;
-    right: -10px;
-    top: 2px; */
-  }
-  .cell .red {
+  :global(.reply_count.red) {
     background: red;
     color: aliceblue;
+    margin-top: 2px;
+    padding:0 3px;
   }
 
   :global(nav i) {
@@ -395,7 +373,7 @@
     display: flex;
   }
   .cells {
-    top: 50px;
+    top: 35px;
     bottom: 10px;
     left: 320px;
     position: fixed;

@@ -8,15 +8,30 @@
       if (res.msg == "ok") {
         message = "你已成功登出。";
       } else {
-        message = "logout not success";
+        message = "你經已成功登出。";
       }
-      localStorage.removeItem("M2NP_TOKEN");
+      
+    }).catch((reason)=>{
+      console.log(reason);
+      message = "你經已成功登出。";
+    }).finally(()=>{
+      localStorage.removeItem("M2NP_TOKEN")
     });
   });
 </script>
-
-<h1>Logout</h1>
-{message}
-<hr />
-<a href="/login">Login</a>
-<a href="/register" use:link>Register</a>
+<section class="hero is-info">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title">
+        Logout M2NP?
+      </h1>
+      <h2 class="subtitle">
+        mm~ {message}
+      </h2>
+    </div>
+  </div>
+</section>
+<div style='padding:1em'>
+<a href="/login" use:link><i class="fa fa-sign-in-alt" /> 回去登入</a>
+<a href="/register" use:link><i class="fa fa-pencil-alt" /> 回去註冊</a>
+</div>
