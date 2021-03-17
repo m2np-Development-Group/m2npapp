@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import API from "../api/Api";
   import inlineAttachment from "./inlineAttachment";
-  import { warning } from "../components/Notification";
+  import { Warning } from "../components/Notification";
   import {Popover} from "sveltestrap"
   export let finishHandler = (id) => {};
   export let style = "";
@@ -19,7 +19,7 @@
         editor.clearHistory();
         finishHandler(res.id);
       } else {
-        warning(res.msg);
+        Warning(res.msg);
       }
     });
   };
@@ -36,7 +36,6 @@
         },
       },
       lineWrapping: true,
-      theme: "monokai",
       extraKeys: { Enter: "newlineAndIndentContinueMarkdownList" },
 
       lineNumbers: true,
@@ -90,7 +89,7 @@
 <div style={style}>
   <textarea name="content" bind:this={textContent} placeholder={placeholder} />
   
-  <Popover placement="right" target="btn">
+  <Popover overlayColor="rgba(0,0,0,0.1)" placement="right" target="btn">
     <div slot="title">
       <i>Hello</i> <b>World!</b>
     </div>

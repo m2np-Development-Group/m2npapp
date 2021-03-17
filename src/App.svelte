@@ -11,14 +11,21 @@
   import Login from "./Login.svelte";
   import Register from "./Register.svelte";
   import Settings from "./Settings.svelte";
-  import {docClicked} from "./stores"
+  import ResetPassword from "./ResetPassword.svelte"
+  import HashTag from "./HashTag.svelte";
+
+  import { docClicked } from "./stores";
   import Modal from "svelte-simple-modal";
   import Notifications from "svelte-notifications";
+  
   import { currentPath } from "./utils/util";
+  
+  import 'bulma/css/bulma.css'
+
 
   let unsub;
   export let url = "";
-  
+
   // const urlMiddleware = (url) => {
   //   console.log("um:" + url)
   //   if (url != "/login" && url != "/register" && url != "/logout") {
@@ -36,9 +43,9 @@
   //       });
   //     }
   // };
-  
+
   onMount(async () => {
-    console.log('%cM2NP WebFrontEnd v0.1', 'font-weight:bold')
+    console.log("%cM2NP WebFrontEnd v0.1", "font-weight:bold");
     unsub = globalHistory.listen(({ location, action }) => {
       console.log(location, action);
       $currentPath = location.pathname;
@@ -52,8 +59,8 @@
   onDestroy(() => {
     unsub();
   });
-  document.addEventListener("click", function(){
-    $docClicked=true;
+  document.addEventListener("click", function () {
+    $docClicked = true;
   });
   // const typeSound = new Audio("/assets/type.mp3");
   // document.addEventListener("keydown", function (e) {
@@ -72,6 +79,11 @@
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
       <Route path="/logout" component={Logout} />
+      <Route path="/reset-password" component={ResetPassword} />
+      
+      <Route path="/hashtag/:tag" let:params>
+        <HashTag tag={params.tag} />
+      </Route>
 
       <PrivateRoute path="/home">
         <Home />
@@ -82,15 +94,22 @@
       <PrivateRoute path="/user/:username" let:params>
         <Home username={params.username} />
       </PrivateRoute>
-
-      
     </Notifications>
   </Modal>
 </Router>
 
 <style>
   /* @import "https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"; */
-
+  :global(.popover_content) {
+    border-radius: 3px;
+    padding: 0.5em;
+    background: white;
+    width: 300px;
+    height: 200px;
+    overflow: auto;
+    font-size: 12px;
+    /* color: black; */
+  }
   :global(a) {
     color: bisque;
     text-decoration: none;
@@ -98,17 +117,13 @@
   :global(a:hover) {
     text-decoration: underline;
   }
-  :global(body) {
-    background-image: radial-gradient(circle at 0% 0%, #2c3940, #1b1f27 70%);
-    color: #bfc2c7;
-    font-family: monospace;
-  }
+
   :global(hr) {
     height: 0px;
     border: none;
     border-top: 1px solid #bfc2c7;
   }
-  :global(h1:focus){
-    outline:none
+  :global(h1:focus) {
+    outline: none;
   }
 </style>
