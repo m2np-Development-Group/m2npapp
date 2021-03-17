@@ -37,8 +37,10 @@
           <img width="30" src={avatars[userId]} class="avatars" alt="avatar" />
         {/if}
       </div>
-      <div>
+      <div class='names'>
         <small>{displaynames[userId]}</small> 
+        <br />
+        <slot />
       </div>
       </div>
       <div slot="content">
@@ -51,6 +53,10 @@
 {/if}
 
 <style>
+  .names{
+    padding-left:.5em;
+    line-height: 1em;
+  }
   .avatar_box * {
     vertical-align: middle;
   }
