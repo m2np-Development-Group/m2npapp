@@ -1,9 +1,7 @@
 import { writable } from 'svelte/store';
 
-export const userInfoStore = writable(null);
+export const myInfoStore = writable(null);
 
-export const avatarStore = writable({});
-export const usernameStore = writable({});
-export const displaynameStore = writable({});
+export const userStore = writable({avatar:{},username:{},displayname:{}});
 
 export const docClicked = writable(false);

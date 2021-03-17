@@ -75,7 +75,7 @@ export default {
 		// instead of npm run dev), minify
 		production && terser(),
 
-		postcss()//for bulma
+		postcss({minified:true})//for bulma
 	],
 	watch: {
 		clearScreen: false
