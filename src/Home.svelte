@@ -159,10 +159,9 @@
 <main>
   <nav
     class="flex"
-    style="padding:5px; height:50px; font-size:1.2em; margin-bottom:1.2em; position:fixed;top:0px;z-index:3;left:2px">
+    style="padding:10px; height:50px; margin-bottom:1.2em; position:fixed;top:0px;z-index:3;left:2px">
     <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
-    <a href="/logout" use:link
-      ><i class="fa fa-sign-out-alt" aria-hidden="true" /></a>
+    <a href="/logout" use:link><i class="fa fa-sign-out-alt" aria-hidden="true" /></a>
     <i
       class="fa fa-cog"
       aria-hidden="true"
@@ -171,7 +170,7 @@
       }} />
 
     <Popover
-    overlayColor="rgba(0,0,0,0.1)" 
+      overlayColor="rgba(0,0,0,0.1)"
       arrow={true}
       placement="bottom-start"
       on:open={() => {
@@ -215,46 +214,56 @@
       {#if profile?.user?.avatar}
         <img width="40" src={profile?.user?.avatar} alt="avatar" />
       {/if}
-      {profile?.user?.display_name} <br />
+      {profile?.user?.display_name}
       <!-- {#if username != "" && username != $userInfoStore.user.username} -->
       {#if $userInfoStore?.followings
         ?.map((x) => x.username)
         .includes(profile.user.username)}
         <Button
+          size="is-small"
           iconRight="arrow-right"
           on:click={() => {
             unfollow(profile.user.username);
           }}>Unfollow</Button>
       {:else}
         <Button
+          size="is-small"
           iconLeft="arrow-right"
           on:click={() => {
             follow(profile.user.username);
           }}>Follow</Button>
       {/if}
       <br />
+      <br />
       <!-- {/if} -->
       <div class="marked">
         {@html myMarked(profile?.user?.description)}
       </div>
-      Followings: {#each profile.followings as v}
+
+      正在跟蹤:<br />
+
+      {#each profile.followings as v}
         <a
           href="/user/{v.username}"
           on:click={() => {
             username = v.username;
           }}
-          use:link>{v.display_name}</a>
+          use:link>{v.display_name}</a
+        ><br />
       {/each} <br />
-      Followers: {#each profile.followers as v}
+
+      跟隨者: <br />
+      {#each profile.followers as v}
         <a
           href="/user/{v.username}"
           on:click={() => {
             username = v.username;
           }}
-          use:link>{v.display_name}</a>
+          use:link>{v.display_name}</a
+        ><br />
       {/each}<br />
-      Last Login: <strong>{getDateDiff(profile.user?.last_login)}</strong><br />
-      Post Count: <strong>{profile.user?.article_count}</strong><br />
+      最後登入: <strong>{getDateDiff(profile.user?.last_login)}</strong><br />
+      噗數: <strong>{profile.user?.article_count}</strong><br />
     {/if}
   </div>
 
@@ -296,14 +305,17 @@
     {/if}
   </div>
   <section class="cells">
-    <BackToTop />
     {#each timeline as v, k}
       <article class="cell" bind:this={articlecells[v.id]}>
-        <AvatarBox userId={v["user_id"]} />
-        <small>{getDateDiff(v.created_at)}</small>
-        <small class="reply_count" class:red={v.nor > 0}>{v.nor}</small>
+        <AvatarBox userId={v["user_id"]}>
+          <small>{getDateDiff(v.created_at)}</small>
+          <small class="reply_count" class:red={v.nor > 0}>{v.nor}</small>
+        </AvatarBox>
+
+        
         <div
           class="post_content marked"
+          style="overflow:hidden;position:absolue;padding-top:3px;max-height:calc(100% - 40px)"
           on:click={() => {
             showingArticle = v;
             refreshReplies(v.id);
@@ -326,7 +338,6 @@
   .marked {
     word-break: break-all;
   }
-
 
   .left_bar {
     width: 300px;
@@ -351,10 +362,13 @@
   }
   .cell {
     /* color: #fbbd2a; */
-    /* border:1px solid red; */
-    /* box-shadow: 0 0 0 1px #666; */
+    /* border:1px solid #DEDEDE; */
+
+    box-shadow: 0 0 0 1px #666;
+    border-radius: 0.5em;
+    padding: 0.5em;
     position: relative;
-    overflow: hidden;
+    /* overflow: hidden; */
     height: 150px;
     margin: 0;
   }
@@ -374,8 +388,7 @@
     display: inline-block;
     padding: 5px 5px;
     height: 20px;
-    font-size: 14px;
-    /* vertical-align:bottom; */
+    vertical-align:top;
   }
 
   .flex {
@@ -390,21 +403,24 @@
     overflow-y: scroll;
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-between;
   }
 
   .cell {
     flex: 0 0 500px;
+    margin: 5px;
+
     box-sizing: border-box;
   }
   @media screen and (min-width: 40em) {
     .cell {
-      max-width: calc(50%);
+      max-width: calc(50% - 10px);
     }
   }
 
   @media screen and (min-width: 60em) {
     .cell {
-      max-width: calc(25%);
+      max-width: calc(25% - 10px);
     }
   }
 
