@@ -11,18 +11,13 @@
   import Hoverable from "./components/Hoverable.svelte";
   import AvatarBox from "./components/AvatarBox.svelte";
   import UserSearchBox from "./components/UserSearchBox.svelte";
-  
-  import {
-    myInfoStore,
-    userStore,
-    docClicked,
-  } from "./stores.js";
+
+  import { myInfoStore, userStore, docClicked } from "./stores.js";
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./Settings.svelte";
-  
+
   import tooltip from "svelte-tooltip-action";
   import { Button, Modal } from "@abbychau/svelma";
-
 
   let articlecells = {};
   let profile = {};
@@ -132,31 +127,27 @@
     });
   };
   let notifications = [];
-  let active = false
-
+  let active = false;
 </script>
 
-
-
-
 <main>
-
-  <Modal bind:active={active}>
-    <div style='background:white;padding:1em;border-radius:1em'>
-    <Settings />
-  </div>
+  <Modal bind:active>
+    <div style="background:white;padding:1em;border-radius:1em">
+      <Settings />
+    </div>
   </Modal>
 
   <nav
     class="flex"
     style="padding:10px; height:50px; margin-bottom:1.2em; position:fixed;top:0px;z-index:3;left:2px;font-size:18px">
     <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
-    <a href="/logout" use:link><i class="fa fa-sign-out-alt" aria-hidden="true" /></a>
+    <a href="/logout" use:link
+      ><i class="fa fa-sign-out-alt" aria-hidden="true" /></a>
     <i
       class="fa fa-cog"
       aria-hidden="true"
       on:click={() => {
-        active = !active
+        active = !active;
       }} />
 
     <Popover
@@ -302,7 +293,6 @@
           <small class="reply_count" class:red={v.nor > 0}>{v.nor}</small>
         </AvatarBox>
 
-        
         <div
           class="post_content marked"
           style="overflow:hidden;position:absolue;padding-top:3px;max-height:calc(100% - 40px)"
@@ -346,7 +336,7 @@
     left: 1em;
     bottom: 2px;
     z-index: 100;
-    padding: .3em
+    padding: 0.3em;
   }
   .postbox :global(article) {
     max-height: calc(100vh - 400px);
@@ -355,7 +345,7 @@
     /* color: #fbbd2a; */
     /* border:1px solid #DEDEDE; */
 
-    box-shadow: 1px 3px 3px 1px #DEDEDE;
+    box-shadow: 1px 3px 3px 1px #dedede;
     border-radius: 0.5em;
     padding: 0.5em;
     position: relative;
@@ -367,7 +357,7 @@
     background: red;
     color: aliceblue;
     margin-top: 2px;
-    padding:0 3px;
+    padding: 0 3px;
   }
 
   :global(nav i) {
@@ -375,7 +365,7 @@
     display: inline-block;
     padding: 5px 5px;
     height: 20px;
-    vertical-align:top;
+    vertical-align: top;
   }
 
   .flex {

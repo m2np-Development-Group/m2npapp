@@ -11,17 +11,15 @@
   import Login from "./Login.svelte";
   import Register from "./Register.svelte";
   import Settings from "./Settings.svelte";
-  import ResetPassword from "./ResetPassword.svelte"
+  import ResetPassword from "./ResetPassword.svelte";
   import HashTag from "./HashTag.svelte";
 
   import { docClicked } from "./stores";
-  import Modal from "svelte-simple-modal";
   import Notifications from "svelte-notifications";
-  
-  import { currentPath } from "./utils/util";
-  
-  import 'bulma/css/bulma.css'
 
+  import { currentPath } from "./utils/util";
+
+  import "bulma/css/bulma.css";
 
   let unsub;
   export let url = "";
@@ -73,29 +71,27 @@
 
 <!-- primary={false} makes route do not autofocus -->
 <Router primary={false}>
-  <Modal>
-    <Notifications>
-      <Route path="/" component={Login} />
-      <Route path="/login" component={Login} />
-      <Route path="/register" component={Register} />
-      <Route path="/logout" component={Logout} />
-      <Route path="/reset-password" component={ResetPassword} />
-      
-      <Route path="/hashtag/:tag" let:params>
-        <HashTag tag={params.tag} />
-      </Route>
+  <Notifications>
+    <Route path="/" component={Login} />
+    <Route path="/login" component={Login} />
+    <Route path="/register" component={Register} />
+    <Route path="/logout" component={Logout} />
+    <Route path="/reset-password" component={ResetPassword} />
 
-      <PrivateRoute path="/home">
-        <Home />
-      </PrivateRoute>
-      <PrivateRoute path="/settings">
-        <Settings />
-      </PrivateRoute>
-      <PrivateRoute path="/user/:username" let:params>
-        <Home username={params.username} />
-      </PrivateRoute>
-    </Notifications>
-  </Modal>
+    <Route path="/hashtag/:tag" let:params>
+      <HashTag tag={params.tag} />
+    </Route>
+
+    <PrivateRoute path="/home">
+      <Home />
+    </PrivateRoute>
+    <PrivateRoute path="/settings">
+      <Settings />
+    </PrivateRoute>
+    <PrivateRoute path="/user/:username" let:params>
+      <Home username={params.username} />
+    </PrivateRoute>
+  </Notifications>
 </Router>
 
 <style>

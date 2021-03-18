@@ -3,15 +3,17 @@
   import API from "../api/Api";
   import inlineAttachment from "./inlineAttachment";
   import { Warning } from "../components/Notification";
-  import Popover from "svelte-popover"
+  import Popover from "svelte-popover";
+  import EmojiSelector from "./EmojiSelector.svelte";
   export let finishHandler = (id) => {};
   export let style = "";
   export let placeholder = "";
-  export let onSubmit = (txt)=>{};
+  export let onSubmit = (txt) => {};
   // export let afterSubmit = (res)=>{};
+  let files;
 
   const submitPost = () => {
-    onSubmit(editor.getValue()).then((res)=>{        
+    onSubmit(editor.getValue()).then((res) => {
       editor.setValue("");
       editor.clearHistory();
       if (res.msg == "ok") {
@@ -88,34 +90,42 @@
 
 <div style={style}>
   <textarea name="content" bind:this={textContent} placeholder={placeholder} />
-  
+
   <Popover
-  overlayColor="rgba(0,0,0,0.1)"
+    overlayColor="rgba(0,0,0,0.1)"
     on:open={() => {
-alert("X")
+      // alert("X");
     }}
     arrowColor="#fff">
-
-    <div slot="target" style='display:flex'>
-      <div>
-        <i class="far fa-smile" />
-        <span on:click={()=>alert("x")}><i class="far fa-file-image" /></span>
-      </div>
-    </div>
+    <span slot="target" style="display:inline">
+      <i class="fas fa-smile" />
+    </span>
     <div slot="content">
       <div class="popover_content">
-        asdf
+        <EmojiSelector />
       </div>
     </div>
   </Popover>
 
+  <label for="file-input">
+    <i class="fas fa-file-image" />
+  </label>
 
-  <span on:click={()=>alert("x")}><i class="fa fa-file-image-o" /></span>
+  <input type="file" id="file-input" style="display:none" bind:files />
+  {#if files && files[0]}
+    <p>
+      {files[0].name}
+    </p>
+  {/if}
+
   <span style="opacity:0.6">按 Ctrl+Enter 送出</span>
 </div>
 
 <style>
   textarea {
     width: 100%;
+  }
+  :global(.popover) {
+    display: inline;
   }
 </style>
