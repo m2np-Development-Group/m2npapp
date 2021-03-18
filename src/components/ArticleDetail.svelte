@@ -1,20 +1,25 @@
 <script>
   import { getDateDiff, myMarked } from "../utils/util";
-  import {
-    userStore,
-  } from "../stores.js";
+  import { userStore } from "../stores.js";
   import API from "../api/Api";
   import { Warning } from "./Notification";
   import AvatarBox from "./AvatarBox.svelte";
-  import {getContext} from "svelte"
-  const { open } = getContext("simple-modal");
+  import Carousel from "./Carousel.svelte";
+  import { Modal } from "@abbychau/svelma";
 
   export let showingArticle;
 
   export let replies = [];
 
-  
+  let isActive = false;
+  let editingArticle = false;
 </script>
+
+<Modal bind:active={isActive}>
+  <div style="background:white;padding:1em;border-radius:1em">
+    <Carousel />
+  </div>
+</Modal>
 
 <article>
   <AvatarBox userId={showingArticle["user_id"]}>
@@ -25,14 +30,21 @@
       >{showingArticle.nor}</small>
   </AvatarBox>
 
+  {#if editingArticle}
   <div class="post_content marked">
     {@html myMarked(showingArticle["content"])}
   </div>
-
-  <i class="fa fa-pencil-alt" on:click={() => {
-    // open(Settings, {});
-  }} />
-  <i class="fa fa-trash-alt" />
+  {/if}
+  <i
+    class="fa fa-pencil-alt"
+    on:click={() => {
+      
+    }} />
+  <i
+    on:click={() => {
+      isActive = !isActive;
+    }}
+    class="fa fa-trash-alt" />
   <span on:click={() => Warning("retweet")}><i class="fa fa-retweet" /></span>
   <span on:click={() => Warning("like")}><i class="fa fa-heart-o" /></span>
 </article>
@@ -52,7 +64,7 @@
     word-break: break-all;
   }
   :global(.marked hr) {
-    display:none;
+    display: none;
   }
 
   article {

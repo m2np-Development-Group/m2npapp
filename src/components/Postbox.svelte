@@ -98,8 +98,8 @@ alert("X")
 
     <div slot="target" style='display:flex'>
       <div>
-        <i class="far fa-smile" />
-        <span on:click={()=>alert("x")}><i class="far fa-file-image" /></span>
+        <i class="fas fa-smile" />
+        <span on:click={()=>alert("x")}><i class="fas fa-file-image" /></span>
       </div>
     </div>
     <div slot="content">
@@ -110,7 +110,7 @@ alert("X")
   </Popover>
 
 
-  <span on:click={()=>alert("x")}><i class="fa fa-file-image-o" /></span>
+  <span on:click={()=>alert("x")}><i class="fas fa-file-image-o" /></span>
   <span style="opacity:0.6">按 Ctrl+Enter 送出</span>
 </div>
 
