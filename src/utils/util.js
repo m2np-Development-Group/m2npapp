@@ -9,66 +9,62 @@ export const exists = (v) => {
 }
 
 export const timeConverter = (UNIX_timestamp) => {
-	var a = new Date(UNIX_timestamp * 1000);
-	var months = [
-		"Jan",
-		"Feb",
-		"Mar",
-		"Apr",
-		"May",
-		"Jun",
-		"Jul",
-		"Aug",
-		"Sep",
-		"Oct",
-		"Nov",
-		"Dec",
+	const a = new Date(UNIX_timestamp * 1000);
+	const months = [
+		"Jan","Feb","Mar","Apr","May","Jun",
+		"Jul","Aug","Sep","Oct","Nov","Dec",
 	];
-	var year = a.getFullYear();
-	var month = months[a.getMonth()];
-	var date = a.getDate();
-	var hour = a.getHours();
-	var min = a.getMinutes();
-	var sec = a.getSeconds();
-	var time =
-		date + " " + month + " " + year + " " + hour + ":" + min + ":" + sec;
+	const year = a.getFullYear();
+	const month = months[a.getMonth()];
+	const date = a.getDate();
+	const hour = a.getHours();
+	const min = a.getMinutes();
+	const sec = a.getSeconds();
+	const time = date + " " + month + " " + year + " " + hour + ":" + min + ":" + sec;
 	return time;
 };
 
 export const currentPath = writable(window.location.pathname)
-
+const parseIntToChinese = (num)=>{
+	const k = parseInt(num)
+	if(k=="1"){return "一";}
+	if(k=="2"){return "兩";}
+	if(k=="3"){return "三";}
+	return k
+}
 export const getDateDiff = (dateTimeStamp) => {
 	dateTimeStamp = dateTimeStamp * 1000
-	var minute = 1000 * 60;
-	var hour = minute * 60;
-	var day = hour * 24;
-	var halfamonth = day * 15;
-	var month = day * 30;
-	var now = new Date().getTime();
-	var diffValue = now - dateTimeStamp;
-	if (diffValue < 0) { return; }
-	var monthC = diffValue / month;
-	var weekC = diffValue / (7 * day);
-	var dayC = diffValue / day;
-	var hourC = diffValue / hour;
-	var minC = diffValue / minute;
-	var result = "";
+	const minute = 1000 * 60;
+	const hour = minute * 60;
+	const day = hour * 24;
+	const halfamonth = day * 15;
+	const month = day * 30;
+	const now = new Date().getTime();
+	const diffValue = now - dateTimeStamp;
+	const suffix = (diffValue < 0)?"後":"前";
+	const monthC = diffValue / month;
+	const weekC = diffValue / (7 * day);
+	const dayC = diffValue / day;
+	const hourC = diffValue / hour;
+	const minC = diffValue / minute;
+	let result = "";
 	if (monthC >= 1) {
-		result = "" + parseInt(monthC) + "個月前";
+		result = "" + parseIntToChinese(monthC) + "個月" + suffix;
 	}
 	else if (weekC >= 1) {
-		result = "" + parseInt(weekC) + "周前";
+		result = "" + parseIntToChinese(weekC) + "周" + suffix;
 	}
 	else if (dayC >= 1) {
-		result = "" + parseInt(dayC) + "天前";
+		result = "" + parseIntToChinese(dayC) + "天" + suffix;
 	}
 	else if (hourC >= 1) {
-		result = "" + parseInt(hourC) + "小時前";
+		result = "" + parseIntToChinese(hourC) + "小時" + suffix;
 	}
 	else if (minC >= 1) {
-		result = "" + parseInt(minC) + "分鐘前";
-	} else
+		result = "" + parseIntToChinese(minC) + "分鐘" + suffix;
+	} else {
 		result = "剛剛";
+	}
 	return result;
 }
 

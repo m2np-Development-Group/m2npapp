@@ -46,6 +46,9 @@
     });
   }
 
+  //"fresh" =new
+  //"prepend" =load new
+  //"append" = load old
   function fetchData(mode = "fresh") {
     API.get(
       username == "" ? "/get_inbox" : "/get_outbox",
@@ -71,7 +74,6 @@
 
         maxTS = timeline[0].created_at;
         minTS = timeline[timeline.length - 1].created_at;
-
         if ($docClicked) {
           if (mode == "append") {
             coinSound.play();
@@ -128,6 +130,7 @@
   };
   let notifications = [];
   let active = false;
+  let cellsSection;
 </script>
 
 <main>
@@ -273,7 +276,10 @@
           if (exists(showingArticle.id)) {
             API.post("/post_post", { content: txt });
           } else {
-            API.post("/post_reply", {post_id: showingArticle.id,content: txt,});
+            API.post("/post_reply", {
+              post_id: showingArticle.id,
+              content: txt,
+            });
           }
         }}
         placeholder={exists(showingArticle.id) ? "發新噗" : "回覆噗"}
@@ -288,7 +294,29 @@
         }} />
     </div>
   </div>
-  <section class="cells">
+  <div style="position:fixed;right:1em;top:0.5em">
+    <Button
+      size="is-small"
+      on:click={() => {
+        const element = cellsSection;
+        element.scrollTop = 0;
+
+        fetchData("prepend");
+      }}
+      rounded
+      iconRight="arrow-up">Prepend</Button>
+    <Button
+      size="is-small"
+      on:click={() => {
+        const element = cellsSection;
+        element.scrollTop = element.scrollHeight;
+
+        fetchData("append");
+      }}
+      rounded
+      iconRight="arrow-down">Append</Button>
+  </div>
+  <section class="cells" bind:this={cellsSection}>
     {#each timeline as v, k}
       <article class="cell" bind:this={articlecells[v.id]}>
         <AvatarBox userId={v["user_id"]}>

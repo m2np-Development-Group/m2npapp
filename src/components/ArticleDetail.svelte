@@ -1,21 +1,22 @@
 <script>
   import { getDateDiff, myMarked } from "../utils/util";
-  import { userStore } from "../stores.js";
+  import { myInfoStore, userStore } from "../stores.js";
   import API from "../api/Api";
   import { Warning } from "./Notification";
   import AvatarBox from "./AvatarBox.svelte";
   import Carousel from "./Carousel.svelte";
   import { Modal } from "svelma2";
+import Postbox from "./Postbox.svelte";
 
   export let showingArticle;
 
   export let replies = [];
   export let onDelete = () => {};
-  let isActive = false;
+  let isCarViewActive = false;
   let editingArticle = false;
 </script>
 
-<Modal bind:active={isActive}>
+<Modal bind:active={isCarViewActive}>
   <div style="background:white;padding:1em;border-radius:1em;overflow:hidden">
     <Carousel />
   </div>
@@ -35,15 +36,20 @@
       {@html myMarked(showingArticle["content"])}
     </div>
   {:else}
-    editing
+    <Postbox initialText={showingArticle["content"]} />
   {/if}
-  <i class="fa fa-pencil-alt" on:click={() => {editingArticle=!editingArticle}} />
+  <i
+    class="fa fa-pencil-alt"
+    on:click={() => {
+      editingArticle = !editingArticle;
+    }} />
   <i
     on:click={() => {
-      isActive = !isActive;
+      isCarViewActive = !isCarViewActive;
     }}
     class="fa fa-train" />
 
+  {#if showingArticle.user_id == $myInfoStore.user.id}
   <i
     on:click={() => {
       if (confirm("你確定要刪除嗎?" + showingArticle.id)) {
@@ -57,8 +63,10 @@
       }
     }}
     class="fa fa-trash-alt" />
-
-  <span on:click={() => Warning("retweet")}><i class="fa fa-retweet" /></span>
+  {/if}
+  {#if showingArticle.user_id != $myInfoStore.user.id}
+    <span on:click={() => Warning("work in progress")}><i class="fa fa-retweet" /></span>
+  {/if}
   <span on:click={() => Warning("like")}><i class="fa fa-heart-o" /></span>
 </article>
 

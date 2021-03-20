@@ -25,7 +25,6 @@
   };
   const onScroll = (e) => {
     const element = e.target;
-// console.log(e.target.scrollTop < 4000)
     hidden = e.target.scrollTop < 2000;
 
     const offset = horizontal

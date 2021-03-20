@@ -11,7 +11,7 @@
   export let onSubmit = (txt) => {};
   // export let afterSubmit = (res)=>{};
   let files;
-
+  export let initialText="";
   const submitPost = () => {
     onSubmit(editor.getValue()).then((res) => {
       editor.setValue("");
@@ -25,9 +25,9 @@
       }
     });
   };
-  var textContent;
-  var overridden = false; //override close window
-  var editor;
+  let textContent;
+  let overridden = false; //override close window
+  let editor;
 
   onMount(function () {
     editor = CodeMirror.fromTextArea(textContent, {
@@ -57,11 +57,11 @@
     });
     inlineAttachment.editors.codemirror4.attach(editor, {
       onFileUploadResponse: function (xhr) {
-        var result = JSON.parse(xhr.responseText),
+        const result = JSON.parse(xhr.responseText),
           filename = result[this.settings.jsonFieldName];
 
         if (result && filename) {
-          var newValue;
+          let newValue;
           if (typeof this.settings.urlText === "function") {
             newValue = this.settings.urlText.call(this, filename, result);
           } else {
@@ -70,7 +70,7 @@
               filename
             );
           }
-          var text = this.editor.getValue().replace(this.lastValue, newValue);
+          const text = this.editor.getValue().replace(this.lastValue, newValue);
           this.editor.setValue(text);
           this.settings.onFileUploaded.call(this, filename);
         }
@@ -89,7 +89,7 @@
 </script>
 
 <div style={style}>
-  <textarea name="content" bind:this={textContent} placeholder={placeholder} />
+  <textarea name="content" bind:this={textContent} placeholder={placeholder}>{initialText}</textarea>
 
   <Popover
     overlayColor="rgba(0,0,0,0.1)"

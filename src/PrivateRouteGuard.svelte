@@ -24,5 +24,5 @@
   {/if}
   
   {#if !$myInfoStore}
-    Loading User Info.
+    <div class="is-loading" style='display:none;width:100%;padding:1em;font-family:Fantasy;font-size:2em'>Loading...</div>
   {/if}
