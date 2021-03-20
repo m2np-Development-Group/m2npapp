@@ -1,7 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import API from "../api/Api";
-  import { Tabs, Tab } from "@abbychau/svelma";
+  import { Tabs, Tab } from "svelma2";
   let myEmojis = [];
 
   onMount(() => {

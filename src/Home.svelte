@@ -2,7 +2,7 @@
   import { onMount, getContext } from "svelte";
   import { link } from "svelte-navigator";
   import Postbox from "./components/Postbox.svelte";
-  import { timeConverter, getDateDiff, myMarked } from "./utils/util";
+  import { exists, getDateDiff, myMarked } from "./utils/util";
   import { Warning } from "./components/Notification";
   import API from "./api/Api";
   import InfiniteScroll from "./components/InfiniteScroll.svelte";
@@ -17,7 +17,7 @@
   import Settings from "./Settings.svelte";
 
   import tooltip from "svelte-tooltip-action";
-  import { Button, Modal } from "@abbychau/svelma";
+  import { Button, Modal, ModalCard } from "svelma2";
 
   let articlecells = {};
   let profile = {};
@@ -131,9 +131,9 @@
 </script>
 
 <main>
-  <Modal bind:active>
+  <Modal bind:active title="設定">
     <div style="background:white;padding:1em;border-radius:1em">
-      <Settings />
+      <Settings bind:active />
     </div>
   </Modal>
 
@@ -191,7 +191,7 @@
     </div>
   </nav>
   <div class="left_bar">
-    {#if profile.user && $myInfoStore.followings != undefined}
+    {#if profile.user && exists($myInfoStore.followings)}
       {#if profile?.user?.avatar}
         <img width="40" src={profile?.user?.avatar} alt="avatar" />
       {/if}
@@ -249,18 +249,7 @@
   </div>
 
   <div class="postbox">
-    {#if showingArticle.id === undefined}
-      <Postbox
-        onSubmit={(txt) => {
-          return API.post("/post_post", { content: txt });
-        }}
-        placeholder="發新噗"
-        finishHandler={(id) => {
-          API.get(`get_post/${id}`).then((res) => {
-            timeline = [res, ...timeline];
-          });
-        }} />
-    {:else}
+    {#if exists(showingArticle.id)}
       <Button
         style="position: absolute;right: .3em; z-index:4;"
         size="is-small"
@@ -269,21 +258,35 @@
         }}
         iconRight="times"
         rounded>關閉</Button>
-      <ArticleDetail showingArticle={showingArticle} replies={replies} />
-      <div style="width:100%; margin-top:1em">
-        <Postbox
-          onSubmit={(txt) => {
-            return API.post("/post_reply", {
-              post_id: showingArticle.id,
-              content: txt,
-            });
-          }}
-          placeholder="回覆噗"
-          finishHandler={(id) => {
-            refreshReplies(showingArticle.id);
-          }} />
-      </div>
+      <ArticleDetail
+        onDelete={() => {
+          timeline = timeline.filter((v) => v.id != showingArticle.id);
+          showingArticle = {};
+        }}
+        showingArticle={showingArticle}
+        replies={replies} />
     {/if}
+
+    <div style="width:100%;">
+      <Postbox
+        onSubmit={(txt) => {
+          if (exists(showingArticle.id)) {
+            API.post("/post_post", { content: txt });
+          } else {
+            API.post("/post_reply", {post_id: showingArticle.id,content: txt,});
+          }
+        }}
+        placeholder={exists(showingArticle.id) ? "發新噗" : "回覆噗"}
+        finishHandler={(id) => {
+          if (exists(showingArticle.id)) {
+            API.get(`get_post/${id}`).then((res) => {
+              timeline = [res, ...timeline];
+            });
+          } else {
+            refreshReplies(showingArticle.id);
+          }
+        }} />
+    </div>
   </div>
   <section class="cells">
     {#each timeline as v, k}
@@ -335,7 +338,7 @@
     border-radius: 0.5em;
     left: 1em;
     bottom: 2px;
-    z-index: 100;
+    z-index: 1;
     padding: 0.3em;
   }
   .postbox :global(article) {

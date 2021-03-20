@@ -32,6 +32,6 @@
   </div>
 </section>
 <div style='padding:1em'>
-<a href="/login" use:link><i class="fa fa-sign-in-alt" /> 回去登入</a>
+<a href="/login"><i class="fa fa-sign-in-alt" /> 回去登入</a>
 <a href="/register" use:link><i class="fa fa-pencil-alt" /> 回去註冊</a>
 </div>

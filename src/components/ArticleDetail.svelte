@@ -5,18 +5,18 @@
   import { Warning } from "./Notification";
   import AvatarBox from "./AvatarBox.svelte";
   import Carousel from "./Carousel.svelte";
-  import { Modal } from "@abbychau/svelma";
+  import { Modal } from "svelma2";
 
   export let showingArticle;
 
   export let replies = [];
-
+  export let onDelete = () => {};
   let isActive = false;
   let editingArticle = false;
 </script>
 
 <Modal bind:active={isActive}>
-  <div style="background:white;padding:1em;border-radius:1em">
+  <div style="background:white;padding:1em;border-radius:1em;overflow:hidden">
     <Carousel />
   </div>
 </Modal>
@@ -30,21 +30,34 @@
       >{showingArticle.nor}</small>
   </AvatarBox>
 
-  {#if editingArticle}
-  <div class="post_content marked">
-    {@html myMarked(showingArticle["content"])}
-  </div>
+  {#if !editingArticle}
+    <div class="post_content marked">
+      {@html myMarked(showingArticle["content"])}
+    </div>
+  {:else}
+    editing
   {/if}
-  <i
-    class="fa fa-pencil-alt"
-    on:click={() => {
-      
-    }} />
+  <i class="fa fa-pencil-alt" on:click={() => {editingArticle=!editingArticle}} />
   <i
     on:click={() => {
       isActive = !isActive;
     }}
+    class="fa fa-train" />
+
+  <i
+    on:click={() => {
+      if (confirm("你確定要刪除嗎?" + showingArticle.id)) {
+        API.post("/delete_post", { id: showingArticle.id }).then((res) => {
+          if (res.msg == "ok") {
+            onDelete();
+          } else {
+            Warning(res.msg);
+          }
+        });
+      }
+    }}
     class="fa fa-trash-alt" />
+
   <span on:click={() => Warning("retweet")}><i class="fa fa-retweet" /></span>
   <span on:click={() => Warning("like")}><i class="fa fa-heart-o" /></span>
 </article>
@@ -68,7 +81,7 @@
   }
 
   article {
-    border-bottom: 1px solid;
+    border-bottom: 1px solid rgba(50, 50, 50, 0.2);
   }
   .replies {
     max-height: calc(100vh - 300px);

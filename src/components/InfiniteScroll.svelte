@@ -1,6 +1,6 @@
 <script>
   import { onMount, onDestroy, createEventDispatcher } from "svelte";
-  import { Button } from "@abbychau/svelma";
+  import { Button } from "svelma2";
   export let threshold = 0;
   export let horizontal = false;
   export let elementScroll = false;

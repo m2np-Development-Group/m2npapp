@@ -1,5 +1,5 @@
 <script>
-  import { Button } from "@abbychau/svelma";
+  import { Button } from "svelma2";
   import Hoverable from "./Hoverable.svelte";
   function youtube_parser(url) {
     var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
@@ -24,7 +24,7 @@
   let isHovering = false;
 </script>
 
-<div style="width:calc(100vw - 100px); height:calc(100vh - 100px);">
+<div style="width:calc(100vw - 100px); height:calc(100vh - 100px); overflow:hidden">
   <Hoverable let:hovering={isHovering}>
     {#each [carouselUrls[index]] as src (index)}
       {#if isHovering}
