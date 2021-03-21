@@ -8,6 +8,8 @@
   export let finishHandler = (id) => {};
   export let style = "";
   export let placeholder = "";
+  $:placeholder, editor?.setOption('placeholder', placeholder);
+
   export let onSubmit = (txt) => {};
   // export let afterSubmit = (res)=>{};
   let files;

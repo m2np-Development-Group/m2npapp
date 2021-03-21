@@ -37,6 +37,7 @@
     "svelte-notifications": "^0.9.9",
     "svelte-popover": "^2.0.8",
     "svelte-preprocess": "^4.6.9",
-    "svelte-tooltip-action": "^1.0.3"
+    "svelte-tooltip-action": "^1.0.3",
+    "html-minifier": "^4.0.0"
   }
 }

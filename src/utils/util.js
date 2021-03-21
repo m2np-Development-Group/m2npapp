@@ -2,6 +2,7 @@ import { writable } from "svelte/store"
 import marked from "marked";
 
 export const exists = (v) => {
+	
 	if (v === undefined || v === null || v === 0 || v === "0" || v === "" || v === "{}" || v === "[]") {
 		return false;
 	}

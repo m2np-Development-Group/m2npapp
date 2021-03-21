@@ -282,7 +282,7 @@
             });
           }
         }}
-        placeholder={exists(showingArticle.id) ? "發新噗" : "回覆噗"}
+        placeholder={exists(showingArticle.id) ? "回覆噗" : "發新噗"}
         finishHandler={(id) => {
           if (exists(showingArticle.id)) {
             API.get(`get_post/${id}`).then((res) => {
@@ -411,7 +411,7 @@
     overflow-y: scroll;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: flex-start;
   }
 
   .cell {
