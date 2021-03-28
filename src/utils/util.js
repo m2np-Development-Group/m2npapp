@@ -88,3 +88,5 @@ export const myMarked = (str) => {
 			'<a href="/hashtag/$1">#$1</a>'
 		);
 };
+
+export const colorMap = {1:"red",2:"yellow",3:"blue",4:"green"}

@@ -3,8 +3,8 @@
   import { Select, Field, Input, Button } from "svelma2";
 
   import API from "./api/Api";
-  import { Warning } from "./components/Notification";
-import { myInfoStore } from "./stores";
+  import { Warning, Success } from "./components/Notification";
+import { myInfoStore, userStore } from "./stores";
 
   let avatar, fileinput;
   export let active;
@@ -12,11 +12,12 @@ import { myInfoStore } from "./stores";
     if (active){
       isLoading = true;
       API.get("/get_profile", {}).then((res) => {
-        description = res.user.description;
-        // color = res.user.color;
-        displayName = res.user.display_name;
+        const v=res.data.user
+        description = v.description;
+        color = v.color;
+        displayName = v.display_name;
         isLoading = false;
-        avatar = res.user.avatar
+        avatar = v.avatar
 
         // console.log(color)
       });
@@ -47,7 +48,16 @@ import { myInfoStore } from "./stores";
       color: color,
       display_name: displayName,
     }).then((res) => {
-      Warning(JSON.stringify(res));
+      if(res.msg=="ok"){
+        const id = $myInfoStore.user.id;
+        console.log($myInfoStore.user.id)
+        // $userStore.avatar[id] = v.avatar;
+        $userStore.displayname[id] = displayName;
+        $userStore.color[id] = color;
+        Success("成功");
+      }else{
+        Warning(JSON.stringify(res));
+      }
     });
   };
   let oldPassword;

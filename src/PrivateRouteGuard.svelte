@@ -14,7 +14,7 @@
       });
     }else if(!$myInfoStore){
       API.get("/get_profile").then((res) => {
-        $myInfoStore=res;
+        $myInfoStore=res.data;
       });
     }
   </script>

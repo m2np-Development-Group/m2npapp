@@ -11,7 +11,7 @@
   export let style = "";
   export let placeholder = "";
 
-  
+
   $:placeholder, editor?.setOption('placeholder', placeholder);
 
   
@@ -20,12 +20,13 @@
   export let initialText="";
   const submitPost = () => {
     onSubmit(editor.getValue()).then((res) => {
-      editor.setValue("");
-      editor.clearHistory();
       if (res.msg == "ok") {
+        finishHandler(editor.getValue());
         editor.setValue("");
         editor.clearHistory();
-        finishHandler(res.id);
+        editor.setValue("");
+        editor.clearHistory();
+        
       } else {
         Warning(res.msg);
       }

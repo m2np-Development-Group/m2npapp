@@ -11,7 +11,7 @@
   import Hoverable from "./components/Hoverable.svelte";
   import AvatarBox from "./components/AvatarBox.svelte";
   import UserSearchBox from "./components/UserSearchBox.svelte";
-
+import Username from "./components/Username.svelte"
   import { myInfoStore, userStore, docClicked } from "./stores.js";
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./Settings.svelte";
@@ -41,8 +41,13 @@
     API.get("/get_profile", {
       username: username,
     }).then((res) => {
-      profile = res;
-      console.log(profile);
+      if(res.msg!='ok'){
+        if(res.msg=='user not found'){
+          coverMessage="查無此人"
+        }
+      }else{
+        profile = res.data;
+      }
     });
   }
 
@@ -62,6 +67,7 @@
         $userStore.avatar[v.id] = v.avatar;
         $userStore.username[v.id] = v.username;
         $userStore.displayname[v.id] = v.display_name;
+        $userStore.color[v.id] = v.color;
       });
       if (Array.isArray(res.posts) && res.posts.length > 0) {
         newBatch = res.posts;
@@ -131,9 +137,27 @@
   let notifications = [];
   let active = false;
   let cellsSection;
+  let coverMessage="";
 </script>
 
 <main>
+
+  <div class="modal" class:is-active={coverMessage!=""}>
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title"></p>
+        <!-- <button class="delete" aria-label="close" on:click={()=>{coverMessage=""}}></button> -->
+      </header>
+      <section class="modal-card-body">
+        {coverMessage}
+      </section>
+      <footer class="modal-card-foot">
+        <!-- <button class="button is-success" on:click={()=>{coverMessage=""}}>OK</button> -->
+      </footer>
+    </div>
+  </div>
+
   <Modal bind:active title="設定">
     <div style="background:white;padding:1em;border-radius:1em">
       <Settings bind:active />
@@ -227,24 +251,12 @@
       正在跟蹤:<br />
 
       {#each profile.followings as v}
-        <a
-          href="/user/{v.username}"
-          on:click={() => {
-            username = v.username;
-          }}
-          use:link>{v.display_name}</a
-        ><br />
+      <Username userId={v.id} /><br />
       {/each} <br />
 
       跟隨者: <br />
       {#each profile.followers as v}
-        <a
-          href="/user/{v.username}"
-          on:click={() => {
-            username = v.username;
-          }}
-          use:link>{v.display_name}</a
-        ><br />
+      <Username userId={v.id} /><br />
       {/each}<br />
       最後登入: <strong>{getDateDiff(profile.user?.last_login)}</strong><br />
       噗數: <strong>{profile.user?.article_count}</strong><br />
@@ -266,7 +278,7 @@
           timeline = timeline.filter((v) => v.id != showingArticle.id);
           showingArticle = {};
         }}
-        showingArticle={showingArticle}
+        article={showingArticle}
         replies={replies} />
     {/if}
 
@@ -283,7 +295,7 @@
           }
         }}
         placeholder={exists(showingArticle.id) ? "回覆噗" : "發新噗"}
-        finishHandler={(id) => {
+        finishHandler={(content) => {
           if (exists(showingArticle.id)) {
             refreshReplies(showingArticle.id);            
           } else {

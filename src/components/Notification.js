@@ -7,5 +7,8 @@ export const Alert = (message,type) => {
   })
 }
 export const Warning = (message) => {
-    Alert(message,"is-warning");
+  Alert(message,"is-warning");
+}
+export const Success = (message) => {
+  Alert(message,"is-success");
 }

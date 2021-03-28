@@ -1,5 +1,5 @@
 <script>
-  import { getDateDiff, myMarked } from "../utils/util";
+  import { getDateDiff, myMarked, colorMap } from "../utils/util";
   import { myInfoStore, userStore } from "../stores.js";
   import API from "../api/Api";
   import { Warning } from "./Notification";
@@ -7,9 +7,9 @@
   import Carousel from "./Carousel.svelte";
   import { Modal } from "svelma2";
   import Postbox from "./Postbox.svelte";
-
-  export let showingArticle;
-
+  import Username from "./Username.svelte"
+  
+  export let article;
   export let replies = [];
   export let onDelete = () => {};
   let isCarViewActive = false;
@@ -23,20 +23,25 @@
 </Modal>
 
 <article>
-  <AvatarBox userId={showingArticle["user_id"]}>
+  <AvatarBox userId={article["user_id"]}>
     <small>
-      {getDateDiff(showingArticle.created_at)}
+      {getDateDiff(article.created_at)}
     </small>
-    <small class="reply_count" class:red={showingArticle.nor > 0}
-      >{showingArticle.nor}</small>
+    <small class="reply_count" class:red={article.nor > 0}>{article.nor}</small>
   </AvatarBox>
 
   {#if !editingArticle}
     <div class="post_content marked">
-      {@html myMarked(showingArticle["content"])}
+      {@html myMarked(article["content"])}
     </div>
   {:else}
-    <Postbox finishHandler={(id)=>{editingArticle=false}} onSubmit={(txt)=>API.post("update_post",{id:editingArticle.id,content:txt})} initialText={showingArticle["content"]} />
+    <Postbox
+      finishHandler={(content) => {
+        article["content"]=content
+        editingArticle = false;
+      }}
+      onSubmit={(txt) => API.post("update_post", { id: article.id, content: txt })}
+      initialText={article["content"]} />
   {/if}
   <i
     class="fa fa-pencil-alt"
@@ -49,11 +54,11 @@
     }}
     class="fa fa-train" />
 
-  {#if showingArticle.user_id == $myInfoStore.user.id}
+  {#if article.user_id == $myInfoStore.user.id}
     <i
       on:click={() => {
-        if (confirm("你確定要刪除嗎?" + showingArticle.id)) {
-          API.post("/delete_post", { id: showingArticle.id }).then((res) => {
+        if (confirm("你確定要刪除嗎?" + article.id)) {
+          API.post("/delete_post", { id: article.id }).then((res) => {
             if (res.msg == "ok") {
               onDelete();
             } else {
@@ -64,7 +69,7 @@
       }}
       class="fa fa-trash-alt" />
   {/if}
-  {#if showingArticle.user_id != $myInfoStore.user.id}
+  {#if article.user_id != $myInfoStore.user.id}
     <span on:click={() => Warning("work in progress")}
       ><i class="fa fa-retweet" /></span>
   {/if}
@@ -72,8 +77,10 @@
 </article>
 
 <div class="replies">
+  
+
   {#each replies as reply}
-    {$userStore.displayname[reply.user_id]}:
+    <Username userId={reply.user_id} />:
     <span class="marked">{@html myMarked(reply.content)}</span>
   {/each}
   {#if replies.length == 0}
