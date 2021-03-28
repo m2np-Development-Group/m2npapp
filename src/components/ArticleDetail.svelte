@@ -6,7 +6,7 @@
   import AvatarBox from "./AvatarBox.svelte";
   import Carousel from "./Carousel.svelte";
   import { Modal } from "svelma2";
-import Postbox from "./Postbox.svelte";
+  import Postbox from "./Postbox.svelte";
 
   export let showingArticle;
 
@@ -36,7 +36,7 @@ import Postbox from "./Postbox.svelte";
       {@html myMarked(showingArticle["content"])}
     </div>
   {:else}
-    <Postbox initialText={showingArticle["content"]} />
+    <Postbox finishHandler={(id)=>{editingArticle=false}} onSubmit={(txt)=>API.post("update_post",{id:editingArticle.id,content:txt})} initialText={showingArticle["content"]} />
   {/if}
   <i
     class="fa fa-pencil-alt"
@@ -50,22 +50,23 @@ import Postbox from "./Postbox.svelte";
     class="fa fa-train" />
 
   {#if showingArticle.user_id == $myInfoStore.user.id}
-  <i
-    on:click={() => {
-      if (confirm("你確定要刪除嗎?" + showingArticle.id)) {
-        API.post("/delete_post", { id: showingArticle.id }).then((res) => {
-          if (res.msg == "ok") {
-            onDelete();
-          } else {
-            Warning(res.msg);
-          }
-        });
-      }
-    }}
-    class="fa fa-trash-alt" />
+    <i
+      on:click={() => {
+        if (confirm("你確定要刪除嗎?" + showingArticle.id)) {
+          API.post("/delete_post", { id: showingArticle.id }).then((res) => {
+            if (res.msg == "ok") {
+              onDelete();
+            } else {
+              Warning(res.msg);
+            }
+          });
+        }
+      }}
+      class="fa fa-trash-alt" />
   {/if}
   {#if showingArticle.user_id != $myInfoStore.user.id}
-    <span on:click={() => Warning("work in progress")}><i class="fa fa-retweet" /></span>
+    <span on:click={() => Warning("work in progress")}
+      ><i class="fa fa-retweet" /></span>
   {/if}
   <span on:click={() => Warning("like")}><i class="fa fa-heart-o" /></span>
 </article>

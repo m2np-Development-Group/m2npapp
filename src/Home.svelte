@@ -274,22 +274,20 @@
       <Postbox
         onSubmit={(txt) => {
           if (exists(showingArticle.id)) {
-            API.post("/post_post", { content: txt });
-          } else {
-            API.post("/post_reply", {
+            return API.post("/post_reply", {
               post_id: showingArticle.id,
               content: txt,
             });
+          } else {
+            return API.post("/post_post", { content: txt });
           }
         }}
         placeholder={exists(showingArticle.id) ? "回覆噗" : "發新噗"}
         finishHandler={(id) => {
           if (exists(showingArticle.id)) {
-            API.get(`get_post/${id}`).then((res) => {
-              timeline = [res, ...timeline];
-            });
+            refreshReplies(showingArticle.id);            
           } else {
-            refreshReplies(showingArticle.id);
+            fetchData("prepend");
           }
         }} />
     </div>
@@ -316,33 +314,36 @@
       rounded
       iconRight="arrow-down">Append</Button>
   </div>
-  <section class="cells" bind:this={cellsSection}>
-    {#each timeline as v, k}
-      <article class="cell" bind:this={articlecells[v.id]}>
-        <AvatarBox userId={v["user_id"]}>
-          <small>{getDateDiff(v.created_at)}</small>
-          <small class="reply_count" class:red={v.nor > 0}>{v.nor}</small>
-        </AvatarBox>
+  <div class="rightColumn">
+    <section class="cells" bind:this={cellsSection}>
+      {#each timeline as v, k}
+        <article class="cell" bind:this={articlecells[v.id]}>
+          <AvatarBox userId={v["user_id"]}>
+            <small>{getDateDiff(v.created_at)}</small>
+            <small class="reply_count" class:red={v.nor > 0}>{v.nor}</small>
+          </AvatarBox>
 
-        <div
-          class="post_content marked"
-          style="overflow:hidden;position:absolue;padding-top:3px;max-height:calc(100% - 40px)"
-          on:click={() => {
-            showingArticle = v;
-            refreshReplies(v.id);
-          }}>
-          {@html myMarked(v["content"])}
-        </div>
-      </article>
-    {/each}
+          <div
+            class="post_content marked"
+            style="overflow:hidden;position:absolue;padding-top:3px;max-height:calc(100% - 40px)"
+            on:click={() => {
+              showingArticle = v;
+              refreshReplies(v.id);
+            }}>
+            {@html myMarked(v["content"])}
+          </div>
+        </article>
+      {/each}
 
+    </section>
+    
     <InfiniteScroll
-      hasMore={newBatch.length > 0}
-      threshold={500}
-      on:loadMore={() => {
-        fetchData("append");
-      }} />
-  </section>
+    hasMore={newBatch.length > 0}
+    threshold={500}
+    on:loadMore={() => {
+      fetchData("append");
+    }} />
+  </div>
 </main>
 
 <style>
@@ -402,7 +403,7 @@
   .flex {
     display: flex;
   }
-  .cells {
+  .rightColumn {
     top: 35px;
     bottom: 10px;
     left: 320px;
@@ -413,7 +414,13 @@
     flex-wrap: wrap;
     justify-content: flex-start;
   }
-
+  .cells{
+    width:100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    height:fit-content;
+  }
   .cell {
     flex: 0 0 500px;
     margin: 5px;
