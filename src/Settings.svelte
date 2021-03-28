@@ -18,8 +18,6 @@ import { myInfoStore, userStore } from "./stores";
         displayName = v.display_name;
         isLoading = false;
         avatar = v.avatar
-
-        // console.log(color)
       });
     }
   }
