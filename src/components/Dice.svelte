@@ -2,7 +2,7 @@
 export let diceSize=4;
 export let seed="";
 
-const result = 
+const result = "";
 
 </script>
 
