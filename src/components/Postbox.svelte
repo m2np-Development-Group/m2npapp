@@ -3,7 +3,6 @@
   import API from "../api/Api";
   import inlineAttachment from "./inlineAttachment";
   import { Warning } from "../components/Notification";
-  import Popover from "svelte-popover";
   import EmojiSelector from "./EmojiSelector.svelte";
 
   export let onSubmit = (txt) => {};
@@ -93,26 +92,19 @@
       }
     };
   });
+  let showEmojiSelector;
 </script>
 
 <div style={style}>
   <textarea name="content" bind:this={textContent} placeholder={placeholder}>{initialText}</textarea>
 
-  <Popover
-    overlayColor="rgba(0,0,0,0.1)"
-    on:open={() => {
-      // alert("X");
-    }}
-    arrowColor="#fff">
-    <span slot="target" style="display:inline">
-      <i class="fas fa-smile" />
-    </span>
-    <div slot="content">
-      <div class="popover_content">
-        <EmojiSelector />
-      </div>
-    </div>
-  </Popover>
+{#if showEmojiSelector}
+<EmojiSelector onInsert={
+  (id)=>editor.replaceSelection(`[emo${id}]`)
+} />
+{/if}
+
+  <i class="fas fa-smile" on:click={()=>{showEmojiSelector=!showEmojiSelector}} />
 
   <label for="file-input">
     <i class="fas fa-file-image" />

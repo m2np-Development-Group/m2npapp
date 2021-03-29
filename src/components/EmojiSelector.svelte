@@ -34,7 +34,7 @@
     });
   });
 
-  const insert = () => {};
+  export let onInsert = (id) => {};
   
 </script>
 
@@ -47,17 +47,16 @@
         <table>
           {#each Array(3) as _, row}
             <tr>
-              {#each Array(3) as _, cell}
-                <td>{row}{cell}
+              {#each Array(3) as _, col}
+                <td>
                   {#each icons as icon}
-                  {JSON.stringify(icon.row==row)}
-                    {#if icon.row == row && icon.cell == cell}
-                    {icon.cell}
+                    {#if icon.row == row && icon.col == col}
                       <img
-                        src={cell.url}
-                        alt={cell.iid}
+                        width="30"
+                        src={icon.url}
+                        alt={icon.iid}
                         on:click={() => {
-                          insert(cell.iid);
+                          onInsert(icon.iid);
                         }} />
                     {/if}
                   {/each}
