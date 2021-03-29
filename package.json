@@ -38,6 +38,7 @@
     "svelte-popover": "^2.0.8",
     "svelte-preprocess": "^4.6.9",
     "svelte-tooltip-action": "^1.0.3",
-    "html-minifier": "^4.0.0"
+    "html-minifier": "^4.0.0",
+    "svelte-sortable-list": "^1.1.0"
   }
 }

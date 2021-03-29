@@ -1,71 +1,78 @@
 <script>
-  import { onMount } from "svelte";
-  import API from "../api/Api";
-  import { Tabs, Tab } from "svelma2";
-  let myEmojis = [];
+  import {flip} from 'svelte/animate';
+  import {onMount} from 'svelte';
+  let list = [{url: "https://picsum.photos/seed/4/30", id: 0}, 
+							{url: "https://picsum.photos/seed/43/30", id: 1},
+							{url: "https://picsum.photos/seed/4123/30", id: 2}, 
+							{url: "https://picsum.photos/seed/44/30", id: 3},
+						  {url: "https://picsum.photos/seed/444/30", id: 4}];
+  let hovering = false;
 
+  const drop = (event, target) => {
+    event.dataTransfer.dropEffect = 'move'; 
+    const start = parseInt(event.dataTransfer.getData("text/plain"));
+    const newTracklist = list
+
+    if (start < target) {
+      newTracklist.splice(target + 1, 0, newTracklist[start]);
+      newTracklist.splice(start, 1);
+    } else {
+      newTracklist.splice(target, 0, newTracklist[start]);
+      newTracklist.splice(start + 1, 1);
+    }
+    list = newTracklist
+    hovering = null
+  }
   onMount(() => {
     API.get("/my_emojis", {}).then((res) => {
-      myEmojis = res;
-      myEmojis = [
-        {
-          name: "cateName1",
-          icons: [
-            {
-              row: 0,
-              col: 1,
-              url: "https://images.plurk.com/QLDxaVYwo3Zf3s0y1wJYt.jpg",
-              iid: "c0",
-            }
-          ],
-        },
-        {
-          name: "cateName2",
-          icons: [
-            {
-              row: 1,
-              col: 2,
-              url: "https://images.plurk.com/QLDxaVYwo3Zf3s0y1wJYt.jpg",
-              iid: "c2s",
-            },
-          ],
-        },
-      ];
+      // list = res;
     });
   });
-
+  const dragstart = (event, i) => {
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.dropEffect = 'move';
+    const start = i;
+    event.dataTransfer.setData('text/plain', start);
+  }
   export let onInsert = (id) => {};
-  
+
 </script>
 
-<div>
-  <Tabs>
-      
-    {#each myEmojis as { name, icons }}
-    
-      <Tab label={name}>
-        <table>
-          {#each Array(3) as _, row}
-            <tr>
-              {#each Array(3) as _, col}
-                <td>
-                  {#each icons as icon}
-                    {#if icon.row == row && icon.col == col}
-                      <img
-                        width="30"
-                        src={icon.url}
-                        alt={icon.iid}
-                        on:click={() => {
-                          onInsert(icon.iid);
-                        }} />
-                    {/if}
-                  {/each}
-                </td>
-              {/each}
-            </tr>
-          {/each}
-        </table>
-      </Tab>
-    {/each}
-  </Tabs>
+<div class="list">
+  {#each list as n, index  (n.url)}
+    <div
+			 class="list-item" 
+       animate:flip={{duration:300}}
+       draggable={true} 
+       on:dragstart={event => dragstart(event, index)}
+       on:drop|preventDefault={event => drop(event, index)}
+       ondragover="return false"
+       on:dragenter={() => hovering = index}
+       class:is-active={hovering === index}>
+       	<img src={n.url} on:click={()=>{onInsert(n.id)}} alt="emoji" />
+    </div>
+  {/each}
+
 </div>
+<style>
+  .list {
+		display:flex;
+		flex-wrap:wrap;
+    background-color: white;
+    border-radius: 4px;
+		width:100%;
+  }
+
+  .list-item {
+		width:30px;
+		border: 1px solid #dbdbdb;
+		margin:2px;
+		padding:2px;
+  }
+
+
+  .list-item.is-active {
+    background-color: #3273dc;
+    color: #fff;
+  }
+</style>
