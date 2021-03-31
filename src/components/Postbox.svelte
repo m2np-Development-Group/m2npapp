@@ -1,22 +1,23 @@
 <script>
   import { onMount } from "svelte";
+  import { Button } from "svelma2";
   import API from "../api/Api";
   import inlineAttachment from "./inlineAttachment";
   import { Warning } from "../components/Notification";
   import EmojiSelector from "./EmojiSelector.svelte";
+  import { exists } from "../utils/util";
 
   export let onSubmit = (txt) => {};
   export let finishHandler = (id) => {};
   export let style = "";
   export let placeholder = "";
+  export let onClose = null;
 
+  $: placeholder, editor?.setOption("placeholder", placeholder);
 
-  $:placeholder, editor?.setOption('placeholder', placeholder);
-
-  
   // export let afterSubmit = (res)=>{};
   let files;
-  export let initialText="";
+  export let initialText = "";
   const submitPost = () => {
     onSubmit(editor.getValue()).then((res) => {
       if (res.msg == "ok") {
@@ -25,7 +26,6 @@
         editor.clearHistory();
         editor.setValue("");
         editor.clearHistory();
-        
       } else {
         Warning(res.msg);
       }
@@ -96,15 +96,18 @@
 </script>
 
 <div style={style}>
-  <textarea name="content" bind:this={textContent} placeholder={placeholder}>{initialText}</textarea>
+  <textarea name="content" bind:this={textContent} placeholder={placeholder}
+    >{initialText}</textarea>
 
-{#if showEmojiSelector}
-<EmojiSelector onInsert={
-  (id)=>editor.replaceSelection(`[emo${id}]`)
-} />
-{/if}
+  {#if showEmojiSelector}
+    <EmojiSelector onInsert={(id) => editor.replaceSelection(`[emo${id}]`)} />
+  {/if}
 
-  <i class="fas fa-smile" on:click={()=>{showEmojiSelector=!showEmojiSelector}} />
+  <i
+    class="fas fa-smile"
+    on:click={() => {
+      showEmojiSelector = !showEmojiSelector;
+    }} />
 
   <label for="file-input">
     <i class="fas fa-file-image" />
@@ -118,6 +121,10 @@
   {/if}
 
   <span style="opacity:0.6">按 Ctrl+Enter 送出</span>
+
+  {#if exists(onClose)}
+    <Button size="is-small" on:click={onClose(editor.getValue())}>取消</Button>
+  {/if}
 </div>
 
 <style>

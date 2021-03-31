@@ -5,7 +5,7 @@ import qs from "Qs";
 // Create a instance of axios to use the same base url.
 const axiosAPI = axios.create({
   baseURL: "https://m2np.com/api",
-  withCredentials: true,
+  // withCredentials: true,
   // headers:{"m2np-token": "TEST"}
 });
 

@@ -1,19 +1,25 @@
 <script>
   import { getDateDiff, myMarked, colorMap } from "../utils/util";
   import { myInfoStore, userStore } from "../stores.js";
+  import { exists } from "../utils/util";
   import API from "../api/Api";
   import { Warning } from "./Notification";
   import AvatarBox from "./AvatarBox.svelte";
   import Carousel from "./Carousel.svelte";
   import { Modal } from "svelma2";
   import Postbox from "./Postbox.svelte";
-  import Username from "./Username.svelte"
-  
+  import Username from "./Username.svelte";
+
   export let article;
+  $: if (article.id) {
+    if (editingArticle.id != article.id) {
+      editingArticle = {};
+    }
+  }
   export let replies = [];
   export let onDelete = () => {};
   let isCarViewActive = false;
-  let editingArticle = false;
+  let editingArticle = {};
 </script>
 
 <Modal bind:active={isCarViewActive}>
@@ -30,23 +36,31 @@
     <small class="reply_count" class:red={article.nor > 0}>{article.nor}</small>
   </AvatarBox>
 
-  {#if !editingArticle}
+  {#if !exists(editingArticle.id)}
     <div class="post_content marked">
       {@html myMarked(article["content"])}
     </div>
   {:else}
     <Postbox
       finishHandler={(content) => {
-        article["content"]=content
-        editingArticle = false;
+        article["content"] = content;
+        editingArticle = {};
       }}
-      onSubmit={(txt) => API.post("update_post", { id: article.id, content: txt })}
+      onClose={(txt) => {
+        if (txt != article["content"]) {
+          alert("Work in progress");
+        } else {
+          editingArticle = {};
+        }
+      }}
+      onSubmit={(txt) =>
+        API.post("update_post", { id: article.id, content: txt })}
       initialText={article["content"]} />
   {/if}
   <i
     class="fa fa-pencil-alt"
     on:click={() => {
-      editingArticle = !editingArticle;
+      editingArticle = article;
     }} />
   <i
     on:click={() => {
@@ -77,8 +91,6 @@
 </article>
 
 <div class="replies">
-  
-
   {#each replies as reply}
     <Username userId={reply.user_id} />:
     <span class="marked">{@html myMarked(reply.content)}</span>

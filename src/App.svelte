@@ -111,7 +111,7 @@
     text-decoration: none;
   }
   :global(a:hover) {
-    text-decoration: underline;
+    /* text-decoration: underline; */
   }
 
   :global(hr) {

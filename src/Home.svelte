@@ -15,6 +15,7 @@ import Username from "./components/Username.svelte"
   import { myInfoStore, userStore, docClicked } from "./stores.js";
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./Settings.svelte";
+  import Search from "./components/Search.svelte";
 
   import tooltip from "svelte-tooltip-action";
   import { Button, Modal, ModalCard } from "svelma2";
@@ -135,9 +136,10 @@ import Username from "./components/Username.svelte"
     });
   };
   let notifications = [];
-  let active = false;
+  let showSettings = false;
   let cellsSection;
   let coverMessage="";
+  let showSearch = false;
 </script>
 
 <main>
@@ -158,12 +160,16 @@ import Username from "./components/Username.svelte"
     </div>
   </div>
 
-  <Modal bind:active title="設定">
+  <Modal bind:active={showSettings} title="設定">
     <div style="background:white;padding:1em;border-radius:1em">
-      <Settings bind:active />
+      <Settings active={showSettings} />
     </div>
   </Modal>
-
+  <Modal bind:active={showSearch} title="搜尋">
+    <div style="background:white;padding:1em;border-radius:1em">
+      <Search />
+    </div>
+  </Modal>
   <nav
     class="flex"
     style="padding:10px; height:50px; margin-bottom:1.2em; position:fixed;top:0px;z-index:3;left:2px;font-size:18px">
@@ -174,7 +180,7 @@ import Username from "./components/Username.svelte"
       class="fa fa-cog"
       aria-hidden="true"
       on:click={() => {
-        active = !active;
+        showSettings = !showSettings;
       }} />
 
     <Popover
@@ -208,13 +214,16 @@ import Username from "./components/Username.svelte"
       </div>
     </Popover>
     <div>
-      <Hoverable let:hovering={isSearchBoxShowing}>
+      <i class="fa fa-search" aria-hidden="true" on:click={() => {
+        showSearch = !showSearch;
+      }}/>
+      <!-- <Hoverable let:hovering={isSearchBoxShowing}>
         {#if isSearchBoxShowing || userSearchText != ""}
           <UserSearchBox bind:value={userSearchText} />
         {:else}
           <i class="fa fa-search" aria-hidden="true" />
         {/if}
-      </Hoverable>
+      </Hoverable> -->
     </div>
   </nav>
   <div class="left_bar">
