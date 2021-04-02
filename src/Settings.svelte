@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { Select, Field, Input, Button } from "svelma2";
 
-  import API from "./api/Api";
+  import API from "./utils/Api";
   import { Warning, Success } from "./components/Notification";
 import { myInfoStore, userStore } from "./stores";
 

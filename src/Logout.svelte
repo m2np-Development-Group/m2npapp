@@ -1,7 +1,7 @@
 <script>
   import { link } from "svelte-navigator";
   import { onMount } from "svelte";
-  import API from "./api/Api";
+  import API from "./utils/Api";
   let message = "登出中。";
   onMount(() => {
     API.get("/logout").then((res) => {

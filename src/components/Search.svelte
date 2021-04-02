@@ -1,5 +1,5 @@
 <script>
-  import API from "../api/Api";
+  import API from "../utils/Api";
   import { link } from "svelte-navigator";
   let content = "請輸入";
   let searchWord = "";
@@ -89,12 +89,11 @@
   </ul>
 </div>
 <div class="block">
-
-      {#if Array.isArray(content)}
-        {#each content as v}
-          <a href={`/user/` + v.username} use:link>{v.username}</a> 
-        {/each}
-      {:else}
-        {content}
-      {/if}
+  {#if Array.isArray(content)}
+    {#each content as v}
+      <a href={`/user/` + v.username} use:link>{v.username}</a>
+    {/each}
+  {:else}
+    {content}
+  {/if}
 </div>

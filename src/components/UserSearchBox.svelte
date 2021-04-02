@@ -1,6 +1,6 @@
 <script>
   import AutoComplete from "./SimpleAutocomplete.svelte";
-  import API from "../api/Api";
+  import API from "../utils/Api";
 import { navigate } from "svelte-navigator";
 
   let fetch = async (event) => {

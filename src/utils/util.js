@@ -72,7 +72,10 @@ export const getDateDiff = (dateTimeStamp) => {
 
 const renderer = new marked.Renderer();
 renderer.link = (href, title, text) => `<a target="_blank" href="${href}">${text}</a>`;
-const markedOptions = { renderer: renderer, breaks: true };
+// renderer.blockquote = (text) => text;
+const tokenizer = new marked.Tokenizer();
+tokenizer.blockquote = ()=>{};
+const markedOptions = { tokenizer:tokenizer, renderer: renderer, breaks: true };
 
 export const myMarked = (str) => {
 	if (str == undefined || str == null) {

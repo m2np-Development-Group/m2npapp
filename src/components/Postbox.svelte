@@ -1,7 +1,6 @@
 <script>
   import { onMount } from "svelte";
   import { Button } from "svelma2";
-  import API from "../api/Api";
   import inlineAttachment from "./inlineAttachment";
   import { Warning } from "../components/Notification";
   import EmojiSelector from "./EmojiSelector.svelte";
@@ -11,7 +10,7 @@
   export let finishHandler = (id) => {};
   export let style = "";
   export let placeholder = "";
-  export let onClose = null;
+  export let onCancel = null;
 
   $: placeholder, editor?.setOption("placeholder", placeholder);
 
@@ -19,6 +18,10 @@
   let files;
   export let initialText = "";
   const submitPost = () => {
+    if (editor.getValue().trim() == "") {
+      Warning("Missing Content");
+      return;
+    }
     onSubmit(editor.getValue()).then((res) => {
       if (res.msg == "ok") {
         finishHandler(editor.getValue());
@@ -92,39 +95,55 @@
       }
     };
   });
-  let showEmojiSelector;
+  let showEmojiSelector = false;
 </script>
 
 <div style={style}>
   <textarea name="content" bind:this={textContent} placeholder={placeholder}
     >{initialText}</textarea>
 
-  {#if showEmojiSelector}
-    <EmojiSelector onInsert={(id) => editor.replaceSelection(`[emo${id}]`)} />
-  {/if}
+  <div class="toolbar">
+    {#if showEmojiSelector}
+      <EmojiSelector onInsert={(id) => editor.replaceSelection(`[emo${id}]`)} />
+    {/if}
 
-  <i
-    class="fas fa-smile"
-    on:click={() => {
-      showEmojiSelector = !showEmojiSelector;
-    }} />
+    <label for="smiley">
+      <i
+        class="fas fa-smile"
+        on:click={() => {
+          showEmojiSelector = !showEmojiSelector;
+        }} />
+    </label>
 
-  <label for="file-input">
-    <i class="fas fa-file-image" />
-  </label>
+    <label for="file-input">
+      <i class="fas fa-file-image" />
+    </label>
 
-  <input type="file" id="file-input" style="display:none" bind:files />
-  {#if files && files[0]}
-    <p>
-      {files[0].name}
-    </p>
-  {/if}
+    <input type="file" id="file-input" style="display:none" bind:files />
+    {#if files && files[0]}
+      <p>
+        {files[0].name}
+      </p>
+    {/if}
 
-  <span style="opacity:0.6">按 Ctrl+Enter 送出</span>
+    <span style="opacity:0.6">按 Ctrl+Enter 送出</span>
 
-  {#if exists(onClose)}
-    <Button size="is-small" on:click={onClose(editor.getValue())}>取消</Button>
-  {/if}
+    <div class="submit_buttons">
+      {#if exists(onCancel)}
+        <Button size="is-small" rounded on:click={onCancel(editor.getValue())}
+          >取消</Button>
+      {/if}
+      {#if exists(onSubmit)}
+        <Button
+          size="is-small"
+          rounded
+          type="is-success"
+          iconLeft="paper-plane"
+          on:click={submitPost(editor.getValue())}>提交</Button>
+      {/if}
+    </div>
+  </div>
+  <div style='clear:both'></div>
 </div>
 
 <style>
@@ -133,5 +152,17 @@
   }
   :global(.popover) {
     display: inline;
+  }
+  .toolbar {
+    padding-top: 1px;
+  }
+  .toolbar > * {
+    display: block;
+    float: left;
+    padding: 2px;
+  }
+  .submit_buttons {
+    float: right;
+    padding: 0;
   }
 </style>

@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import API from "../api/Api";
+  import API from "../utils/Api";
 
 
   export let postId;

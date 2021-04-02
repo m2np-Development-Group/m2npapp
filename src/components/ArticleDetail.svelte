@@ -2,21 +2,21 @@
   import { getDateDiff, myMarked, colorMap } from "../utils/util";
   import { myInfoStore, userStore } from "../stores.js";
   import { exists } from "../utils/util";
-  import API from "../api/Api";
+  import API from "../utils/Api";
   import { Warning } from "./Notification";
   import AvatarBox from "./AvatarBox.svelte";
   import Carousel from "./Carousel.svelte";
   import { Modal } from "svelma2";
   import Postbox from "./Postbox.svelte";
-  import Username from "./Username.svelte";
-
+  import ReplyEntry from "./ReplyEntry.svelte";
+  export let onArticleContentChanged=(content)=>{}
   export let article;
   $: if (article.id) {
     if (editingArticle.id != article.id) {
       editingArticle = {};
     }
   }
-  export let replies = [];
+  export let replies;
   export let onDelete = () => {};
   let isCarViewActive = false;
   let editingArticle = {};
@@ -43,25 +43,28 @@
   {:else}
     <Postbox
       finishHandler={(content) => {
-        article["content"] = content;
+        // console.log("fin"+content);
+        article.content = content;
         editingArticle = {};
+        onArticleContentChanged(content);
       }}
-      onClose={(txt) => {
+      onCancel={(txt) => {
         if (txt != article["content"]) {
           alert("Work in progress");
         } else {
           editingArticle = {};
         }
       }}
-      onSubmit={(txt) =>
-        API.post("update_post", { id: article.id, content: txt })}
+      onSubmit={(txt) => API.post("update_post", { id: article.id, content: txt })}
       initialText={article["content"]} />
   {/if}
-  <i
-    class="fa fa-pencil-alt"
-    on:click={() => {
-      editingArticle = article;
-    }} />
+  {#if $myInfoStore.user.id == article.user_id}
+    <i
+      class="fa fa-pencil-alt"
+      on:click={() => {
+        editingArticle = article;
+      }} />
+  {/if}
   <i
     on:click={() => {
       isCarViewActive = !isCarViewActive;
@@ -91,12 +94,15 @@
 </article>
 
 <div class="replies">
-  {#each replies as reply}
-    <Username userId={reply.user_id} />:
-    <span class="marked">{@html myMarked(reply.content)}</span>
-  {/each}
-  {#if replies.length == 0}
-    No Replies.
+  {#if replies === undefined}
+    <i class="fas fa-spinner fa-pulse" /> LOADING...
+  {:else}
+    {#each replies as reply}
+      <ReplyEntry reply={reply} />
+    {/each}
+    {#if replies.length == 0}
+      No Replies.
+    {/if}
   {/if}
 </div>
 

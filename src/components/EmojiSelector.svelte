@@ -1,6 +1,8 @@
 <script>
   import {flip} from 'svelte/animate';
   import {onMount} from 'svelte';
+  import API from "../utils/Api";
+  
   let list = [{url: "https://picsum.photos/seed/4/30", id: 0}, 
 							{url: "https://picsum.photos/seed/43/30", id: 1},
 							{url: "https://picsum.photos/seed/4123/30", id: 2}, 

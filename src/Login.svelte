@@ -1,5 +1,5 @@
 <script>
-  import API from "./api/Api";
+  import API from "./utils/Api";
   import { navigate, Link } from "svelte-navigator";
   import { Warning } from "./components/Notification";
   import { myInfoStore } from "./stores";

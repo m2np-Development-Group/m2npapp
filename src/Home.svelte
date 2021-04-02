@@ -4,14 +4,14 @@
   import Postbox from "./components/Postbox.svelte";
   import { exists, getDateDiff, myMarked } from "./utils/util";
   import { Warning } from "./components/Notification";
-  import API from "./api/Api";
+  import API from "./utils/Api";
   import InfiniteScroll from "./components/InfiniteScroll.svelte";
   // import { parse } from "QS";
   import Popover from "svelte-popover";
   import Hoverable from "./components/Hoverable.svelte";
   import AvatarBox from "./components/AvatarBox.svelte";
   import UserSearchBox from "./components/UserSearchBox.svelte";
-import Username from "./components/Username.svelte"
+  import Username from "./components/Username.svelte";
   import { myInfoStore, userStore, docClicked } from "./stores.js";
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./Settings.svelte";
@@ -42,11 +42,11 @@ import Username from "./components/Username.svelte"
     API.get("/get_profile", {
       username: username,
     }).then((res) => {
-      if(res.msg!='ok'){
-        if(res.msg=='user not found'){
-          coverMessage="查無此人"
+      if (res.msg != "ok") {
+        if (res.msg == "user not found") {
+          coverMessage = "查無此人";
         }
-      }else{
+      } else {
         profile = res.data;
       }
     });
@@ -138,17 +138,16 @@ import Username from "./components/Username.svelte"
   let notifications = [];
   let showSettings = false;
   let cellsSection;
-  let coverMessage="";
+  let coverMessage = "";
   let showSearch = false;
 </script>
 
 <main>
-
-  <div class="modal" class:is-active={coverMessage!=""}>
-    <div class="modal-background"></div>
+  <div class="modal" class:is-active={coverMessage != ""}>
+    <div class="modal-background" />
     <div class="modal-card">
       <header class="modal-card-head">
-        <p class="modal-card-title"></p>
+        <p class="modal-card-title" />
         <!-- <button class="delete" aria-label="close" on:click={()=>{coverMessage=""}}></button> -->
       </header>
       <section class="modal-card-body">
@@ -214,9 +213,12 @@ import Username from "./components/Username.svelte"
       </div>
     </Popover>
     <div>
-      <i class="fa fa-search" aria-hidden="true" on:click={() => {
-        showSearch = !showSearch;
-      }}/>
+      <i
+        class="fa fa-search"
+        aria-hidden="true"
+        on:click={() => {
+          showSearch = !showSearch;
+        }} />
       <!-- <Hoverable let:hovering={isSearchBoxShowing}>
         {#if isSearchBoxShowing || userSearchText != ""}
           <UserSearchBox bind:value={userSearchText} />
@@ -260,12 +262,12 @@ import Username from "./components/Username.svelte"
       正在跟蹤:<br />
 
       {#each profile.followings as v}
-      <Username userId={v.id} /><br />
+        <Username userId={v.id} /><br />
       {/each} <br />
 
       跟隨者: <br />
       {#each profile.followers as v}
-      <Username userId={v.id} /><br />
+        <Username userId={v.id} /><br />
       {/each}<br />
       最後登入: <strong>{getDateDiff(profile.user?.last_login)}</strong><br />
       噗數: <strong>{profile.user?.article_count}</strong><br />
@@ -283,6 +285,14 @@ import Username from "./components/Username.svelte"
         iconRight="times"
         rounded>關閉</Button>
       <ArticleDetail
+        onArticleContentChanged={(content) => {
+          timeline = timeline.map((v) => {
+            if (v.id == showingArticle.id) {
+              v.content = content;
+            }
+            return v;
+          });
+        }}
         onDelete={() => {
           timeline = timeline.filter((v) => v.id != showingArticle.id);
           showingArticle = {};
@@ -306,7 +316,7 @@ import Username from "./components/Username.svelte"
         placeholder={exists(showingArticle.id) ? "回覆噗" : "發新噗"}
         finishHandler={(content) => {
           if (exists(showingArticle.id)) {
-            refreshReplies(showingArticle.id);            
+            refreshReplies(showingArticle.id);
           } else {
             fetchData("prepend");
           }
@@ -355,15 +365,14 @@ import Username from "./components/Username.svelte"
           </div>
         </article>
       {/each}
-
     </section>
-    
+
     <InfiniteScroll
-    hasMore={newBatch.length > 0}
-    threshold={500}
-    on:loadMore={() => {
-      fetchData("append");
-    }} />
+      hasMore={newBatch.length > 0}
+      threshold={500}
+      on:loadMore={() => {
+        fetchData("append");
+      }} />
   </div>
 </main>
 
@@ -383,11 +392,11 @@ import Username from "./components/Username.svelte"
   }
   .postbox {
     position: fixed;
-    width: 300px;
+    width: 310px;
     background-color: #efefef;
     border-radius: 0.5em;
-    left: 1em;
-    bottom: 2px;
+    left: 3px;
+    bottom: 3px;
     z-index: 1;
     padding: 0.3em;
   }
@@ -435,12 +444,12 @@ import Username from "./components/Username.svelte"
     flex-wrap: wrap;
     justify-content: flex-start;
   }
-  .cells{
-    width:100%;
+  .cells {
+    width: 100%;
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
-    height:fit-content;
+    height: fit-content;
   }
   .cell {
     flex: 0 0 500px;

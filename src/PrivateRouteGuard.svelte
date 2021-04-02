@@ -1,7 +1,7 @@
 <script>
     import { useNavigate, useLocation } from "svelte-navigator";
     import { myInfoStore } from "./stores";
-    import API from "./api/Api"
+    import API from "./utils/Api"
     const navigate = useNavigate();
     const location = useLocation();
     const getCookieValue = (name) => (

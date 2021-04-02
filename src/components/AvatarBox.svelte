@@ -1,6 +1,6 @@
 <script>
   import Popover from "svelte-popover";
-  import API from "../api/Api";
+  import API from "../utils/Api";
   import Username from "./Username.svelte";
   import { userStore } from "../stores.js";
   export let userId;
