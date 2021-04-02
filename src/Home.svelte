@@ -344,8 +344,8 @@
       rounded
       iconRight="arrow-down">Append</Button>
   </div>
-  <div class="rightColumn">
-    <section class="cells" bind:this={cellsSection}>
+  <div class="rightColumn" bind:this={cellsSection}>
+    <section class="cells">
       {#each timeline as v, k}
         <article class="cell" bind:this={articlecells[v.id]}>
           <AvatarBox userId={v["user_id"]}>
