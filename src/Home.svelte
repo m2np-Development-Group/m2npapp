@@ -159,12 +159,12 @@
     </div>
   </div>
 
-  <Modal bind:active={showSettings} title="設定">
+  <Modal bind:active={showSettings}>
     <div style="background:white;padding:1em;border-radius:1em">
       <Settings active={showSettings} />
     </div>
   </Modal>
-  <Modal bind:active={showSearch} title="搜尋">
+  <Modal bind:active={showSearch}>
     <div style="background:white;padding:1em;border-radius:1em">
       <Search />
     </div>
