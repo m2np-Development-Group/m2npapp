@@ -58,6 +58,8 @@
       onSubmit={(txt) => API.post("update_post", { id: article.id, content: txt })}
       initialText={article["content"]} />
   {/if}
+
+  
   {#if $myInfoStore.user.id == article.user_id}
     <i
       class="fa fa-pencil-alt"
@@ -113,12 +115,14 @@
   :global(.marked hr) {
     display: none;
   }
-
+.post_content{overflow:auto}
   article {
+    overflow:auto;
+    max-height: calc(50vh - 50px);
     border-bottom: 1px solid rgba(50, 50, 50, 0.2);
   }
   .replies {
-    max-height: calc(100vh - 300px);
+    max-height: calc(50vh - 50px);
 
     overflow-y: auto;
   }

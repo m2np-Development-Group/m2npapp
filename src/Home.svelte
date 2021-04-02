@@ -170,8 +170,7 @@
     </div>
   </Modal>
   <nav
-    class="flex"
-    style="padding:10px; height:50px; margin-bottom:1.2em; position:fixed;top:0px;z-index:3;left:2px;font-size:18px">
+    style="display:flex;padding:10px; height:50px; margin-bottom:1.2em; position:fixed;top:0px;z-index:3;left:2px;font-size:18px">
     <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
     <a href="/logout" use:link
       ><i class="fa fa-sign-out-alt" aria-hidden="true" /></a>
@@ -399,10 +398,11 @@
     bottom: 3px;
     z-index: 1;
     padding: 0.3em;
+    max-height: calc(100vh - 50px);
   }
-  .postbox :global(article) {
+  /* .postbox :global(article) {
     max-height: calc(100vh - 400px);
-  }
+  } */
   .cell {
     /* color: #fbbd2a; */
     /* border:1px solid #DEDEDE; */
@@ -430,9 +430,6 @@
     vertical-align: top;
   }
 
-  .flex {
-    display: flex;
-  }
   .rightColumn {
     top: 35px;
     bottom: 10px;
