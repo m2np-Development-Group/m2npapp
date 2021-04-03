@@ -18,41 +18,19 @@
   import Notifications from "svelte-notifications";
 
   import { currentPath } from "./utils/util";
-
-  import "bulma/css/bulma.css";
+  
 
   let unsub;
   export let url = "";
 
-  // const urlMiddleware = (url) => {
-  //   console.log("um:" + url)
-  //   if (url != "/login" && url != "/register" && url != "/logout") {
-  //       API.get("/check").then(function (response) {
-  //         console.log(response);
-
-  //         console.log(url);
-  //         if (response.msg != "ok") {
-  //           navigate("/login", { replace: false });
-  //         } else {
-  //           if (url == "/" || url == "") {
-  //             navigate("/home", { replace: false });
-  //           }
-  //         }
-  //       });
-  //     }
-  // };
-
   onMount(async () => {
-    console.log("%cM2NP WebFrontEnd v0.1", "font-weight:bold");
+    console.log("%cM2NP WebFrontEnd v20210403", "font-weight:bold");
     unsub = globalHistory.listen(({ location, action }) => {
       console.log(location, action);
       $currentPath = location.pathname;
 
       url = $currentPath;
-      // urlMiddleware(url)
     });
-
-    // urlMiddleware(location.pathname)
   });
   onDestroy(() => {
     unsub();
@@ -95,6 +73,15 @@
 </Router>
 
 <style>
+
+  /* dark */
+  /* @import "https://jenil.github.io/bulmaswatch/darkly/bulmaswatch.min.css"; */
+  @import "https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css";
+  /* light */
+  /* @import "https://jenil.github.io/bulmaswatch/flatly/bulmaswatch.min.css"; */
+  /* @import 'bulma/css/bulma.css'; */
+
+
   :global(.popover_content) {
     border-radius: 3px;
     padding: 0.5em;
@@ -106,11 +93,10 @@
     /* color: black; */
   }
   :global(a) {
-    color: bisque;
     text-decoration: none;
   }
-  :global(a:hover) {
-    /* text-decoration: underline; */
+  :global(code){
+    padding: 1px .5em 1px;
   }
 
   :global(hr) {
@@ -121,4 +107,15 @@
   :global(h1:focus) {
     outline: none;
   }
+  :global(html,body) {
+      height: 100%;
+      font-size: 13px;
+      overflow: hidden;
+      background:#DDD;
+    }
+
+    :global(pre) {
+      padding: 0
+    }
+
 </style>

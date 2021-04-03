@@ -16,11 +16,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
     integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w=="
     crossorigin="anonymous" />
-  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.2/css/bulma.min.css"
-    integrity="sha512-byErQdWdTqREz6DLAA9pCnLbdoGGhXfU6gm1c8bkf7F51JVmUBlayGe2A31VpXWQP+eiJ3ilTAZHCR3vmMyybA=="
-    crossorigin="anonymous" /> -->
-  <!-- <script src="https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js"></script> -->
-  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css" /> -->
 
   <script defer src="/build/bundle.js"></script>
 
@@ -75,40 +70,32 @@
       outline: none;
     }
 
-    html,
-    body {
-      height: 100%;
-      font-size: 13px;
-      overflow: hidden;
-    }
 
-    pre {
-      padding: 0
-    }
 
     input[type=checkbox] {
       position: relative;
- }
- /* to hide the checkbox itself */
-  input[type=checkbox]:before {
+    }
+
+    /* to hide the checkbox itself */
+    input[type=checkbox]:before {
       position: absolute;
-     background-color: #FFFFFF;
-     height: 100%;
- width: 100%;
-     font-family: "Font Awesome 5 Free";
-     display: inline-block;
-     content:"\f0c8";
-     letter-spacing: 10px;
- }
- /* space between checkbox and label */
-  input[type=checkbox]:checked:before {
+      background-color: white;
+      height: 100%;
+      width: 100%;
       font-family: "Font Awesome 5 Free";
-     display: inline-block;
-     content:"\f14a";
-     letter-spacing: 5px;
- }
+      display: inline-block;
+      content: "\f0c8";
+      letter-spacing: 10px;
+    }
 
-
+    /* space between checkbox and label */
+    input[type=checkbox]:checked:before {
+      font-family: "Font Awesome 5 Free";
+      background-color: white;
+      display: inline-block;
+      content: "\f14a";
+      letter-spacing: 5px;
+    }
   </style>
 </head>
 

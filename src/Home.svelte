@@ -33,12 +33,17 @@
   let minTS;
   let replies;
 
-  export let username = "";
+  export let username = null;
   $: if (username) {
     fetchData();
     fetchProfile();
   }
   function fetchProfile() {
+    if(username==null){
+      profile=$myInfoStore
+      return;
+    }
+    console.log(username)
     API.get("/get_profile", {
       username: username,
     }).then((res) => {
@@ -57,7 +62,7 @@
   //"append" = load old
   function fetchData(mode = "fresh") {
     API.get(
-      username == "" ? "/get_inbox" : "/get_outbox",
+      username == null ? "/get_inbox" : "/get_outbox",
       mode == "append"
         ? { less_than_ts: minTS, username: username }
         : mode == "prepend"
@@ -96,6 +101,7 @@
   onMount(async () => {
     fetchData("fresh");
     fetchProfile();
+    
   });
 
   // setInterval(function () {
@@ -109,27 +115,34 @@
     });
   }
   let userSearchText = "";
-  const unfollow = (username) => {
-    API.post("/unfollow", { username: username }).then((res) => {
+  const unfollow = (user) => {
+    API.post("/unfollow", { user_id: user.id }).then((res) => {
       if (res.msg == "ok") {
         $myInfoStore.followings = $myInfoStore.followings.filter(
-          (x) => x.username != username
+          (x) => x.id != user.id
         );
+
+        profile.followers = profile.followers.filter(
+          (x) => x.id != user.id
+        );
+
       } else {
         Warning(res.msg);
       }
     });
   };
-  const follow = (username) => {
-    API.post("/follow", { username: profile.user.username }).then((res) => {
+  const follow = (user) => {
+    API.post("/follow", { user_id: user.id }).then((res) => {
       if (res.msg == "ok") {
-        $myInfoStore.followings = [
-          ...$myInfoStore.followings,
-          {
-            username: profile.user.username,
-            display_name: profile.user.display_name,
-          },
-        ];
+
+        let smallUser = {
+            display_name:user.display_name,
+            id:user.id,
+            username:user.username,
+          };
+        $myInfoStore.followings = [...$myInfoStore.followings,smallUser];
+        profile.followers = [...profile.followers,smallUser]
+        console.log($myInfoStore.followings)
       } else {
         Warning(res.msg);
       }
@@ -169,8 +182,7 @@
       <Search />
     </div>
   </Modal>
-  <nav
-    style="display:flex;padding:10px; height:50px; margin-bottom:1.2em; position:fixed;top:0px;z-index:3;left:2px;font-size:18px">
+  <nav class="left_nav">
     <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
     <a href="/logout" use:link
       ><i class="fa fa-sign-out-alt" aria-hidden="true" /></a>
@@ -228,46 +240,62 @@
     </div>
   </nav>
   <div class="left_bar">
-    {#if profile.user && exists($myInfoStore.followings)}
-      {#if profile?.user?.avatar}
-        <img width="40" src={profile?.user?.avatar} alt="avatar" />
-      {/if}
-      {profile?.user?.display_name}
-      <!-- {#if username != "" && username != $myInfoStore.user.username} -->
-      {#if $myInfoStore?.followings
-        ?.map((x) => x.username)
-        .includes(profile.user.username)}
-        <Button
-          size="is-small"
-          iconRight="arrow-right"
-          on:click={() => {
-            unfollow(profile.user.username);
-          }}>Unfollow</Button>
-      {:else}
-        <Button
-          size="is-small"
-          iconLeft="arrow-right"
-          on:click={() => {
-            follow(profile.user.username);
-          }}>Follow</Button>
-      {/if}
-      <br />
-      <br />
-      <!-- {/if} -->
+    {#if profile.user}
+      <div style="display:flex">
+        <div style="padding:2px">
+          {#if profile?.user?.avatar}
+            <img width="40" src={profile?.user?.avatar} alt="avatar" />
+          {/if}
+        </div>
+        <div>
+          {profile?.user?.display_name}<br />
+<!-- {JSON.stringify($myInfoStore?.followers)} -->
+          {#if $myInfoStore?.followers?.map(x=>x.id).includes(profile.user.id)}
+            正在跟隨你。
+          {/if}
+
+          {#if $myInfoStore?.followings
+            ?.map((x) => x.id)
+            .includes(profile.user.id)}
+            <Button
+              size="is-small"
+              iconRight="arrow-right"
+              on:click={() => {
+                unfollow(profile.user);
+              }}>Unfollow</Button>
+          {:else}
+            <Button
+              size="is-small"
+              iconLeft="arrow-right"
+              on:click={() => {
+                follow(profile.user);
+              }}>Follow</Button>
+          {/if}
+        </div>
+      </div>
+
       <div class="marked">
         {@html myMarked(profile?.user?.description)}
       </div>
-
+      <br />
       正在跟蹤:<br />
-
-      {#each profile.followings as v}
-        <Username userId={v.id} /><br />
-      {/each} <br />
-
+      {#if profile.followings.length > 0}
+        {#each profile.followings as v}
+          <Username userId={v.id} /><br />
+        {/each} <br />
+      {:else}
+        沒有
+      {/if}
       跟隨者: <br />
-      {#each profile.followers as v}
-        <Username userId={v.id} /><br />
-      {/each}<br />
+      {#if profile.followers.length > 0}
+        {#each profile.followers as v}
+          <Username userId={v.id} /><br />
+        {/each}
+      {:else}
+        沒有
+      {/if}
+      <br />
+      <br />
       最後登入: <strong>{getDateDiff(profile.user?.last_login)}</strong><br />
       噗數: <strong>{profile.user?.article_count}</strong><br />
     {/if}
@@ -376,44 +404,69 @@
 </main>
 
 <style>
-  .marked {
-    word-break: break-all;
+  .left_nav {
+    display: flex;
+    padding: 0.3em;
+    height: 50px;
+    margin-bottom: 1.2em;
+    position: fixed;
+    top: 0px;
+    z-index: 3;
+    left: 2px;
+    font-size: 18px;
   }
 
   .left_bar {
-    width: 300px;
-    position: fixed;
-    top: 50px;
-    left: 1em;
-    height: 200px;
-    padding: 0;
-    margin-block-start: 0;
-  }
-  .postbox {
+    border: 1px solid #ccc;
     position: fixed;
     width: 310px;
-    background-color: #efefef;
-    border-radius: 0.5em;
+    background-color: #eee;
+    border-radius: 0.75em;
+    left: 3px;
+    top: 40px;
+    z-index: 0;
+    padding: 0.3em;
+  }
+  .postbox {
+    border: 1px solid #ccc;
+    position: fixed;
+    width: 310px;
+    background-color: #eee;
+    border-radius: 0.75em;
     left: 3px;
     bottom: 3px;
     z-index: 1;
     padding: 0.3em;
     max-height: calc(100vh - 50px);
   }
-  /* .postbox :global(article) {
-    max-height: calc(100vh - 400px);
-  } */
-  .cell {
-    /* color: #fbbd2a; */
-    /* border:1px solid #DEDEDE; */
 
-    box-shadow: 1px 3px 3px 1px #dedede;
-    border-radius: 0.5em;
+  .rightColumn {
+    top: 35px;
+    bottom: 10px;
+    left: 320px;
+    position: fixed;
+    width: calc(100vw - 326px);
+    overflow-y: scroll;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .marked {
+    word-break: break-all;
+  }
+
+  .cell {
+    background: #eee;
+    border: 1px solid #ccc;
+    border-radius: 0.75em;
     padding: 0.5em;
     position: relative;
     /* overflow: hidden; */
     height: 150px;
-    margin: 0;
+
+    flex: 0 0 500px;
+    margin: 5px;
   }
   :global(.reply_count.red) {
     background: red;
@@ -430,29 +483,12 @@
     vertical-align: top;
   }
 
-  .rightColumn {
-    top: 35px;
-    bottom: 10px;
-    left: 320px;
-    position: fixed;
-    width: calc(100vw - 326px);
-    overflow-y: scroll;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-  }
   .cells {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
     height: fit-content;
-  }
-  .cell {
-    flex: 0 0 500px;
-    margin: 5px;
-
-    box-sizing: border-box;
   }
   @media screen and (min-width: 40em) {
     .cell {
@@ -469,16 +505,8 @@
   :global(body) {
     overflow: hidden;
   }
-  :global(.cell a) {
-    /* color: #f7694d; */
-    /* text-decoration: none; */
-  }
-  :global(article a) {
-    /* color: #f7694d; */
-    /* text-decoration: none; */
-  }
-  :global(.cell th) {
-    border-bottom: #fbbc2a88 1px solid;
+  :global(.marked th) {
+    border-bottom: 1px solid;
     text-align: left;
     font-weight: 700;
   }
@@ -491,6 +519,6 @@
   }
   :global(.post_content table td) {
     padding-right: 1em;
-    border-bottom: #fbbc2a67 1px solid;
+    /* border-bottom: #fbbc2a67 1px solid; */
   }
 </style>

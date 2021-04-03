@@ -2,7 +2,7 @@
   import API from "./utils/Api";
   import { navigate, Link } from "svelte-navigator";
   import { Warning } from "./components/Notification";
-  import { myInfoStore } from "./stores";
+  import { myInfoStore, userStore } from "./stores";
   import { onMount } from "svelte";
   import { Field, Input,Button } from "svelma2"
   export let location;
@@ -23,6 +23,21 @@
       API.post("/login", { email: email, password: password }).then((res) => {
         if (res.msg == "ok") {
           $myInfoStore = res.user;
+
+          res.user.followings?.forEach((v) => {
+            $userStore.avatar[v.id] = v.avatar;
+            $userStore.username[v.id] = v.username;
+            $userStore.displayname[v.id] = v.display_name;
+            $userStore.color[v.id] = v.color;
+          });
+          res.user.followers?.forEach((v) => {
+            $userStore.avatar[v.id] = v.avatar;
+            $userStore.username[v.id] = v.username;
+            $userStore.displayname[v.id] = v.display_name;
+            $userStore.color[v.id] = v.color;
+          });
+
+
           console.log($myInfoStore);
           localStorage.setItem("M2NP_TOKEN", res.token);
           // const from = ($location.state && $location.state.from) || "/home";
@@ -53,7 +68,12 @@
     </div>
   </div>
 </section>
+
+
+
+
 <div style='padding:1em'>
+  
 <Field label="E-Mail" type:is-danger={false} message={invalidEmailMessage}>
   <Input
   on:keypress={onKp}
@@ -61,12 +81,14 @@
   placeholder="E-Mail"
   required="required"
   bind:this={emailInput}
-  bind:value={email} />
+  bind:value={email}
+  icon="envelope"
+  />
   
 </Field>
 
 <Field label="密碼" message={invalidPasswordMessage}> 
-  <Input on:keypress={onKp} placeholder="Password" type="password" bind:value={password} passwordReveal={true} />
+  <Input on:keypress={onKp} placeholder="Password" type="password" bind:value={password} passwordReveal={true} icon="key" />
 </Field>
 <Button type="is-primary" on:click={login}><i class="fa fa-sign-in-alt" /> 登入</Button>
 

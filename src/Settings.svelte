@@ -10,6 +10,7 @@ import { myInfoStore, userStore } from "./stores";
   export let active;
   $:{
     if (active){
+      console.log("load setting")
       isLoading = true;
       API.get("/get_profile", {}).then((res) => {
         const v=res.data.user
@@ -48,10 +49,16 @@ import { myInfoStore, userStore } from "./stores";
     }).then((res) => {
       if(res.msg=="ok"){
         const id = $myInfoStore.user.id;
-        console.log($myInfoStore.user.id)
+        // console.log($myInfoStore.user.id)
         // $userStore.avatar[id] = v.avatar;
         $userStore.displayname[id] = displayName;
         $userStore.color[id] = color;
+
+        $myInfoStore.user.color=color;
+        $myInfoStore.user.displayname=displayName;
+        $myInfoStore.user.description=description;
+
+
         Success("成功");
       }else{
         Warning(JSON.stringify(res));
