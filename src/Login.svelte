@@ -2,7 +2,7 @@
   import API from "./utils/Api";
   import { navigate, Link } from "svelte-navigator";
   import { Warning } from "./components/Notification";
-  import { myInfoStore, userStore } from "./stores";
+  import { myInfoStore, filluserStore } from "./stores";
   import { onMount } from "svelte";
   import { Field, Input,Button } from "svelma2"
   export let location;
@@ -23,19 +23,9 @@
       API.post("/login", { email: email, password: password }).then((res) => {
         if (res.msg == "ok") {
           $myInfoStore = res.user;
-
-          res.user.followings?.forEach((v) => {
-            $userStore.avatar[v.id] = v.avatar;
-            $userStore.username[v.id] = v.username;
-            $userStore.displayname[v.id] = v.display_name;
-            $userStore.color[v.id] = v.color;
-          });
-          res.user.followers?.forEach((v) => {
-            $userStore.avatar[v.id] = v.avatar;
-            $userStore.username[v.id] = v.username;
-            $userStore.displayname[v.id] = v.display_name;
-            $userStore.color[v.id] = v.color;
-          });
+          filluserStore(res.user.followings);
+          filluserStore(res.user.followers);
+          
 
 
           console.log($myInfoStore);

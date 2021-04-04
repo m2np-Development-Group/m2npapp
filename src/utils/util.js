@@ -1,6 +1,11 @@
 import { writable } from "svelte/store"
 import marked from "marked";
+import {userStore} from "../stores.js"
 
+let displaynames;
+const unsubscribe = userStore.subscribe(value => {
+	displaynames = value.displaynameOfUsername;
+});
 export const exists = (v) => {
 	
 	if (v === undefined || v === null || v === 0 || v === "0" || v === "" || v === "{}" || v === "[]") {
@@ -78,12 +83,17 @@ tokenizer.blockquote = ()=>{};
 const markedOptions = { tokenizer:tokenizer, renderer: renderer, breaks: true };
 
 export const myMarked = (str) => {
+	// console.log(displaynames)
 	if (str == undefined || str == null) {
 		return "";
 	}
 	return marked(str, markedOptions)
 		.replaceAll("&#39;", "&apos;")
-		.replace(/@([a-z\d_]+)/gi, '<a href="/user/$1">@$1</a>')
+		.replace(/@([a-z\d_]+)/gi, (match,capture)=>
+		{
+			return `<a href="/user/${capture}">`+displaynames[capture]+"</a>"
+		}
+		)//mention
 		.replaceAll("<p>", "")
 		.replaceAll("</p>", "<br />")
 		.replace(

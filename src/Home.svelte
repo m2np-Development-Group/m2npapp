@@ -12,7 +12,7 @@
   import AvatarBox from "./components/AvatarBox.svelte";
   import UserSearchBox from "./components/UserSearchBox.svelte";
   import Username from "./components/Username.svelte";
-  import { myInfoStore, userStore, docClicked } from "./stores.js";
+  import { myInfoStore, filluserStore, docClicked } from "./stores.js";
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./Settings.svelte";
   import Search from "./components/Search.svelte";
@@ -69,12 +69,7 @@
         ? { more_than_ts: maxTS, username: username }
         : { username: username }
     ).then((res) => {
-      res.users?.forEach((v) => {
-        $userStore.avatar[v.id] = v.avatar;
-        $userStore.username[v.id] = v.username;
-        $userStore.displayname[v.id] = v.display_name;
-        $userStore.color[v.id] = v.color;
-      });
+      filluserStore(res.users);
       if (Array.isArray(res.posts) && res.posts.length > 0) {
         newBatch = res.posts;
         timeline =
