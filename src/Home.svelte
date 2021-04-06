@@ -18,7 +18,7 @@
   import Search from "./components/Search.svelte";
 
   import tooltip from "svelte-tooltip-action";
-  import { Button, Modal, ModalCard } from "svelma2";
+  import { Button, Modal, ModalCard } from "svelma";
 
   let articlecells = {};
   let profile = {};

@@ -4,7 +4,7 @@
   import { Warning } from "./components/Notification";
   import { myInfoStore, filluserStore } from "./stores";
   import { onMount } from "svelte";
-  import { Field, Input,Button } from "svelma2"
+  import { Field, Input,Button } from "svelma"
   export let location;
 
   let email = "";

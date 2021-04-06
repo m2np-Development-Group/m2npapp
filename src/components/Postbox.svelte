@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { Button } from "svelma2";
+  import { Button } from "svelma";
   import inlineAttachment from "./inlineAttachment";
   import { Warning } from "../components/Notification";
   import EmojiSelector from "./EmojiSelector.svelte";

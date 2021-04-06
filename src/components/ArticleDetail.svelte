@@ -6,7 +6,7 @@
   import { Warning } from "./Notification";
   import AvatarBox from "./AvatarBox.svelte";
   import Carousel from "./Carousel.svelte";
-  import { Modal } from "svelma2";
+  import { Modal } from "svelma";
   import Postbox from "./Postbox.svelte";
   import ReplyEntry from "./ReplyEntry.svelte";
   export let onArticleContentChanged=(content)=>{}

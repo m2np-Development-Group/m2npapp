@@ -2,7 +2,7 @@
   import API from "./utils/Api";
   import { navigate, Link, link } from "svelte-navigator";
   import { Warning } from "./components/Notification";
-  import { Field, Input, Button } from "svelma2";
+  import { Field, Input, Button } from "svelma";
   let email = "";
   let password = "";
   let username = "";

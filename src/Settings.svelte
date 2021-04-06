@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { Select, Field, Input, Button } from "svelma2";
+  import { Select, Field, Input, Button } from "svelma";
 
   import API from "./utils/Api";
   import { Warning, Success } from "./components/Notification";

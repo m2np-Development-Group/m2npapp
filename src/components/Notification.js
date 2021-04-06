@@ -1,4 +1,4 @@
-import { Button, Notification } from "svelma2";
+import { Button, Notification } from "svelma";
 
 export const Alert = (message,type) => {
   Notification.create({

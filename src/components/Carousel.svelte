@@ -1,5 +1,5 @@
 <script>
-  import { Button } from "svelma2";
+  import { Button } from "svelma";
   import Hoverable from "./Hoverable.svelte";
   function youtube_parser(url) {
     var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
