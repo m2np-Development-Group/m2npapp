@@ -115,5 +115,6 @@ let onParticlesLoaded = (event) => {
     width: 100%;
     position: absolute;
     z-index: -2;
+    top:0;
   }
 </style>
