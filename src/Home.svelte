@@ -8,9 +8,7 @@
   import InfiniteScroll from "./components/InfiniteScroll.svelte";
   // import { parse } from "QS";
   import Popover from "svelte-popover";
-  import Hoverable from "./components/Hoverable.svelte";
-  import AvatarBox from "./components/AvatarBox.svelte";
-  import UserSearchBox from "./components/UserSearchBox.svelte";
+  import Cell from "./components/Cell.svelte";
   import Username from "./components/Username.svelte";
   import { myInfoStore, filluserStore, docClicked } from "./stores.js";
   import ArticleDetail from "./components/ArticleDetail.svelte";
@@ -20,7 +18,6 @@
   import tooltip from "svelte-tooltip-action";
   import { Button, Modal, ModalCard } from "svelma";
 
-  let articlecells = {};
   let profile = {};
 
   let coinSound = new Audio("/assets/coin.mp3");
@@ -39,11 +36,11 @@
     fetchProfile();
   }
   function fetchProfile() {
-    if(username==null){
-      profile=$myInfoStore
+    if (username == null) {
+      profile = $myInfoStore;
       return;
     }
-    console.log(username)
+    console.log(username);
     API.get("/get_profile", {
       username: username,
     }).then((res) => {
@@ -96,7 +93,6 @@
   onMount(async () => {
     fetchData("fresh");
     fetchProfile();
-    
   });
 
   // setInterval(function () {
@@ -117,10 +113,7 @@
           (x) => x.id != user.id
         );
 
-        profile.followers = profile.followers.filter(
-          (x) => x.id != user.id
-        );
-
+        profile.followers = profile.followers.filter((x) => x.id != user.id);
       } else {
         Warning(res.msg);
       }
@@ -129,15 +122,14 @@
   const follow = (user) => {
     API.post("/follow", { user_id: user.id }).then((res) => {
       if (res.msg == "ok") {
-
         let smallUser = {
-            display_name:user.display_name,
-            id:user.id,
-            username:user.username,
-          };
-        $myInfoStore.followings = [...$myInfoStore.followings,smallUser];
-        profile.followers = [...profile.followers,smallUser]
-        console.log($myInfoStore.followings)
+          display_name: user.display_name,
+          id: user.id,
+          username: user.username,
+        };
+        $myInfoStore.followings = [...$myInfoStore.followings, smallUser];
+        profile.followers = [...profile.followers, smallUser];
+        console.log($myInfoStore.followings);
       } else {
         Warning(res.msg);
       }
@@ -244,8 +236,10 @@
         </div>
         <div>
           {profile?.user?.display_name}<br />
-<!-- {JSON.stringify($myInfoStore?.followers)} -->
-          {#if $myInfoStore?.followers?.map(x=>x.id).includes(profile.user.id)}
+          <!-- {JSON.stringify($myInfoStore?.followers)} -->
+          {#if $myInfoStore?.followers
+            ?.map((x) => x.id)
+            .includes(profile.user.id)}
             正在跟隨你。
           {/if}
 
@@ -369,23 +363,14 @@
   </div>
   <div class="rightColumn" bind:this={cellsSection}>
     <section class="cells">
-      {#each timeline as v, k}
-        <article class="cell" bind:this={articlecells[v.id]}>
-          <AvatarBox userId={v["user_id"]}>
-            <small>{getDateDiff(v.created_at)}</small>
-            <small class="reply_count" class:red={v.nor > 0}>{v.nor}</small>
-          </AvatarBox>
-
-          <div
-            class="post_content marked"
-            style="overflow:hidden;position:absolue;padding-top:3px;max-height:calc(100% - 40px)"
-            on:click={() => {
-              showingArticle = v;
-              refreshReplies(v.id);
-            }}>
-            {@html myMarked(v["content"])}
-          </div>
-        </article>
+      <article class="media cell"></article>
+      {#each timeline as v}
+        <Cell
+          onCellClick={() => {
+            showingArticle = v;
+            refreshReplies(v.id);
+          }}
+          cellData={v} />
       {/each}
     </section>
 
@@ -451,18 +436,6 @@
     word-break: break-all;
   }
 
-  .cell {
-    background: #eee;
-    border: 1px solid #ccc;
-    border-radius: 0.75em;
-    padding: 0.5em;
-    position: relative;
-    /* overflow: hidden; */
-    height: 150px;
-
-    flex: 0 0 500px;
-    margin: 5px;
-  }
   :global(.reply_count.red) {
     background: red;
     color: aliceblue;
@@ -484,17 +457,6 @@
     flex-wrap: wrap;
     justify-content: flex-start;
     height: fit-content;
-  }
-  @media screen and (min-width: 40em) {
-    .cell {
-      max-width: calc(50% - 10px);
-    }
-  }
-
-  @media screen and (min-width: 60em) {
-    .cell {
-      max-width: calc(25% - 10px);
-    }
   }
 
   :global(body) {

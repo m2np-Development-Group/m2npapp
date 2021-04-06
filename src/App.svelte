@@ -110,8 +110,7 @@
   :global(html,body) {
       height: 100%;
       font-size: 13px;
-      overflow: hidden;
-      background:#DDD;
+      overflow: hidden
     }
 
     :global(pre) {
