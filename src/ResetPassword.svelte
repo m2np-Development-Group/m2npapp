@@ -54,21 +54,7 @@
     </div>
   </section>
   <div style='padding:1em'>
-  <Field label="Email" type:is-danger={false} message={invalidEmailMessage}>
-    <Input
-    on:keypress={onKp}
-    type="email"
-    placeholder="E-Mail"
-    required="required"
-    bind:this={emailInput}
-    bind:value={email} />
-    
-  </Field>
-  
-  <Field label="Password" message={invalidPasswordMessage}> 
-    <Input on:keypress={onKp} placeholder="Password" type="password" bind:value={password} passwordReveal={true} />
-  </Field>
-  <button on:click={reset}>重設</button>
+<a href='/reset-pw'>按我進入重設用的臨時頁面</a>
   <hr />
   <Link to="/register">未有賬戶？按此登記。</Link><br />
   <Link to="/login">突然記起？按此登入。</Link><br />

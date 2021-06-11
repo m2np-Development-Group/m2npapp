@@ -1,5 +1,7 @@
 # M2NP
-
+```
+npm install node-sass sass -g
+```
 Scripts:
 
 ```
