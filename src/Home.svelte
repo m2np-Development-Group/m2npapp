@@ -351,7 +351,7 @@
     
 
     <Popover
-      overlayColor="rgba(0,0,0,0.1)"
+      overlayColor="rgba(0,0,0,0)"
       arrow={true}
       placement="bottom-start"
       on:open={() => {
@@ -364,10 +364,11 @@
         class="fa fa-bell"
         slot="target"
         aria-hidden="true"
-        use:tooltip={{
-          text: "通知",
-          style: "left: 0; bottom: -40px;",
-        }} />
+ />
+ <!-- use:tooltip={{
+  text: "通知",
+  style: "left: 0; bottom: -40px;",
+}} -->
       <div slot="content">
         <div class="popover_content">
           {#if notifications.length > 0}
@@ -538,9 +539,11 @@
     <input type="text" style='width:100%;border:0;' bind:value={rightSearchTerm} on:keypress={  (e) => {
       // console.log(e.srcElement.checkValidity())
       if (e.key === "Enter"){
-        alert(rightSearchTerm)
-      }
-    }} />
+        //API do search
+        API.get("/search", { my_timeline : "test", query:rightSearchTerm, time_from:1,time_to:1713912948 }).then((res) => {
+          timeline=res
+      });
+    }}} />
   </div>
   <div class="rightColumn" bind:this={cellsSection}>
     <section class="cells">
