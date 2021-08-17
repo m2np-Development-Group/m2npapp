@@ -52,9 +52,9 @@
 </script>
 
 <div bind:this={component} style="width:0px" />
-<div class="back-to-top" class:hidden>
+<!-- <div class="back-to-top" class:hidden>
   <Button on:click={goTop} rounded iconRight="arrow-up">Top</Button>
-</div>
+</div> -->
 
 <style>
   .back-to-top {

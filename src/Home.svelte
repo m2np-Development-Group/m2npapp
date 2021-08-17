@@ -143,7 +143,131 @@
   let showSearch = false;
 
   let isUserMenuShowing = false;
+  let rightSearchTerm="";
+  //css vars
 </script>
+
+<style>
+  :root {
+    --frame-height: calc(100vh - 43px);
+  }
+  .userMenu a{color:gray}
+  .left_nav {
+    display: flex;
+    padding: 0.3em;
+    height: 50px;
+    margin-bottom: 1.2em;
+    position: fixed;
+    top: 0px;
+    z-index: 3;
+    left: 2px;
+    font-size: 18px;
+  }
+  .left_nav i{
+    cursor:pointer;
+  }
+  .prepend-buttons{
+    z-index:3;
+    position:fixed;bottom:9px;
+    right:calc(42vw + 23px);
+  }
+  .left_bar {
+    border: 1px solid #ccc;
+    position: fixed;
+    width: 16vw;
+    height: var(--frame-height);
+    overflow-y: auto;
+    background-color: #FEFEFE;
+    left: 3px;
+    bottom: 3px;
+    z-index: 0;
+    padding: 0.3em;
+  }
+  .postbox {
+    border: 1px solid #ccc;
+    position: fixed;
+    width: calc(42vw - 10px);
+    right: 3px;
+    bottom: 3px;
+    z-index: 1;
+    padding: 0.3em;
+  }
+  .rightSearch {
+    padding:0 .4em;
+    height: 30px;
+    border: 1px solid #ccc;
+    top: 6px;
+    left: calc(16vw + 10px);
+    position: fixed;
+    width: calc(42vw - 10px);
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  .rightColumn {
+    height: var(--frame-height);
+    border: 1px solid #ccc;
+    bottom: 3px;
+    left: calc(16vw + 10px);
+    position: fixed;
+    width: calc(42vw - 10px);
+    overflow-y: scroll;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .marked {
+    word-break: break-all;
+  }
+
+  :global(.reply_count.red) {
+    background: red;
+    color: aliceblue;
+    margin-top: 2px;
+    padding: 0 3px;
+  }
+
+  :global(nav i) {
+    color: dimgray;
+    display: inline-block;
+    padding: 5px 5px;
+    height: 20px;
+    vertical-align: top;
+  }
+
+  .cells {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    height: fit-content;
+  }
+
+  :global(body) {
+    overflow: hidden;
+  }
+  :global(.marked th) {
+    border-bottom: 1px solid;
+    text-align: left;
+    font-weight: 700;
+  }
+  .post_content {
+    padding-left: 0.3em;
+    font-size: 13px;
+  }
+  :global(.post_content table) {
+    border-spacing: 0;
+  }
+  :global(.post_content table td) {
+    padding-right: 1em;
+    /* border-bottom: #fbbc2a67 1px solid; */
+  }
+  .dropdown-item{
+    cursor: pointer;
+  }
+</style>
 
 <main>
   <div class="modal" class:is-active={coverMessage != ""}>
@@ -388,7 +512,7 @@
         }} />
     </div>
   </div>
-  <div style="position:fixed;right:1em;top:0.5em">
+  <div class='prepend-buttons'>
     <Button
       size="is-small"
       on:click={() => {
@@ -409,6 +533,14 @@
       }}
       rounded
       iconRight="arrow-down">Append</Button>
+  </div>
+  <div class="rightSearch">
+    <input type="text" style='width:100%;border:0;' bind:value={rightSearchTerm} on:keypress={  (e) => {
+      // console.log(e.srcElement.checkValidity())
+      if (e.key === "Enter"){
+        alert(rightSearchTerm)
+      }
+    }} />
   </div>
   <div class="rightColumn" bind:this={cellsSection}>
     <section class="cells">
@@ -432,108 +564,3 @@
       }} />
   </div>
 </main>
-
-<style>
-  .userMenu a{color:gray}
-  .left_nav {
-    display: flex;
-    padding: 0.3em;
-    height: 50px;
-    margin-bottom: 1.2em;
-    position: fixed;
-    top: 0px;
-    z-index: 3;
-    left: 2px;
-    font-size: 18px;
-  }
-  .left_nav i{
-    cursor:pointer;
-  }
-
-  .left_bar {
-    border: 1px solid #ccc;
-    position: fixed;
-    width: 16vw;
-    height: calc(100vh - 43px);
-    overflow-y: auto;
-    background-color: #FEFEFE;
-    left: 3px;
-    bottom: 3px;
-    z-index: 0;
-    padding: 0.3em;
-  }
-  .postbox {
-    border: 1px solid #ccc;
-    position: fixed;
-    width: calc(42vw - 10px);
-    background-color: #eee;
-    border-radius: 0.75em;
-    right: 3px;
-    bottom: 3px;
-    z-index: 1;
-    padding: 0.3em;
-    max-height: calc(100vh - 50px);
-  }
-
-  .rightColumn {
-    top: 35px;
-    bottom: 10px;
-    left: calc(16vw + 10px);
-    position: fixed;
-    width: calc(42vw - 10px);
-    overflow-y: scroll;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-  }
-
-  .marked {
-    word-break: break-all;
-  }
-
-  :global(.reply_count.red) {
-    background: red;
-    color: aliceblue;
-    margin-top: 2px;
-    padding: 0 3px;
-  }
-
-  :global(nav i) {
-    color: dimgray;
-    display: inline-block;
-    padding: 5px 5px;
-    height: 20px;
-    vertical-align: top;
-  }
-
-  .cells {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    height: fit-content;
-  }
-
-  :global(body) {
-    overflow: hidden;
-  }
-  :global(.marked th) {
-    border-bottom: 1px solid;
-    text-align: left;
-    font-weight: 700;
-  }
-  .post_content {
-    padding-left: 0.3em;
-    font-size: 13px;
-  }
-  :global(.post_content table) {
-    border-spacing: 0;
-  }
-  :global(.post_content table td) {
-    padding-right: 1em;
-    /* border-bottom: #fbbc2a67 1px solid; */
-  }
-  .dropdown-item{
-    cursor: pointer;
-  }
-</style>
