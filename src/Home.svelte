@@ -32,6 +32,7 @@
 
   export let username = null;
   $: if (username) {
+    timeline=[];
     fetchData();
     fetchProfile();
   }
@@ -140,6 +141,8 @@
   let cellsSection;
   let coverMessage = "";
   let showSearch = false;
+
+  let isUserMenuShowing = false;
 </script>
 
 <main>
@@ -170,15 +173,58 @@
     </div>
   </Modal>
   <nav class="left_nav">
+
+    <div class="dropdown userMenu" class:is-active={isUserMenuShowing} on:click={()=>{isUserMenuShowing=!isUserMenuShowing}}>
+      <div class="dropdown-trigger">
+        <button class="" aria-haspopup="true" aria-controls="dropdown-menu2">
+          <i class="fas fa-user"></i>
+          <span>Me</span>
+          <span class="icon is-small">
+            <i class="fas fa-angle-down" aria-hidden="true"></i>
+          </span>
+        </button>
+      </div>
+      <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+        <div class="dropdown-content">
+          <div class="dropdown-item">
+              
+
+              <div style="display:flex">
+                <div style="padding:2px">
+                  {#if $myInfoStore?.user?.avatar}
+                    <img width="40" src={$myInfoStore?.user?.avatar} alt="avatar" />
+                  {/if}
+                </div>
+                <div>
+                  {$myInfoStore?.user?.display_name}<br />test
+                </div>
+              </div>
+
+          </div>
+          <hr class="dropdown-divider">
+          <div class="dropdown-item"           
+          on:click={() => {
+            showSettings = !showSettings;
+          }}>
+            <i
+            class="fa fa-cog"
+            aria-hidden="true"
+
+            alt='設定'
+            />
+            設定
+          </div>
+          <hr class="dropdown-divider">
+          <div class="dropdown-item">
+          <a href="/logout" use:link><i class="fa fa-sign-out-alt" aria-hidden="true" /> Sign Out</a>
+        </div>
+        </div>
+      </div>
+    </div>
+
+
     <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
-    <a href="/logout" use:link
-      ><i class="fa fa-sign-out-alt" aria-hidden="true" /></a>
-    <i
-      class="fa fa-cog"
-      aria-hidden="true"
-      on:click={() => {
-        showSettings = !showSettings;
-      }} />
+    
 
     <Popover
       overlayColor="rgba(0,0,0,0.1)"
@@ -195,7 +241,7 @@
         slot="target"
         aria-hidden="true"
         use:tooltip={{
-          text: "Notifications",
+          text: "通知",
           style: "left: 0; bottom: -40px;",
         }} />
       <div slot="content">
@@ -216,7 +262,8 @@
         aria-hidden="true"
         on:click={() => {
           showSearch = !showSearch;
-        }} />
+        }}
+        />
       <!-- <Hoverable let:hovering={isSearchBoxShowing}>
         {#if isSearchBoxShowing || userSearchText != ""}
           <UserSearchBox bind:value={userSearchText} />
@@ -263,18 +310,15 @@
         </div>
       </div>
 
-      <div class="marked">
-        {@html myMarked(profile?.user?.description)}
-      </div>
-      <br />
       正在跟蹤:<br />
       {#if profile.followings.length > 0}
         {#each profile.followings as v}
           <Username userId={v.id} /><br />
-        {/each} <br />
+        {/each} 
       {:else}
         沒有
       {/if}
+      <br />
       跟隨者: <br />
       {#if profile.followers.length > 0}
         {#each profile.followers as v}
@@ -283,10 +327,15 @@
       {:else}
         沒有
       {/if}
+
+      <div class="marked">
+        {@html myMarked(profile?.user?.description)}
+      </div>
+
       <br />
       <br />
       最後登入: <strong>{getDateDiff(profile.user?.last_login)}</strong><br />
-      噗數: <strong>{profile.user?.article_count}</strong><br />
+      Po文: <strong>{profile.user?.article_count}</strong>則<br />
     {/if}
   </div>
 
@@ -329,7 +378,7 @@
             return API.post("/post_post", { content: txt });
           }
         }}
-        placeholder={exists(showingArticle.id) ? "回覆噗" : "發新噗"}
+        placeholder={exists(showingArticle.id) ? "回覆Po" : "發新Po"}
         finishHandler={(content) => {
           if (exists(showingArticle.id)) {
             refreshReplies(showingArticle.id);
@@ -366,6 +415,7 @@
       <article class="media cell"></article>
       {#each timeline as v}
         <Cell
+          isRead={Math.random()>0.5}
           onCellClick={() => {
             showingArticle = v;
             refreshReplies(v.id);
@@ -384,6 +434,7 @@
 </main>
 
 <style>
+  .userMenu a{color:gray}
   .left_nav {
     display: flex;
     padding: 0.3em;
@@ -395,25 +446,29 @@
     left: 2px;
     font-size: 18px;
   }
+  .left_nav i{
+    cursor:pointer;
+  }
 
   .left_bar {
     border: 1px solid #ccc;
     position: fixed;
-    width: 310px;
-    background-color: #eee;
-    border-radius: 0.75em;
+    width: 16vw;
+    height: calc(100vh - 43px);
+    overflow-y: auto;
+    background-color: #FEFEFE;
     left: 3px;
-    top: 40px;
+    bottom: 3px;
     z-index: 0;
     padding: 0.3em;
   }
   .postbox {
     border: 1px solid #ccc;
     position: fixed;
-    width: 310px;
+    width: calc(42vw - 10px);
     background-color: #eee;
     border-radius: 0.75em;
-    left: 3px;
+    right: 3px;
     bottom: 3px;
     z-index: 1;
     padding: 0.3em;
@@ -423,9 +478,9 @@
   .rightColumn {
     top: 35px;
     bottom: 10px;
-    left: 320px;
+    left: calc(16vw + 10px);
     position: fixed;
-    width: calc(100vw - 326px);
+    width: calc(42vw - 10px);
     overflow-y: scroll;
     display: flex;
     flex-wrap: wrap;
@@ -477,5 +532,8 @@
   :global(.post_content table td) {
     padding-right: 1em;
     /* border-bottom: #fbbc2a67 1px solid; */
+  }
+  .dropdown-item{
+    cursor: pointer;
   }
 </style>

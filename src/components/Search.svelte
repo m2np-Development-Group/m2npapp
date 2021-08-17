@@ -91,7 +91,7 @@
 <div class="block">
   {#if Array.isArray(content)}
     {#each content as v}
-      <a href={`/user/` + v.username} use:link>{v.username}</a>
+      <a href={`/user/` + v.username} use:link>{v.username}</a><br />
     {/each}
   {:else}
     {content}

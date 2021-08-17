@@ -1,6 +1,9 @@
 # M2NP
 ```
 npm install node-sass sass -g
+npm install -g typescript
+npm link typescript
+
 ```
 Scripts:
 

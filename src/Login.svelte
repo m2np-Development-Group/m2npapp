@@ -69,12 +69,12 @@ let onParticlesLoaded = (event) => {
 </h2>
 </div>
 
-<Particles
+<!-- <Particles
   id="tsparticles"
   options="{Config}"
   on:particlesLoaded="{onParticlesLoaded}"
   on:particlesInit="{onParticlesInit}"
-/>
+/> -->
 
 
 <div class='x' style='padding:1em;max-width:400px;opacity:.9'>
@@ -102,11 +102,11 @@ let onParticlesLoaded = (event) => {
 
 <div style='position:fixed;left:1em;bottom:1em; padding:.3em;border-radius:.3em'>
   <a href="/register" use:link>登記</a><br />
-  <a href="/reset-password" use:link>重設密碼</a>
+  <a href="https://m2np.com/reset-pw" target="_blank">重設密碼</a>
   </div>
 
 <style>
-  :global(.x .label){
+  /* :global(.x .label){
     color:white
   }
   * {color:white}
@@ -116,5 +116,5 @@ let onParticlesLoaded = (event) => {
     position: absolute;
     z-index: -2;
     top:0;
-  }
+  } */
 </style>
