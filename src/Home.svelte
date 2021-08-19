@@ -10,7 +10,7 @@
   import Popover from "svelte-popover";
   import Cell from "./components/Cell.svelte";
   import Username from "./components/Username.svelte";
-  import { myInfoStore, filluserStore, docClicked } from "./stores.js";
+  import { myInfoStore, filluserStore, docClicked, myUnreadIds } from "./stores.js";
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./Settings.svelte";
   import Search from "./components/Search.svelte";
@@ -54,11 +54,29 @@
       }
     });
   }
-
+function markAsRead(postId){
+  API.post("/mark_as_read",{postId:postId}).then(res=>{
+      if(res.msg!='ok'){
+        return 
+      }
+      //console.log($myUnreadIds);
+      //console.log(postId);
+      $myUnreadIds = $myUnreadIds.filter(m=>m!=postId);
+    })
+}
+  function fetchUnreadIds(){
+    API.get("/get_unread").then(res=>{
+      if(res.msg!='ok'){
+        return 
+      }
+      $myUnreadIds = res.data
+    })
+  }
   //"fresh" =new
   //"prepend" =load new
   //"append" = load old
   function fetchData(mode = "fresh") {
+    fetchUnreadIds();
     API.get(
       username == null ? "/get_inbox" : "/get_outbox",
       mode == "append"
@@ -553,10 +571,11 @@
       <article class="media cell"></article>
       {#each timeline as v}
         <Cell
-          isRead={Math.random()>0.5}
+          isRead={!$myUnreadIds.includes(v.id)}
           onCellClick={() => {
             showingArticle = v;
             refreshReplies(v.id);
+            markAsRead(v.id);
           }}
           cellData={v} />
       {/each}
