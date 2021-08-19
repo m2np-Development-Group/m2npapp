@@ -543,7 +543,10 @@
         API.get("/search", { my_timeline : "test", query:rightSearchTerm, time_from:1,time_to:1713912948 }).then((res) => {
           timeline=res
       });
-    }}} />
+    }}} 
+    autocomplete="off"
+    
+    />
   </div>
   <div class="rightColumn" bind:this={cellsSection}>
     <section class="cells">

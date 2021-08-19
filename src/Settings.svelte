@@ -27,6 +27,10 @@ import { myInfoStore, userStore } from "./stores";
     let reader = new FileReader();
     reader.readAsDataURL(image);
     reader.onload = (e) => {
+      if(e.target.result.length>3000*1000){
+        alert("file is too large")
+        return;
+      }
       avatar = e.target.result;
     };
   };
@@ -40,17 +44,18 @@ import { myInfoStore, userStore } from "./stores";
   });
 
   const submitChanges = () => {
-    console.log(displayName);
-    console.log(description);
+    isLoading=true
     API.post("/update_personal_info", {
       description: description,
       color: color,
       display_name: displayName,
+      avatar: avatar
     }).then((res) => {
       if(res.msg=="ok"){
+        const data=res.update;
         const id = $myInfoStore.user.id;
         // console.log($myInfoStore.user.id)
-        // $userStore.avatar[id] = v.avatar;
+        
         $userStore.displayname[id] = displayName;
         $userStore.color[id] = color;
 
@@ -58,11 +63,19 @@ import { myInfoStore, userStore } from "./stores";
         $myInfoStore.user.displayname=displayName;
         $myInfoStore.user.description=description;
 
-
+        if('avatar' in data){
+          $userStore.avatar[id] = data.avatar;
+          $myInfoStore.user.avatar=data.avatar;
+          avatar=data.avatar
+          
+        console.log(avatar);
+        }
+        
         Success("成功");
       }else{
         Warning(JSON.stringify(res));
       }
+      isLoading=false;
     });
   };
   let oldPassword;
@@ -91,37 +104,28 @@ import { myInfoStore, userStore } from "./stores";
       </Field>
     </Field>
     
-    <div class="columns">
-      <div class="column">
-        {#if avatar}
-        <img class="avatar" src={avatar} alt="d" />
-      {:else}
-        未有頭像
-      {/if}
-      </div>
-      <div class="column">
-        <img
-        class="upload"
-        src="https://static.thenounproject.com/png/625182-200.png"
-        alt=""
-        on:click={() => {
-          fileinput.click();
-        }} />
-      <div
-        on:click={() => {
-          fileinput.click();
-        }}>
-      </div>
-      <input
-        style="display:none"
-        type="file"
-        accept=".jpg, .jpeg, .png"
-        on:change={(e) => onFileSelected(e)}
-        bind:this={fileinput} />
-  
-      </div>
-    </div>
+    <div class='thumb' style="background-image:url('{avatar}')"
+    on:click={() => {
+      fileinput.click();
+    }}
+    >
+      {#if avatar == ""}
+      未有頭像
+    
+      
+    {/if}
 
+    <i class="fa fa-pencil-alt" style="position: absolute;
+    right: 0.5em;
+    bottom: 0.5em;"></i>
+
+    </div>
+    <input
+      style="display:none"
+      type="file"
+      accept=".jpg, .jpeg, .png"
+      on:change={(e) => onFileSelected(e)}
+      bind:this={fileinput} />
 
     <hr />
 
@@ -136,7 +140,8 @@ import { myInfoStore, userStore } from "./stores";
         placeholder="您的暱稱顏色"
         bind:selected={color}
         icon="paint-roller"
-        iconPack="fas">
+        iconPack="fas"
+        >
         <option value="1" selected={1 == color}>紅</option>
         <option value="2" selected={2 == color}>黃</option>
         <option value="3" selected={3 == color}>藍</option>
@@ -151,15 +156,12 @@ import { myInfoStore, userStore } from "./stores";
 {/if}
 
 <style>
-  .upload {
-    display: flex;
-    height: 50px;
-    width: 50px;
-    cursor: pointer;
-  }
-  .avatar {
-    display: flex;
-    height: 200px;
-    width: 200px;
-  }
+.thumb {
+    display: inline-block;
+    width: 250px;
+    height: 250px;
+    background-position: center center;
+    background-size: cover;
+    cursor:pointer;border-radius: 2px;border:1px solid #CCC;display:inline-block;position:relative
+}
 </style>

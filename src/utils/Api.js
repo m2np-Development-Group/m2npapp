@@ -19,7 +19,6 @@ const apiRequest = (method, url, params, data) => {
     method,
     url,
     data: data,
-    params: {'HTTP_CONTENT_LANGUAGE': "ABB"},
     headers: headers,
     params: params,
   })
