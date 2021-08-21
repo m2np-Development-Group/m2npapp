@@ -106,7 +106,7 @@ inlineAttachment.defaults = {
   /**
    * URL where the file will be send
    */
-  uploadUrl: "https://realblog.zkiz.com/upload_attachment.php",
+  uploadUrl: "https://m2np.com/api/upload_image",
 
   /**
    * Which method will be used to send the file to the upload URL
@@ -251,7 +251,7 @@ inlineAttachment.prototype.uploadFile = function (file) {
       }
     }
   }
-
+  xhr.setRequestHeader("m2np-token", localStorage.getItem("M2NP_TOKEN"));
   xhr.onload = function () {
     // If HTTP status is OK or Created
     if (xhr.status === 200 || xhr.status === 201) {

@@ -150,9 +150,6 @@
   textarea {
     width: 100%;
   }
-  :global(.popover) {
-    display: inline;
-  }
   .toolbar {
     padding-top: 1px;
   }

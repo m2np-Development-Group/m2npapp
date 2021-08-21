@@ -76,7 +76,23 @@ export const getDateDiff = (dateTimeStamp) => {
 
 
 const renderer = new marked.Renderer();
-renderer.link = (href, title, text) => `<a target="_blank" href="${href}">${text}</a>`;
+
+function matchYoutubeUrl(url) {
+    var p = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+    if(url.match(p)){
+        return url.match(p)[1];
+    }
+    return false;
+}
+
+renderer.link = (href, title, text) => {
+	const ytid = matchYoutubeUrl(href);
+	if(ytid){
+		return `<a target="_blank" title="${title}" href="${href}">YT: ${ytid}</a>`
+	}else{
+		return `<a target="_blank" title="${title}" href="${href}">${text}</a>`
+	}	
+};
 // renderer.blockquote = (text) => text;
 const tokenizer = new marked.Tokenizer();
 tokenizer.blockquote = ()=>{};

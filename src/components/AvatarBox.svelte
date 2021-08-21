@@ -1,5 +1,4 @@
 <script>
-  import Popover from "svelte-popover";
   import API from "../utils/Api";
   import Username from "./Username.svelte";
   import { userStore } from "../stores.js";
@@ -31,6 +30,9 @@
   .names {
     padding-left: 0.5em;
     line-height: 1em;
+  }
+  .avatar_box{
+    padding-bottom: 6px;
   }
   .avatar_box * {
     vertical-align: middle;

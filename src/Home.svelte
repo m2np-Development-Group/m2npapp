@@ -7,15 +7,14 @@
   import API from "./utils/Api";
   import InfiniteScroll from "./components/InfiniteScroll.svelte";
   // import { parse } from "QS";
-  import Popover from "svelte-popover";
   import Cell from "./components/Cell.svelte";
   import Username from "./components/Username.svelte";
-  import { myInfoStore, filluserStore, docClicked, myUnreadIds } from "./stores.js";
+  import { myInfoStore, filluserStore, docClicked, myUnreadIds, userStore } from "./stores.js";
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./Settings.svelte";
   import Search from "./components/Search.svelte";
+  import { Tabs, Tab } from 'svelma'
 
-  import tooltip from "svelte-tooltip-action";
   import { Button, Modal, ModalCard } from "svelma";
 
   let profile = {};
@@ -26,12 +25,22 @@
   let showingArticle = {};
   let newBatch = [];
   let timeline = [];
-  let maxTS;
-  let minTS;
+  let maxTS = {"inbox":null,"outbox":null,"public":null};
+  let minTS = {"inbox":null,"outbox":null,"public":null};
   let replies;
+  let currentChannel="outbox";
+  let isProfileMyself = false;
+  $: profile?.user?.id, ()=>{isProfileMyself = (profile?.user?.id==$myInfoStore?.user?.id);}
 
   export let username = null;
   $: if (username) {
+    if(username==null){
+      columnSelected=[true,false,false]
+      currentChannel="inbox";
+    }else{
+      columnSelected=[false,true,false]
+      currentChannel="outbox";
+    }
     timeline=[];
     fetchData();
     fetchProfile();
@@ -41,7 +50,6 @@
       profile = $myInfoStore;
       return;
     }
-    console.log(username);
     API.get("/get_profile", {
       username: username,
     }).then((res) => {
@@ -51,6 +59,7 @@
         }
       } else {
         profile = res.data;
+        filluserStore(res.data.users);
       }
     });
   }
@@ -59,8 +68,6 @@ function markAsRead(postId){
       if(res.msg!='ok'){
         return 
       }
-      //console.log($myUnreadIds);
-      //console.log(postId);
       $myUnreadIds = $myUnreadIds.filter(m=>m!=postId);
     })
 }
@@ -75,19 +82,32 @@ function markAsRead(postId){
   //"fresh" =new
   //"prepend" =load new
   //"append" = load old
-  function fetchData(mode = "fresh") {
-    fetchUnreadIds();
+  function fetchData(mode = "fresh", iUsername=null) {
+    
+
+    let pUser = iUsername??username; 
+
+    //set url
+    let channel = currentChannel;
+    let url = "/get_"+channel;
+
+    //set params
+    let params={ username: pUser };
+    if(mode === "append"){
+      params.less_than_ts = minTS[channel];
+    }else if(mode === "prepend"){
+      params.more_than_ts = maxTS[channel]
+    }
+
     API.get(
-      username == null ? "/get_inbox" : "/get_outbox",
-      mode == "append"
-        ? { less_than_ts: minTS, username: username }
-        : mode == "prepend"
-        ? { more_than_ts: maxTS, username: username }
-        : { username: username }
+      url,
+      params
     ).then((res) => {
+      fetchUnreadIds();
       filluserStore(res.users);
-      if (Array.isArray(res.posts) && res.posts.length > 0) {
+      if (Array.isArray(res.posts) && (res.posts.length > 0 || mode == "fresh")) {
         newBatch = res.posts;
+        console.log(newBatch)
         timeline =
           mode == "append"
             ? [...timeline, ...newBatch]
@@ -95,9 +115,11 @@ function markAsRead(postId){
             ? [...newBatch, ...timeline]
             : newBatch;
 
-        maxTS = timeline[0].created_at;
-        minTS = timeline[timeline.length - 1].created_at;
-        if ($docClicked) {
+        maxTS[channel] = timeline[0]?.created_at;
+        minTS[channel] = timeline[timeline.length - 1]?.created_at;
+
+
+        if ($docClicked) { //sounds
           if (mode == "append") {
             coinSound.play();
           } else {
@@ -148,7 +170,6 @@ function markAsRead(postId){
         };
         $myInfoStore.followings = [...$myInfoStore.followings, smallUser];
         profile.followers = [...profile.followers, smallUser];
-        console.log($myInfoStore.followings);
       } else {
         Warning(res.msg);
       }
@@ -161,133 +182,34 @@ function markAsRead(postId){
   let showSearch = false;
 
   let isUserMenuShowing = false;
+  let isNotificationMenuShowing=false;
+
+  const hideAllPopup = ()=>{
+    isNotificationMenuShowing=false;
+    isUserMenuShowing = false;
+  }
+
   let rightSearchTerm="";
-  //css vars
+  let playerSrc="";
+  
+  
+  let columnSelected = [true,false,false]
+
+  
+  const changeToTab = (id)=>{
+    if(currentChannel==id){return false;}
+    currentChannel=id;
+    return true;
+  }
 </script>
 
-<style>
-  :root {
-    --frame-height: calc(100vh - 43px);
-  }
-  .userMenu a{color:gray}
-  .left_nav {
-    display: flex;
-    padding: 0.3em;
-    height: 50px;
-    margin-bottom: 1.2em;
-    position: fixed;
-    top: 0px;
-    z-index: 3;
-    left: 2px;
-    font-size: 18px;
-  }
-  .left_nav i{
-    cursor:pointer;
-  }
-  .prepend-buttons{
-    z-index:3;
-    position:fixed;bottom:9px;
-    right:calc(42vw + 23px);
-  }
-  .left_bar {
-    border: 1px solid #ccc;
-    position: fixed;
-    width: 16vw;
-    height: var(--frame-height);
-    overflow-y: auto;
-    background-color: #FEFEFE;
-    left: 3px;
-    bottom: 3px;
-    z-index: 0;
-    padding: 0.3em;
-  }
-  .postbox {
-    border: 1px solid #ccc;
-    position: fixed;
-    width: calc(42vw - 10px);
-    right: 3px;
-    bottom: 3px;
-    z-index: 1;
-    padding: 0.3em;
-  }
-  .rightSearch {
-    padding:0 .4em;
-    height: 30px;
-    border: 1px solid #ccc;
-    top: 6px;
-    left: calc(16vw + 10px);
-    position: fixed;
-    width: calc(42vw - 10px);
-    overflow: hidden;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-  }
-  .rightColumn {
-    height: var(--frame-height);
-    border: 1px solid #ccc;
-    bottom: 3px;
-    left: calc(16vw + 10px);
-    position: fixed;
-    width: calc(42vw - 10px);
-    overflow-y: scroll;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-  }
-
-  .marked {
-    word-break: break-all;
-  }
-
-  :global(.reply_count.red) {
-    background: red;
-    color: aliceblue;
-    margin-top: 2px;
-    padding: 0 3px;
-  }
-
-  :global(nav i) {
-    color: dimgray;
-    display: inline-block;
-    padding: 5px 5px;
-    height: 20px;
-    vertical-align: top;
-  }
-
-  .cells {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    height: fit-content;
-  }
-
-  :global(body) {
-    overflow: hidden;
-  }
-  :global(.marked th) {
-    border-bottom: 1px solid;
-    text-align: left;
-    font-weight: 700;
-  }
-  .post_content {
-    padding-left: 0.3em;
-    font-size: 13px;
-  }
-  :global(.post_content table) {
-    border-spacing: 0;
-  }
-  :global(.post_content table td) {
-    padding-right: 1em;
-    /* border-bottom: #fbbc2a67 1px solid; */
-  }
-  .dropdown-item{
-    cursor: pointer;
-  }
-</style>
 
 <main>
+
+  {#if playerSrc!=""}
+  <iframe width="560" height="315" src={playerSrc} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  {/if}
+
   <div class="modal" class:is-active={coverMessage != ""}>
     <div class="modal-background" />
     <div class="modal-card">
@@ -314,36 +236,24 @@ function markAsRead(postId){
       <Search />
     </div>
   </Modal>
-  <nav class="left_nav">
+  <nav class="small_nav left">
+    <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
+  </nav>
 
-    <div class="dropdown userMenu" class:is-active={isUserMenuShowing} on:click={()=>{isUserMenuShowing=!isUserMenuShowing}}>
-      <div class="dropdown-trigger">
-        <button class="" aria-haspopup="true" aria-controls="dropdown-menu2">
-          <i class="fas fa-user"></i>
-          <span>Me</span>
-          <span class="icon is-small">
-            <i class="fas fa-angle-down" aria-hidden="true"></i>
-          </span>
-        </button>
+  <nav class="small_nav" style='background:#EEE'>
+    
+    <div class="dropdown is-right userMenu" class:is-active={isUserMenuShowing}>
+      <div style='padding-right:1em;display: inline-block;' 
+      class="dropdown-trigger" on:click={()=>{isUserMenuShowing=!isUserMenuShowing}}>
+        <div style='cursor:pointer' aria-haspopup="true" aria-controls="dropdown-menu2">
+          {#if $myInfoStore?.user?.avatar}
+          <img src={$myInfoStore?.user?.avatar} alt="avatar" style='border-radius:3px;width:20px' />
+        {/if}
+        <span>{$myInfoStore?.user?.display_name}</span>
+        </div>
       </div>
       <div class="dropdown-menu" id="dropdown-menu2" role="menu">
         <div class="dropdown-content">
-          <div class="dropdown-item">
-              
-
-              <div style="display:flex">
-                <div style="padding:2px">
-                  {#if $myInfoStore?.user?.avatar}
-                    <img width="40" src={$myInfoStore?.user?.avatar} alt="avatar" />
-                  {/if}
-                </div>
-                <div>
-                  {$myInfoStore?.user?.display_name}<br />test
-                </div>
-              </div>
-
-          </div>
-          <hr class="dropdown-divider">
           <div class="dropdown-item"           
           on:click={() => {
             showSettings = !showSettings;
@@ -365,40 +275,31 @@ function markAsRead(postId){
     </div>
 
 
-    <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
     
-
-    <Popover
-      overlayColor="rgba(0,0,0,0)"
-      arrow={true}
-      placement="bottom-start"
+    <div class="dropdown is-right userMenu" class:is-active={isNotificationMenuShowing}>
+      <i class="fa fa-bell dropdown-trigger" aria-hidden="true"
+      on:click={()=>{isNotificationMenuShowing=!isNotificationMenuShowing}}
       on:open={() => {
         API.get("/notifications").then((res) => {
           notifications = res;
         });
       }}
-      arrowColor="#fff">
-      <i
-        class="fa fa-bell"
-        slot="target"
-        aria-hidden="true"
- />
- <!-- use:tooltip={{
-  text: "通知",
-  style: "left: 0; bottom: -40px;",
-}} -->
-      <div slot="content">
-        <div class="popover_content">
-          {#if notifications.length > 0}
+      />
+      <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+        <div class="dropdown-content">
+          <div class="dropdown-item">
+            {#if notifications.length > 0}
             {#each notifications as v}
               <a href={v.url} use:link>{v.message}</a>
             {/each}
           {:else}
             🤗沒有通知很棒棒
           {/if}
+          </div>
         </div>
       </div>
-    </Popover>
+    </div>
+
     <div>
       <i
         class="fa fa-search"
@@ -432,28 +333,27 @@ function markAsRead(postId){
             .includes(profile.user.id)}
             正在跟隨你。
           {/if}
-
-          {#if $myInfoStore?.followings
-            ?.map((x) => x.id)
-            .includes(profile.user.id)}
-            <Button
-              size="is-small"
-              iconRight="arrow-right"
-              on:click={() => {
-                unfollow(profile.user);
-              }}>Unfollow</Button>
-          {:else}
-            <Button
-              size="is-small"
-              iconLeft="arrow-right"
-              on:click={() => {
-                follow(profile.user);
-              }}>Follow</Button>
+          {#if profile.user.id!=$myInfoStore?.user?.id}
+            {#if $myInfoStore?.followings?.map((x) => x.id).includes(profile.user.id)}
+              <Button
+                size="is-small"
+                iconRight="arrow-right"
+                on:click={() => {
+                  unfollow(profile.user);
+                }}>Unfollow</Button>
+            {:else}
+              <Button
+                size="is-small"
+                iconLeft="arrow-right"
+                on:click={() => {
+                  follow(profile.user);
+                }}>Follow</Button>
+            {/if}
           {/if}
         </div>
       </div>
 
-      正在跟蹤:<br />
+      跟蹤:<br />
       {#if profile.followings.length > 0}
         {#each profile.followings as v}
           <Username userId={v.id} /><br />
@@ -462,7 +362,7 @@ function markAsRead(postId){
         沒有
       {/if}
       <br />
-      跟隨者: <br />
+      粉絲: <br />
       {#if profile.followers.length > 0}
         {#each profile.followers as v}
           <Username userId={v.id} /><br />
@@ -504,6 +404,9 @@ function markAsRead(postId){
         onDelete={() => {
           timeline = timeline.filter((v) => v.id != showingArticle.id);
           showingArticle = {};
+          if(profile.user.id == $myInfoStore.user.id){
+            profile.user.article_count--;
+          }
         }}
         article={showingArticle}
         replies={replies} />
@@ -524,9 +427,17 @@ function markAsRead(postId){
         placeholder={exists(showingArticle.id) ? "回覆Po" : "發新Po"}
         finishHandler={(content) => {
           if (exists(showingArticle.id)) {
+            //reply
             refreshReplies(showingArticle.id);
           } else {
-            fetchData("prepend");
+            //create
+            if(currentChannel!='inbox'){
+              fetchData("prepend");
+            }
+
+            if(profile.user.id == $myInfoStore.user.id){
+              profile.user.article_count++;
+            }
           }
         }} />
     </div>
@@ -554,21 +465,54 @@ function markAsRead(postId){
       iconRight="arrow-down">Append</Button>
   </div>
   <div class="rightSearch">
-    <input type="text" style='width:100%;border:0;' bind:value={rightSearchTerm} on:keypress={  (e) => {
-      // console.log(e.srcElement.checkValidity())
-      if (e.key === "Enter"){
-        //API do search
-        API.get("/search", { my_timeline : "test", query:rightSearchTerm, time_from:1,time_to:1713912948 }).then((res) => {
-          timeline=res
-      });
-    }}} 
-    autocomplete="off"
-    
-    />
+    <div class='columnSwitcher' style=''>
+      
+        {#if profile?.user?.id==$myInfoStore?.user?.id}
+        <span on:click={()=>{
+          if(changeToTab('inbox')){
+            fetchData('fresh',username);
+          }
+          }}  class:active={currentChannel=="inbox"}>
+        <i class="fas fa-inbox"></i> 進口
+      </span>
+        {/if}
+        <span on:click={()=>{
+          if(changeToTab('outbox')){
+            fetchData('fresh',username);
+          }
+        }} class:active={currentChannel=="outbox"}>
+        <i class="fas fa-newspaper"></i> 出口
+      </span>
+        <span on:click={()=>{
+          if(changeToTab('public')){
+            fetchData('fresh',username);
+          }
+        }} class:active={currentChannel=="public"}><i class="fas fa-water"></i> 海洋</span>
+    </div>
+      <div class="control has-icons-left" style="width: 200px;
+      right: 0;
+      float: right;
+      margin-top: 3px;clear:none">
+        <input class="input is-small" type="text" placeholder=""
+        
+        bind:value={rightSearchTerm} on:keypress={  (e) => {
+          if (e.key === "Enter"){
+            //API do search
+            API.get("/search", { my_timeline : "test", query:rightSearchTerm, time_from:1,time_to:1713912948 }).then((res) => {
+              timeline=res
+          });
+        }}} 
+        autocomplete="off"
+        />
+        <span class="icon is-small is-left">
+          <i class="fas fa-search"></i>
+        </span>
+      </div>
+    <div style='clear:both'></div>
   </div>
+  
   <div class="rightColumn" bind:this={cellsSection}>
     <section class="cells">
-      <article class="media cell"></article>
       {#each timeline as v}
         <Cell
           isRead={!$myUnreadIds.includes(v.id)}
@@ -589,3 +533,141 @@ function markAsRead(postId){
       }} />
   </div>
 </main>
+
+
+<style>
+  :root {
+    --frame-height: calc(100vh - 43px);
+  }
+  .columnSwitcher{
+    float: left;font-size:15px;color:gray;margin:5px 2px;
+  }
+  .columnSwitcher span {
+    color:gray;
+    cursor:pointer;
+    font-weight: normal;
+  }
+  .columnSwitcher .active {
+    color:rgb(87, 109, 233);
+  }
+  .userMenu a{
+    color:gray;
+    font-size: 15px;
+  }
+  .small_nav {
+    display: flex;
+    padding: 0.3em;
+    margin-bottom: 1.2em;
+    position: fixed;
+    top: 0px;
+    z-index: 3;
+    right: 0px;
+    font-size: 15px;
+  }
+  .small_nav.left{
+    right:unset;left:0px;top:0px;font-size:18px;
+    padding:8px 0 0 6px;
+  }
+  .small_nav i{
+    cursor:pointer;
+  }
+  .prepend-buttons{
+    z-index:3;
+    position:fixed;bottom:9px;
+    right:calc(42vw + 23px);
+  }
+  .left_bar {
+    border: 1px solid #ccc;
+    position: fixed;
+    width: 16vw;
+    height: var(--frame-height);
+    overflow-y: auto;
+    background-color: #FEFEFE;
+    left: 3px;
+    bottom: 3px;
+    z-index: 0;
+    padding: 0.3em;
+  }
+  .postbox {
+    border: 1px solid #ccc;
+    position: fixed;
+    width: calc(42vw - 10px);
+    right: 3px;
+    bottom: 3px;
+    z-index: 1;
+    padding: 0.3em;
+  }
+  .rightSearchBox{
+    border: 1px solid #ccc;
+    padding:0 .4em;
+    height: 30px;
+  }
+  .rightSearch {
+    height:32px;
+    top: 6px;
+    left: calc(16vw + 10px);
+    position: fixed;
+    width: calc(42vw - 10px);
+    overflow: hidden;
+    justify-content: flex-start;
+    z-index: 3;
+    background:white
+  }
+  .rightColumn {
+    height: var(--frame-height);
+    border: 1px solid #ccc;
+    bottom: 3px;
+    left: calc(16vw + 10px);
+    position: fixed;
+    width: calc(42vw - 10px);
+    overflow-y: scroll;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .marked {
+    word-break: break-all;
+  }
+
+  :global(.reply_count.red) {
+    background: red;
+    color: aliceblue;
+    margin-top: 2px;
+    padding: 0 3px;
+  }
+
+  :global(nav i) {
+    color: dimgray;
+    display: inline-block;
+    padding: 5px 5px;
+    height: 20px;
+    vertical-align: top;
+  }
+
+  .cells {
+    width: 100%;
+    overflow-x:hidden;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    height: fit-content;
+  }
+
+  :global(body) {
+    overflow: hidden;
+  }
+  :global(.marked th) {
+    border-bottom: 1px solid;
+    text-align: left;
+    font-weight: 700;
+  }
+
+  .dropdown-item{
+    cursor: pointer;
+  }
+  .dropdown-trigger * {
+    vertical-align: middle;
+    text-align: center;
+    color: inherit;
+  }
+</style>

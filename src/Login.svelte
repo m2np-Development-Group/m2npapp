@@ -5,8 +5,8 @@
   import { myInfoStore, filluserStore } from "./stores";
   import { onMount } from "svelte";
   import { Field, Input,Button } from "svelma"
-  import Particles from "svelte-particles";
-  import Config from "./ParticleConfig"
+  //import Particles from "svelte-particles";
+  //import Config from "./ParticleConfig"
 
   export let location;
 

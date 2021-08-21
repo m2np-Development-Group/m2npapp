@@ -82,16 +82,6 @@
   /* @import 'bulma/css/bulma.css'; */
 
 
-  :global(.popover_content) {
-    border-radius: 3px;
-    padding: 0.5em;
-    background: white;
-    width: 300px;
-    height: 200px;
-    overflow: auto;
-    font-size: 12px;
-    /* color: black; */
-  }
   :global(a) {
     text-decoration: none;
   }

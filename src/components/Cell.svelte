@@ -19,44 +19,44 @@ export let onCellClick=()=>{};
 </a> -->
 
 <article class="media cell" class:isRead={isRead}>
-    <figure class="media-left">
-      <p class="image is-32x32">
-        {#if $userStore.avatar[cellData.user_id] != null}
-        <img
-          src={$userStore.avatar[cellData.user_id]??"https://bulma.io/images/placeholders/128x128.png"}
-          class="avatars"
-          alt="avatar" />
-      {/if}
-      </p>
-    </figure>
-    <div class="media-content">
-      <div class="content" on:click={onCellClick}>
+  <figure class="media-left">
+    <p class="image is-32x32">
+      {#if $userStore.avatar[cellData.user_id] != null}
+      <img
+        src={$userStore.avatar[cellData.user_id]??"https://bulma.io/images/placeholders/128x128.png"}
+        class="avatars"
+        alt="avatar" />
+    {/if}
+    </p>
+  </figure>
+  <div class="media-content">
+    <div class="content" on:click={onCellClick}>
+      
+        <strong>{$userStore.displayname[cellData.user_id]}</strong> <small>@{$userStore.username[cellData.user_id]}</small> <small>{getDateDiff(cellData.created_at)}</small>
         
-          <strong>{$userStore.displayname[cellData.user_id]}</strong> <small>@{$userStore.username[cellData.user_id]}</small> <small>{getDateDiff(cellData.created_at)}</small>
-          
-          <div style='height:140px;overflow:hidden'>
-          <!-- {@html myMarked(cellData["content"])} -->
-          {cellData["content"]}
-        </div>
+        <div style='overflow:hidden'>
+        <!-- {@html myMarked(cellData["content"])} -->
+        {cellData["content"].split('\n')[0]}
       </div>
-
     </div>
-    <!-- <div class="media-right">
-      <button class="delete"></button>
-    </div> -->
-  </article>
+
+  </div>
+  <!-- <div class="media-right">
+    <button class="delete"></button>
+  </div> -->
+</article>
 
 <style>
   .media-content{
-    margin-top:-7px;
+    margin-top:-3px;
+    overflow:hidden;
   }
   .media-left{
-    margin-left:5px;
-    margin-top:-3px;
+    margin:0px 5px;
   }
   .cell {
-    /* overflow: hidden; */
-    height: 45px;
+    padding: 6px 0;
+    height: 43px;
     line-height: 18px;
     width:100%;
     margin: 2px;

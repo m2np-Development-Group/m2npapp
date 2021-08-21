@@ -127,4 +127,16 @@
 
     overflow-y: auto;
   }
+
+  .post_content {
+    font-size: 13px;
+  }
+  :global(.post_content table) {
+    border-spacing: 0;
+  }
+  :global(.post_content table td) {
+    padding-right: 1em;
+    /* border-bottom: #fbbc2a67 1px solid; */
+  }
+
 </style>
