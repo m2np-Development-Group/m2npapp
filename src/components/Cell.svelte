@@ -4,7 +4,7 @@ import {myMarked,getDateDiff} from "../utils/util";
 import {userStore} from "../stores"
 import Username from "./Username.svelte"
 export let cellData;
-export let isRead;
+export let isUnread;
 export let onCellClick=()=>{};
 </script>
 
@@ -18,7 +18,8 @@ export let onCellClick=()=>{};
   <span class="icon is-small"><i class="fas fa-heart"></i></span>
 </a> -->
 
-<article class="media cell" class:isRead={isRead}>
+<article class="media cell" class:isUnread={isUnread}>
+  <div style='' class='nor'>{cellData.nor}</div>
   <figure class="media-left">
     <p class="image is-32x32">
       {#if $userStore.avatar[cellData.user_id] != null}
@@ -61,9 +62,16 @@ export let onCellClick=()=>{};
     width:100%;
     margin: 2px;
     overflow: hidden;
+    position: relative;
   }  
-  .isRead{
-    opacity:0.5;
+  .nor{
+    position:absolute;right:.7em;top:3px;
+    padding:2px 4px;
   }
+  .isUnread .nor{
+    background:red;color:white;
+    
+  }
+  
 
 </style>

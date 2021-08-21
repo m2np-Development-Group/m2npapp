@@ -14,7 +14,7 @@
   import ResetPassword from "./ResetPassword.svelte";
   import HashTag from "./HashTag.svelte";
 
-  import { docClicked } from "./stores";
+  import { docClicked,myInfoStore,wallpaper } from "./stores";
   import Notifications from "svelte-notifications";
 
   import { currentPath } from "./utils/util";
@@ -45,10 +45,13 @@
   //   }
   //   typeSound.play();
   // });
+
+  //$wallpaper='https://wallpapercave.com/wp/wp5005408.jpg';
 </script>
 
 <!-- primary={false} makes route do not autofocus -->
 <Router primary={false}>
+  <div id='wallpaper' style='background-image: url({$wallpaper});'></div>
   <Notifications>
     <Route path="/" component={Login} />
     <Route path="/login" component={Login} />
@@ -61,7 +64,7 @@
     </Route>
 
     <PrivateRoute path="/home">
-      <Home />
+      <Home username={$myInfoStore.user.username} />
     </PrivateRoute>
     <PrivateRoute path="/settings">
       <Settings />
@@ -81,6 +84,16 @@
   /* @import "https://jenil.github.io/bulmaswatch/flatly/bulmaswatch.min.css"; */
   /* @import 'bulma/css/bulma.css'; */
 
+  #wallpaper {    
+    content: "";
+    background-size: cover;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    opacity: 0.6;
+  }
 
   :global(a) {
     text-decoration: none;
@@ -103,8 +116,12 @@
       overflow: hidden
     }
 
-    :global(pre) {
-      padding: 0
-    }
-
+  :global(pre) {
+    padding: 0
+  }
+  :global(.marked th) {
+    border-bottom: 1px solid;
+    text-align: left;
+    font-weight: 700;
+  }
 </style>

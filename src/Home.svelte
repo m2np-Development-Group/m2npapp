@@ -9,45 +9,73 @@
   // import { parse } from "QS";
   import Cell from "./components/Cell.svelte";
   import Username from "./components/Username.svelte";
-  import { myInfoStore, filluserStore, docClicked, myUnreadIds, userStore } from "./stores.js";
+  import {
+    myInfoStore,
+    filluserStore,
+    docClicked,
+    myUnreadIds,
+    wallpaper,
+    playerSrc
+  } from "./stores.js";
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./Settings.svelte";
   import Search from "./components/Search.svelte";
-  import { Tabs, Tab } from 'svelma'
 
-  import { Button, Modal, ModalCard } from "svelma";
+  import { Button, Modal } from "svelma";
 
-  let profile = {};
+  export let username = null;
 
   let coinSound = new Audio("/assets/coin.mp3");
   let flipCoinSound = new Audio("/assets/flipcoin.mp3");
-
   let showingArticle = {};
   let newBatch = [];
   let timeline = [];
-  let maxTS = {"inbox":null,"outbox":null,"public":null};
-  let minTS = {"inbox":null,"outbox":null,"public":null};
+  let maxTS = { inbox: null, outbox: null, public: null };
+  let minTS = { inbox: null, outbox: null, public: null };
   let replies;
-  let currentChannel="outbox";
-  let isProfileMyself = false;
-  $: profile?.user?.id, ()=>{isProfileMyself = (profile?.user?.id==$myInfoStore?.user?.id);}
+  let currentChannel = "outbox";
+  let isMyself = false;
+  let profile = {};
+  let notifications = [];
+  let isSettingsShowing = false;
+  let cellsSection;
+  let coverMessage = "";
+  let showSearch = false;
 
-  export let username = null;
-  $: if (username) {
-    if(username==null){
-      columnSelected=[true,false,false]
-      currentChannel="inbox";
-    }else{
-      columnSelected=[false,true,false]
-      currentChannel="outbox";
+  let isUserMenuShowing = false;
+  let isNotificationMenuShowing = false;
+  
+  // Get the data from the api, after the page is mounted.
+  // onMount(async () => {mount()});
+  function mount(){
+    timeline = [];
+
+    if (isMyself) {
+      columnSelected = [true, false, false];
+      currentChannel = "inbox";
+    } else {
+      columnSelected = [false, true, false];
+      currentChannel = "outbox";
     }
-    timeline=[];
-    fetchData();
     fetchProfile();
+    fetchData("fresh");
   }
+  $: if(username){
+    console.log("username changed to " + username)
+    if(username != null && username != ""){
+      isMyself = username == $myInfoStore?.user?.username;
+      console.log(isMyself)
+      mount()
+    }
+  }
+
+
+
   function fetchProfile() {
-    if (username == null) {
+    if (isMyself) {
       profile = $myInfoStore;
+      $wallpaper=profile.user.wallpaper
+      filluserStore([profile.user]);
       return;
     }
     API.get("/get_profile", {
@@ -61,53 +89,51 @@
         profile = res.data;
         filluserStore(res.data.users);
       }
+      $wallpaper=profile.user.wallpaper
     });
   }
-function markAsRead(postId){
-  API.post("/mark_as_read",{postId:postId}).then(res=>{
-      if(res.msg!='ok'){
-        return 
+  function markAsRead(postId) {
+    API.post("/mark_as_read", { postId: postId }).then((res) => {
+      if (res.msg != "ok") {
+        return;
       }
-      $myUnreadIds = $myUnreadIds.filter(m=>m!=postId);
-    })
-}
-  function fetchUnreadIds(){
-    API.get("/get_unread").then(res=>{
-      if(res.msg!='ok'){
-        return 
+      $myUnreadIds = $myUnreadIds.filter((m) => m != postId);
+    });
+  }
+  function fetchUnreadIds() {
+    API.get("/get_unread").then((res) => {
+      if (res.msg != "ok") {
+        return;
       }
-      $myUnreadIds = res.data
-    })
+      $myUnreadIds = res.data;
+    });
   }
   //"fresh" =new
   //"prepend" =load new
   //"append" = load old
-  function fetchData(mode = "fresh", iUsername=null) {
-    
-
-    let pUser = iUsername??username; 
+  function fetchData(mode = "fresh", iUsername = null) {
+    let pUser = iUsername ?? username;
 
     //set url
     let channel = currentChannel;
-    let url = "/get_"+channel;
+    let url = "/get_" + channel;
 
     //set params
-    let params={ username: pUser };
-    if(mode === "append"){
+    let params = { username: pUser };
+    if (mode === "append") {
       params.less_than_ts = minTS[channel];
-    }else if(mode === "prepend"){
-      params.more_than_ts = maxTS[channel]
+    } else if (mode === "prepend") {
+      params.more_than_ts = maxTS[channel];
     }
 
-    API.get(
-      url,
-      params
-    ).then((res) => {
+    API.get(url, params).then((res) => {
       fetchUnreadIds();
       filluserStore(res.users);
-      if (Array.isArray(res.posts) && (res.posts.length > 0 || mode == "fresh")) {
+      if (
+        Array.isArray(res.posts) &&
+        (res.posts.length > 0 || mode == "fresh")
+      ) {
         newBatch = res.posts;
-        console.log(newBatch)
         timeline =
           mode == "append"
             ? [...timeline, ...newBatch]
@@ -118,8 +144,8 @@ function markAsRead(postId){
         maxTS[channel] = timeline[0]?.created_at;
         minTS[channel] = timeline[timeline.length - 1]?.created_at;
 
-
-        if ($docClicked) { //sounds
+        if ($docClicked) {
+          //sounds
           if (mode == "append") {
             coinSound.play();
           } else {
@@ -130,23 +156,16 @@ function markAsRead(postId){
     });
   }
 
-  // Get the data from the api, after the page is mounted.
-  onMount(async () => {
-    fetchData("fresh");
-    fetchProfile();
-  });
 
-  // setInterval(function () {
-  //   var ni = timeline[8];
-  //   ni.id = ni.id + 1000;
-  //   timeline = [ni, ...timeline];
-  // }, 30000);
+
+  setInterval(function () {
+    fetchUnreadIds()
+  }, 30000);
   function refreshReplies(post_id) {
     API.get("/get_replies", { post_id: post_id }).then((res) => {
       replies = res;
     });
   }
-  let userSearchText = "";
   const unfollow = (user) => {
     API.post("/unfollow", { user_id: user.id }).then((res) => {
       if (res.msg == "ok") {
@@ -175,39 +194,40 @@ function markAsRead(postId){
       }
     });
   };
-  let notifications = [];
-  let showSettings = false;
-  let cellsSection;
-  let coverMessage = "";
-  let showSearch = false;
 
-  let isUserMenuShowing = false;
-  let isNotificationMenuShowing=false;
 
-  const hideAllPopup = ()=>{
-    isNotificationMenuShowing=false;
+  const hideAllPopup = () => {
+    isNotificationMenuShowing = false;
     isUserMenuShowing = false;
-  }
+  };
 
-  let rightSearchTerm="";
-  let playerSrc="";
-  
-  
-  let columnSelected = [true,false,false]
+  let rightSearchTerm = "";
 
-  
-  const changeToTab = (id)=>{
-    if(currentChannel==id){return false;}
-    currentChannel=id;
+  let columnSelected = [true, false, false];
+
+  const changeToTab = (id) => {
+    if (currentChannel == id) {
+      return false;
+    }
+    currentChannel = id;
     return true;
-  }
+  };
 </script>
 
-
 <main>
-
-  {#if playerSrc!=""}
-  <iframe width="560" height="315" src={playerSrc} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  {#if $playerSrc != ""}
+    <iframe
+    style="    z-index: 10;
+    right: 10px;
+    top: 42px;
+    position: fixed;"
+      width="560"
+      height="315"
+      src="https://www.youtube.com/embed/{$playerSrc}"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen />
   {/if}
 
   <div class="modal" class:is-active={coverMessage != ""}>
@@ -226,11 +246,10 @@ function markAsRead(postId){
     </div>
   </div>
 
-  <Modal bind:active={showSettings}>
-    <div style="background:white;padding:1em;border-radius:1em">
-      <Settings active={showSettings} />
-    </div>
-  </Modal>
+  <Settings bind:active={isSettingsShowing} />
+
+
+
   <Modal bind:active={showSearch}>
     <div style="background:white;padding:1em;border-radius:1em">
       <Search />
@@ -240,61 +259,70 @@ function markAsRead(postId){
     <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
   </nav>
 
-  <nav class="small_nav" style='background:#EEE'>
-    
+  <nav class="small_nav" style="background:#EEE">
     <div class="dropdown is-right userMenu" class:is-active={isUserMenuShowing}>
-      <div style='padding-right:1em;display: inline-block;' 
-      class="dropdown-trigger" on:click={()=>{isUserMenuShowing=!isUserMenuShowing}}>
-        <div style='cursor:pointer' aria-haspopup="true" aria-controls="dropdown-menu2">
+      <div
+        style="padding-right:1em;display: inline-block;"
+        class="dropdown-trigger"
+        on:click={() => {
+          isUserMenuShowing = !isUserMenuShowing;
+        }}>
+        <div
+          style="cursor:pointer"
+          aria-haspopup="true"
+          aria-controls="dropdown-menu2">
           {#if $myInfoStore?.user?.avatar}
-          <img src={$myInfoStore?.user?.avatar} alt="avatar" style='border-radius:3px;width:20px' />
-        {/if}
-        <span>{$myInfoStore?.user?.display_name}</span>
+            <img
+              src={$myInfoStore?.user?.avatar}
+              alt="avatar"
+              style="border-radius:3px;width:20px" />
+          {/if}
+          <span>{$myInfoStore?.user?.display_name}</span>
         </div>
       </div>
       <div class="dropdown-menu" id="dropdown-menu2" role="menu">
         <div class="dropdown-content">
-          <div class="dropdown-item"           
-          on:click={() => {
-            showSettings = !showSettings;
-          }}>
-            <i
-            class="fa fa-cog"
-            aria-hidden="true"
-
-            alt='設定'
-            />
+          <div
+            class="dropdown-item"
+            on:click={() => {
+              isSettingsShowing = true;
+            }}>
+            <i class="fa fa-cog" aria-hidden="true" alt="設定" />
             設定
           </div>
-          <hr class="dropdown-divider">
+          <hr class="dropdown-divider" />
           <div class="dropdown-item">
-          <a href="/logout" use:link><i class="fa fa-sign-out-alt" aria-hidden="true" /> Sign Out</a>
-        </div>
+            <a href="/logout" use:link
+              ><i class="fa fa-sign-out-alt" aria-hidden="true" /> Sign Out</a>
+          </div>
         </div>
       </div>
     </div>
 
-
-    
-    <div class="dropdown is-right userMenu" class:is-active={isNotificationMenuShowing}>
-      <i class="fa fa-bell dropdown-trigger" aria-hidden="true"
-      on:click={()=>{isNotificationMenuShowing=!isNotificationMenuShowing}}
-      on:open={() => {
-        API.get("/notifications").then((res) => {
-          notifications = res;
-        });
-      }}
-      />
+    <div
+      class="dropdown is-right userMenu"
+      class:is-active={isNotificationMenuShowing}>
+      <i
+        class="fa fa-bell dropdown-trigger"
+        aria-hidden="true"
+        on:click={() => {
+          isNotificationMenuShowing = !isNotificationMenuShowing;
+        }}
+        on:open={() => {
+          API.get("/notifications").then((res) => {
+            notifications = res;
+          });
+        }} />
       <div class="dropdown-menu" id="dropdown-menu3" role="menu">
         <div class="dropdown-content">
           <div class="dropdown-item">
             {#if notifications.length > 0}
-            {#each notifications as v}
-              <a href={v.url} use:link>{v.message}</a>
-            {/each}
-          {:else}
-            🤗沒有通知很棒棒
-          {/if}
+              {#each notifications as v}
+                <a href={v.url} use:link>{v.message}</a>
+              {/each}
+            {:else}
+              🤗沒有通知很棒棒
+            {/if}
           </div>
         </div>
       </div>
@@ -306,18 +334,10 @@ function markAsRead(postId){
         aria-hidden="true"
         on:click={() => {
           showSearch = !showSearch;
-        }}
-        />
-      <!-- <Hoverable let:hovering={isSearchBoxShowing}>
-        {#if isSearchBoxShowing || userSearchText != ""}
-          <UserSearchBox bind:value={userSearchText} />
-        {:else}
-          <i class="fa fa-search" aria-hidden="true" />
-        {/if}
-      </Hoverable> -->
+        }} />
     </div>
   </nav>
-  <div class="left_bar">
+  <div class="left-bar app-box">
     {#if profile.user}
       <div style="display:flex">
         <div style="padding:2px">
@@ -333,8 +353,10 @@ function markAsRead(postId){
             .includes(profile.user.id)}
             正在跟隨你。
           {/if}
-          {#if profile.user.id!=$myInfoStore?.user?.id}
-            {#if $myInfoStore?.followings?.map((x) => x.id).includes(profile.user.id)}
+          {#if profile.user.id != $myInfoStore?.user?.id}
+            {#if $myInfoStore?.followings
+              ?.map((x) => x.id)
+              .includes(profile.user.id)}
               <Button
                 size="is-small"
                 iconRight="arrow-right"
@@ -357,7 +379,7 @@ function markAsRead(postId){
       {#if profile.followings.length > 0}
         {#each profile.followings as v}
           <Username userId={v.id} /><br />
-        {/each} 
+        {/each}
       {:else}
         沒有
       {/if}
@@ -370,7 +392,8 @@ function markAsRead(postId){
       {:else}
         沒有
       {/if}
-
+      <br />
+      自介: <br />
       <div class="marked">
         {@html myMarked(profile?.user?.description)}
       </div>
@@ -382,7 +405,7 @@ function markAsRead(postId){
     {/if}
   </div>
 
-  <div class="postbox">
+  <div class="postbox app-box">
     {#if exists(showingArticle.id)}
       <Button
         style="position: absolute;right: .3em; z-index:4;"
@@ -404,7 +427,7 @@ function markAsRead(postId){
         onDelete={() => {
           timeline = timeline.filter((v) => v.id != showingArticle.id);
           showingArticle = {};
-          if(profile.user.id == $myInfoStore.user.id){
+          if (profile.user.id == $myInfoStore.user.id) {
             profile.user.article_count--;
           }
         }}
@@ -431,24 +454,22 @@ function markAsRead(postId){
             refreshReplies(showingArticle.id);
           } else {
             //create
-            if(currentChannel!='inbox'){
+            if (currentChannel != "inbox") {
               fetchData("prepend");
             }
 
-            if(profile.user.id == $myInfoStore.user.id){
+            if (profile.user.id == $myInfoStore.user.id) {
               profile.user.article_count++;
             }
           }
         }} />
     </div>
   </div>
-  <div class='prepend-buttons'>
+  <div class="prepend-buttons">
     <Button
       size="is-small"
       on:click={() => {
-        const element = cellsSection;
-        element.scrollTop = 0;
-
+        cellsSection.scrollTop = 0; //scroll top
         fetchData("prepend");
       }}
       rounded
@@ -456,66 +477,92 @@ function markAsRead(postId){
     <Button
       size="is-small"
       on:click={() => {
-        const element = cellsSection;
-        element.scrollTop = element.scrollHeight;
-
+        cellsSection.scrollTop = cellsSection.scrollHeight; //scroll bottom
         fetchData("append");
       }}
       rounded
       iconRight="arrow-down">Append</Button>
   </div>
-  <div class="rightSearch">
-    <div class='columnSwitcher' style=''>
-      
-        {#if profile?.user?.id==$myInfoStore?.user?.id}
-        <span on:click={()=>{
-          if(changeToTab('inbox')){
-            fetchData('fresh',username);
+  <div class="rightSearch app-box">
+    <div class="columnSwitcher" style="">
+      {#if isMyself}
+        <span
+          on:click={() => {
+            if (changeToTab("inbox")) {
+              fetchData("fresh", username);
+            }
+          }}
+          class:active={currentChannel == "inbox"}>
+          <i class="fas fa-inbox" /> 進口
+        </span>
+      {/if}
+      <span
+        on:click={() => {
+          if (changeToTab("outbox")) {
+            fetchData("fresh", username);
           }
-          }}  class:active={currentChannel=="inbox"}>
-        <i class="fas fa-inbox"></i> 進口
+        }}
+        class:active={currentChannel == "outbox"}>
+        <i class="fas fa-newspaper" /> 出口
       </span>
-        {/if}
-        <span on:click={()=>{
-          if(changeToTab('outbox')){
-            fetchData('fresh',username);
+      <span
+        on:click={() => {
+          if (changeToTab("public")) {
+            fetchData("fresh", username);
           }
-        }} class:active={currentChannel=="outbox"}>
-        <i class="fas fa-newspaper"></i> 出口
+        }}
+        class:active={currentChannel == "public"}
+        ><i class="fas fa-water" /> 海洋
       </span>
-        <span on:click={()=>{
-          if(changeToTab('public')){
-            fetchData('fresh',username);
+      {#if $myUnreadIds.length > 0 || currentChannel == "updated"}
+      <span
+        on:click={() => {
+          if (changeToTab("updated")) {
+            fetchData("fresh", username);
           }
-        }} class:active={currentChannel=="public"}><i class="fas fa-water"></i> 海洋</span>
+        }}
+        class:active={currentChannel == "updated"}
+        ><i class="fas fa-water" /> 更新
+      </span>
+      {/if}
     </div>
-      <div class="control has-icons-left" style="width: 200px;
+    <div
+      class="control has-icons-left"
+      style="width: 200px;
       right: 0;
       float: right;
       margin-top: 3px;clear:none">
-        <input class="input is-small" type="text" placeholder=""
-        
-        bind:value={rightSearchTerm} on:keypress={  (e) => {
-          if (e.key === "Enter"){
+      <input
+        class="input is-small"
+        type="text"
+        placeholder=""
+        bind:value={rightSearchTerm}
+        on:keypress={(e) => {
+          if (e.key === "Enter") {
             //API do search
-            API.get("/search", { my_timeline : "test", query:rightSearchTerm, time_from:1,time_to:1713912948 }).then((res) => {
-              timeline=res
-          });
-        }}} 
-        autocomplete="off"
-        />
-        <span class="icon is-small is-left">
-          <i class="fas fa-search"></i>
-        </span>
-      </div>
-    <div style='clear:both'></div>
+            API.get("/search", {
+              my_timeline: "test",
+              query: rightSearchTerm,
+              time_from: 1,
+              time_to: 1713912948,
+            }).then((res) => {
+              timeline = res;
+            });
+          }
+        }}
+        autocomplete="off" />
+      <span class="icon is-small is-left">
+        <i class="fas fa-search" />
+      </span>
+    </div>
+    <div style="clear:both" />
   </div>
-  
-  <div class="rightColumn" bind:this={cellsSection}>
+
+  <div class="rightColumn app-box" bind:this={cellsSection}>
     <section class="cells">
       {#each timeline as v}
         <Cell
-          isRead={!$myUnreadIds.includes(v.id)}
+          isUnread={$myUnreadIds.includes(v.id)}
           onCellClick={() => {
             showingArticle = v;
             refreshReplies(v.id);
@@ -534,24 +581,28 @@ function markAsRead(postId){
   </div>
 </main>
 
-
 <style>
   :root {
     --frame-height: calc(100vh - 43px);
+    --box-background: #fefefe;
   }
-  .columnSwitcher{
-    float: left;font-size:15px;color:gray;margin:5px 2px;
+
+  .columnSwitcher {
+    float: left;
+    font-size: 15px;
+    color: gray;
+    margin: 5px 2px;
   }
   .columnSwitcher span {
-    color:gray;
-    cursor:pointer;
+    color: gray;
+    cursor: pointer;
     font-weight: normal;
   }
   .columnSwitcher .active {
-    color:rgb(87, 109, 233);
+    color: rgb(87, 109, 233);
   }
-  .userMenu a{
-    color:gray;
+  .userMenu a {
+    color: gray;
     font-size: 15px;
   }
   .small_nav {
@@ -564,32 +615,38 @@ function markAsRead(postId){
     right: 0px;
     font-size: 15px;
   }
-  .small_nav.left{
-    right:unset;left:0px;top:0px;font-size:18px;
-    padding:8px 0 0 6px;
+  .small_nav.left {
+    right: unset;
+    left: 0px;
+    top: 0px;
+    font-size: 18px;
+    padding: 8px 0 0 6px;
   }
-  .small_nav i{
-    cursor:pointer;
+  .small_nav i {
+    cursor: pointer;
   }
-  .prepend-buttons{
-    z-index:3;
-    position:fixed;bottom:9px;
-    right:calc(42vw + 23px);
+  .prepend-buttons {
+    z-index: 3;
+    position: fixed;
+    bottom: 9px;
+    right: calc(42vw + 23px);
   }
-  .left_bar {
+  .app-box{
     border: 1px solid #ccc;
+    background-color: var(--box-background);
+    opacity:0.97;
+  }
+  .left-bar {
     position: fixed;
     width: 16vw;
     height: var(--frame-height);
     overflow-y: auto;
-    background-color: #FEFEFE;
     left: 3px;
     bottom: 3px;
     z-index: 0;
     padding: 0.3em;
   }
   .postbox {
-    border: 1px solid #ccc;
     position: fixed;
     width: calc(42vw - 10px);
     right: 3px;
@@ -597,13 +654,9 @@ function markAsRead(postId){
     z-index: 1;
     padding: 0.3em;
   }
-  .rightSearchBox{
-    border: 1px solid #ccc;
-    padding:0 .4em;
-    height: 30px;
-  }
   .rightSearch {
-    height:32px;
+    padding: 0 4px;
+    height: 32px;
     top: 6px;
     left: calc(16vw + 10px);
     position: fixed;
@@ -611,11 +664,9 @@ function markAsRead(postId){
     overflow: hidden;
     justify-content: flex-start;
     z-index: 3;
-    background:white
   }
   .rightColumn {
     height: var(--frame-height);
-    border: 1px solid #ccc;
     bottom: 3px;
     left: calc(16vw + 10px);
     position: fixed;
@@ -630,14 +681,8 @@ function markAsRead(postId){
     word-break: break-all;
   }
 
-  :global(.reply_count.red) {
-    background: red;
-    color: aliceblue;
-    margin-top: 2px;
-    padding: 0 3px;
-  }
 
-  :global(nav i) {
+  nav i {
     color: dimgray;
     display: inline-block;
     padding: 5px 5px;
@@ -647,22 +692,14 @@ function markAsRead(postId){
 
   .cells {
     width: 100%;
-    overflow-x:hidden;
+    overflow-x: hidden;
     flex-wrap: wrap;
     justify-content: flex-start;
     height: fit-content;
   }
 
-  :global(body) {
-    overflow: hidden;
-  }
-  :global(.marked th) {
-    border-bottom: 1px solid;
-    text-align: left;
-    font-weight: 700;
-  }
 
-  .dropdown-item{
+  .dropdown-item {
     cursor: pointer;
   }
   .dropdown-trigger * {

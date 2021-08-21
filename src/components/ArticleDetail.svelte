@@ -6,9 +6,12 @@
   import { Warning } from "./Notification";
   import AvatarBox from "./AvatarBox.svelte";
   import Carousel from "./Carousel.svelte";
+  import Link from "./markdown/Link.svelte";
   import { Modal } from "svelma";
   import Postbox from "./Postbox.svelte";
   import ReplyEntry from "./ReplyEntry.svelte";
+  import SvelteMarkdown from 'svelte-markdown'
+
   export let onArticleContentChanged=(content)=>{}
   export let article;
   $: if (article.id) {
@@ -39,7 +42,14 @@
 
   {#if !exists(editingArticle.id)}
     <div class="post_content marked">
-      {@html myMarked(article["content"])}
+      <SvelteMarkdown source={article["content"]} options={{
+        gfm:true,
+        breaks:true,
+      }}
+      renderers={{    
+          "link": Link
+      }}
+      />
     </div>
   {:else}
     <Postbox

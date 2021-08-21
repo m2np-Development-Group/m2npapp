@@ -6,8 +6,10 @@ import { writable } from 'svelte/store';
 export const myInfoStore = writable(null);
 // myInfoStore.subscribe(val => localStorage.setItem("myInfoStore", val));
 export const myUnreadIds = writable([]);
-
 export const userStore = writable({avatar:{},username:{},displayname:{},displaynameOfUsername:{},color:{}});
+
+export const wallpaper = writable("");
+export const playerSrc = writable("");
 
 let userStoreValue;
 

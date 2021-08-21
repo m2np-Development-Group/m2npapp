@@ -5,6 +5,8 @@
   import API from "../utils/Api";
   import { Warning } from "./Notification";
   import Postbox from "./Postbox.svelte";
+  import SvelteMarkdown from 'svelte-markdown'
+  import Link from "./markdown/Link.svelte";
 
   export let reply;
   let editingReply = {};
@@ -27,7 +29,19 @@
   {#if !exists(editingReply.id)}
     <div class="reply_box">
       <Username userId={reply.user_id} />:
-      <span class="marked">{@html myMarked(reply.content)}</span>
+      <span class="marked">
+        <SvelteMarkdown source={reply.content} options={{
+          gfm:true,
+          breaks:true,
+        }}
+        renderers={{        
+          
+            "link": Link
+          
+        }}
+        />  
+      
+      </span>
     </div>
     {#if show}
       <div class="editbox">

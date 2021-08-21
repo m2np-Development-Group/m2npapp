@@ -88,9 +88,9 @@ function matchYoutubeUrl(url) {
 renderer.link = (href, title, text) => {
 	const ytid = matchYoutubeUrl(href);
 	if(ytid){
-		return `<a target="_blank" title="${title}" href="${href}">YT: ${ytid}</a>`
+		return `<a target="_blank" href="${href}">YT: ${ytid}</a>`
 	}else{
-		return `<a target="_blank" title="${title}" href="${href}">${text}</a>`
+		return `<a target="_blank" href="${href}">${text}</a>`
 	}	
 };
 // renderer.blockquote = (text) => text;

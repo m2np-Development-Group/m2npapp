@@ -6,7 +6,7 @@
   import { Warning, Success } from "./components/Notification";
   import { myInfoStore, userStore } from "./stores";
 
-  let avatar, fileinput;
+  let avatar, fileinput, wallpaper,files;
   export let active;
   $: {
     if (active) {
@@ -15,10 +15,11 @@
       API.get("/get_profile", {}).then((res) => {
         const v = res.data.user;
         description = v.description;
-        color = v.color;
+        color = ""+v.color;
         displayName = v.display_name;
         isLoading = false;
         avatar = v.avatar;
+        wallpaper = v.wallpaper;
       });
     }
   }
@@ -36,18 +37,26 @@
   };
 
   let description = "";
-  let color = 3;
+  let color = "3";
   let displayName = "";
   let isLoading = true;
+  let loadingPercentage=null;
   onMount(() => {});
 
   const submitChanges = () => {
     isLoading = true;
-    API.post("/update_personal_info", {
-      description: description,
-      color: color,
-      display_name: displayName,
-      avatar: avatar,
+    let data = new FormData()
+    data.append('description', description)
+    data.append('color', color)
+    data.append('display_name', displayName)
+    if(files){
+      data.append('avatar', files[0])
+    }
+    data.append('wallpaper', wallpaper)
+
+    loadingPercentage=null;
+    API.formPostFile("/update_personal_info", data,(e)=>{
+      loadingPercentage = Math.round( (e.loaded * 100.0) / e.total)
     }).then((res) => {
       if (res.msg == "ok") {
         const data = res.update;
@@ -60,6 +69,7 @@
         $myInfoStore.user.color = color;
         $myInfoStore.user.displayname = displayName;
         $myInfoStore.user.description = description;
+        $myInfoStore.user.wallpaper = wallpaper;
 
         if ("avatar" in data) {
           $userStore.avatar[id] = data.avatar;
@@ -79,102 +89,132 @@
   let oldPassword;
   let newPassword;
   let isShowUpdatePassword=false;
+  $:color, console.log(color);
+
+  let colors = ['1abc9c', '2cprocessing3e50', '2980b9', '7f8c8d', 'f1c40f', 'd35400', '27ae60'];
+
 </script>
+<div class="modal" class:is-active={active}>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">設置</p>
+      <button class="delete" aria-label="close" on:click={()=>active=false}></button>
+    </header>
+    <section class="modal-card-body">
+      {#if !isLoading}
+      <div style='position:relative'>
+        <Field label="頭像">
+          <div
+            class="thumb"
+            style="background-image:url('{avatar}')"
+            on:click={() => {
+              fileinput.click();
+            }}>
+            {#if avatar == ""}未有頭像 {/if}
+    
+            <i
+              class="fa fa-pencil-alt"
+              style="position: absolute;
+                      right: 0.5em;
+                      bottom: 0.5em;
+                      text-shadow:2px 2px rgb(255 255 255 / 75%);"
+             />
+          </div>
+        </Field>
+        <input
+          style="display:none"
+          type="file"
+          accept=".jpg, .jpeg, .png"
+          on:change={(e) => onFileSelected(e)}
+          bind:this={fileinput}
+          bind:files />
+    
+        <Field grouped>
+          <Field label="名字顏色">
+            <div class="control has-icons-left">
+              <div class="select">
+                <select bind:value={color}>
+                  {#each color as v}
+                  <option value="1">紅</option>
+                  <option value="2">黃</option>
+                  <option value="3">藍</option>
+                  <option value="4">綠</option>
+                  {/each}
+                </select>
+              </div>
+              <div class="icon is-small is-left">
+                <i class="fas fa-paint-roller"></i>
+              </div>
+            </div>
+          </Field>
+          <Field label="暱稱">
+            <Input bind:value={displayName} type="text" placeholder="暱稱" />
+          </Field>
+          <Field label="背景URL">
+            <Input bind:value={wallpaper} type="text" placeholder="背景URL" />
+          </Field>
+        </Field>
+        <Field label="自我介紹">
+          <Input
+            type="textarea"
+            bind:value={description}
+            placeholder="關於您自己" />
+        </Field>
+    
 
-{#if !isLoading}
-  <div style='position:relative'>
-    <Field label="自我介紹">
-      <div
-        class="thumb"
-        style="background-image:url('{avatar}')"
-        on:click={() => {
-          fileinput.click();
-        }}>
-        {#if avatar == ""}未有頭像 {/if}
-
-        <i
-          class="fa fa-pencil-alt"
-          style="position: absolute;
-                  right: 0.5em;
-                  bottom: 0.5em;
-                  text-shadow:2px 2px rgb(255 255 255 / 75%);"
-         />
       </div>
-    </Field>
-    <input
-      style="display:none"
-      type="file"
-      accept=".jpg, .jpeg, .png"
-      on:change={(e) => onFileSelected(e)}
-      bind:this={fileinput} />
-
-    <Field grouped>
-      <Field label="名字顏色">
-        <Select
-          placeholder="您的暱稱顏色"
-          bind:selected={color}
-          icon="paint-roller"
-          iconPack="fas">
-          <option value="1" selected={1 == color}>紅</option>
-          <option value="2" selected={2 == color}>黃</option>
-          <option value="3" selected={3 == color}>藍</option>
-          <option value="4" selected={4 == color}>綠</option>
-        </Select>
+    
+      {#if isShowUpdatePassword}
+      <div style='padding-top:10px'>
+      
+      
+      <Field grouped>
+        <Field label="舊密碼">
+          <Input
+            type="password"
+            bind:value={oldPassword}
+            placeholder="舊密碼"
+            passwordReveal={true}
+            autocomplete="off" />
+        </Field>
+        <Field label="新密碼">
+          <Input
+            type="password"
+            bind:value={newPassword}
+            placeholder="新密碼"
+            passwordReveal={true}
+            autocomplete="off" />
+        </Field>
+        <Field label="　">
+          <Button type="is-primary">更改</Button>
+        </Field>
       </Field>
-      <Field label="暱稱">
-        <Input bind:value={displayName} type="text" placeholder="暱稱" />
-      </Field>
-    </Field>
-    <Field label="自我介紹">
-      <Input
-        type="textarea"
-        bind:value={description}
-        placeholder="關於您自己" />
-    </Field>
+    </div>
+    {/if}
+    
+    {:else}
+      <div class="is-loading" style="width:100%"> 
+        <i class="fas fa-spinner fa-pulse" /> Processing... {loadingPercentage!=null?loadingPercentage+"%":""}<br />
+        
+      </div>
+    {/if}
+    </section>
+    <footer class="modal-card-foot">
+      {#if !isLoading}
+      <button on:click={submitChanges} class="button is-success" >更新</button>
+      <button on:click={()=>active=false} class="button" >Cancel</button>
 
-    <Field grouped>
-      <Field>
-    <Button on:click={submitChanges} type="is-primary">更新</Button>
-  </Field>
-  <Field style="">
-    <button style="border: 0;
-    position: absolute;
-    right: 10px;border:0" class="button" on:click={()=>{
-      isShowUpdatePassword = !isShowUpdatePassword;
-    }}>更改密碼</button>
-    </Field>
-  </Field>
+      <button style="border: 0;
+      position: absolute;
+      right: 20px;border:0;background:none" class="button" on:click={()=>{
+        isShowUpdatePassword = !isShowUpdatePassword;
+      }}>更改密碼</button>
+      {/if}
+    </footer>
   </div>
-
-  {#if isShowUpdatePassword}
-  <div>
-  <Field grouped>
-    <Field label="舊密碼">
-      <Input
-        type="password"
-        bind:value={oldPassword}
-        placeholder="舊密碼"
-        passwordReveal={true}
-        autocomplete="off" />
-    </Field>
-    <Field label="新密碼">
-      <Input
-        type="password"
-        bind:value={newPassword}
-        placeholder="新密碼"
-        passwordReveal={true}
-        autocomplete="off" />
-    </Field>
-    <Field label="　">
-      <Button type="is-primary">更改</Button>
-    </Field>
-  </Field>
 </div>
-{/if}
 
-{:else}
-  <div class="is-loading" style="width:100%">Loading</div>
-{/if}
 
 <style>
   .thumb {
