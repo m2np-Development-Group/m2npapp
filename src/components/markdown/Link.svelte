@@ -11,15 +11,15 @@
     if(url.match(p)){
         return url.match(p)[1];
     }
-    return false;
+    return "";
   }
   let ytid = matchYoutubeUrl(href);
 
 </script>
-{#if ytid}
+{#if ytid!=""}
 <a on:click={()=>{
-  $playerSrc=ytid
+  $playerSrc="https://www.youtube.com/embed/"+ytid
 }} {title}>YT: {ytid}</a>
 {:else}
-<a {href} {title}><slot></slot></a>
+<a {href} {title} target="_blank"><slot></slot></a>
 {/if}

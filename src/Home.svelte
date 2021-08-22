@@ -161,6 +161,7 @@
     fetchUnreadIds()
   }, 30000);
   function refreshReplies(post_id) {
+    replies=undefined;
     API.get("/get_replies", { post_id: post_id }).then((res) => {
       replies = res;
     });
@@ -642,7 +643,7 @@
   }
   .postbox {
     position: fixed;
-    width: calc(42vw - 10px);
+    width: calc(49vw - 9px);
     right: 3px;
     bottom: 3px;
     z-index: 1;
@@ -664,7 +665,7 @@
     bottom: 3px;
     left: calc(16vw + 10px);
     position: fixed;
-    width: calc(42vw - 10px);
+    width: calc(35vw - 9px);
     overflow-y: scroll;
     display: flex;
     flex-wrap: wrap;
