@@ -6,7 +6,7 @@
   import { Warning } from "./Notification";
   import Postbox from "./Postbox.svelte";
   import SvelteMarkdown from 'svelte-markdown'
-  import Link from "./markdown/Link.svelte";
+  import Markdown from "./Markdown.svelte";
 
   export let reply;
   let editingReply = {};
@@ -30,17 +30,7 @@
     <div class="reply_box">
       <Username userId={reply.user_id} />:
       <span class="marked">
-        <SvelteMarkdown source={reply.content} options={{
-          gfm:true,
-          breaks:true,
-        }}
-        renderers={{        
-          
-            "link": Link
-          
-        }}
-        />  
-      
+        <Markdown content={reply.content} />
       </span>
     </div>
     {#if show}

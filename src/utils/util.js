@@ -1,6 +1,7 @@
 import { writable } from "svelte/store"
 import marked from "marked";
 import {userStore} from "../stores.js"
+import Link from "../components/markdown/Link.svelte";
 
 let displaynames;
 const unsubscribe = userStore.subscribe(value => {
@@ -85,14 +86,7 @@ function matchYoutubeUrl(url) {
     return false;
 }
 
-renderer.link = (href, title, text) => {
-	const ytid = matchYoutubeUrl(href);
-	if(ytid){
-		return `<a target="_blank" href="${href}">YT: ${ytid}</a>`
-	}else{
-		return `<a target="_blank" href="${href}">${text}</a>`
-	}	
-};
+renderer.link = (href, title, text) => Link;
 // renderer.blockquote = (text) => text;
 const tokenizer = new marked.Tokenizer();
 tokenizer.blockquote = ()=>{};

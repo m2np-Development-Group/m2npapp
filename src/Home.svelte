@@ -1,5 +1,6 @@
 <script>
   import { onMount, getContext } from "svelte";
+  import Markdown from "./components/Markdown.svelte"
   import { link } from "svelte-navigator";
   import Postbox from "./components/Postbox.svelte";
   import { exists, getDateDiff, myMarked } from "./utils/util";
@@ -30,8 +31,8 @@
   let showingArticle = {};
   let newBatch = [];
   let timeline = [];
-  let maxTS = { inbox: null, outbox: null, public: null };
-  let minTS = { inbox: null, outbox: null, public: null };
+  let maxTS = { inbox: null, outbox: null, public: null, search: null };
+  let minTS = { inbox: null, outbox: null, public: null, search: null };
   let replies;
   let currentChannel = "outbox";
   let isMyself = false;
@@ -61,14 +62,11 @@
     fetchData("fresh");
   }
   $: if(username){
-    console.log("username changed to " + username)
     if(username != null && username != ""){
       isMyself = username == $myInfoStore?.user?.username;
-      console.log(isMyself)
       mount()
     }
   }
-
 
 
   function fetchProfile() {
@@ -111,15 +109,16 @@
   //"fresh" =new
   //"prepend" =load new
   //"append" = load old
-  function fetchData(mode = "fresh", iUsername = null) {
-    let pUser = iUsername ?? username;
+  function fetchData(mode = "fresh") {
+    let pUser = username;
 
     //set url
     let channel = currentChannel;
     let url = "/get_" + channel;
 
     //set params
-    let params = { username: pUser };
+    rightSearchTerm = rightSearchTerm.trim()
+    let params = { username: pUser, filter: rightSearchTerm==""?null:rightSearchTerm };
     if (mode === "append") {
       params.less_than_ts = minTS[channel];
     } else if (mode === "prepend") {
@@ -210,6 +209,8 @@
       return false;
     }
     currentChannel = id;
+    rightSearchTerm=""
+    fetchData("fresh");
     return true;
   };
 </script>
@@ -395,7 +396,7 @@
       <br />
       自介: <br />
       <div class="marked">
-        {@html myMarked(profile?.user?.description)}
+        <Markdown content={profile?.user?.description} />
       </div>
 
       <br />
@@ -488,9 +489,7 @@
       {#if isMyself}
         <span
           on:click={() => {
-            if (changeToTab("inbox")) {
-              fetchData("fresh", username);
-            }
+            changeToTab("inbox")
           }}
           class:active={currentChannel == "inbox"}>
           <i class="fas fa-inbox" /> 進口
@@ -498,18 +497,14 @@
       {/if}
       <span
         on:click={() => {
-          if (changeToTab("outbox")) {
-            fetchData("fresh", username);
-          }
+          changeToTab("outbox")
         }}
         class:active={currentChannel == "outbox"}>
         <i class="fas fa-newspaper" /> 出口
       </span>
       <span
         on:click={() => {
-          if (changeToTab("public")) {
-            fetchData("fresh", username);
-          }
+          changeToTab("public")
         }}
         class:active={currentChannel == "public"}
         ><i class="fas fa-water" /> 海洋
@@ -517,9 +512,7 @@
       {#if $myUnreadIds.length > 0 || currentChannel == "updated"}
       <span
         on:click={() => {
-          if (changeToTab("updated")) {
-            fetchData("fresh", username);
-          }
+          changeToTab("updated")
         }}
         class:active={currentChannel == "updated"}
         ><i class="fas fa-water" /> 更新
@@ -539,15 +532,16 @@
         bind:value={rightSearchTerm}
         on:keypress={(e) => {
           if (e.key === "Enter") {
+            fetchData("fresh")
             //API do search
-            API.get("/search", {
-              my_timeline: "test",
-              query: rightSearchTerm,
-              time_from: 1,
-              time_to: 1713912948,
-            }).then((res) => {
-              timeline = res;
-            });
+            // API.get("/search", {
+            //   my_timeline: "test",
+            //   query: rightSearchTerm,
+            //   time_from: minTS['search'],
+            //   time_to: maxTS['search'],
+            // }).then((res) => {
+            //   timeline = res;
+            // });
           }
         }}
         autocomplete="off" />
