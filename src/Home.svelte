@@ -42,7 +42,7 @@
   let cellsSection;
   let coverMessage = "";
   let showSearch = false;
-
+  let isShowFilterBox=true;
   let isUserMenuShowing = false;
   let isNotificationMenuShowing = false;
   
@@ -96,6 +96,14 @@
         return;
       }
       $myUnreadIds = $myUnreadIds.filter((m) => m != postId);
+    });
+  }
+  function markAllAsRead(){
+    API.post("/mark_all_as_read", { postId: postId }).then((res) => {
+      if (res.msg != "ok") {
+        return;
+      }
+      $myUnreadIds = [];
     });
   }
   function fetchUnreadIds() {
@@ -206,6 +214,8 @@
   let columnSelected = [true, false, false];
 
   const changeToTab = (id) => {
+    isShowFilterBox = id!='updated';
+
     if (currentChannel == id) {
       return false;
     }
@@ -516,16 +526,18 @@
           changeToTab("updated")
         }}
         class:active={currentChannel == "updated"}
-        ><i class="fas fa-water" /> 更新
+        ><i class="fas fa-comment-dots"></i> 未讀
       </span>
       {/if}
     </div>
+    {#if isShowFilterBox}
     <div
       class="control has-icons-left"
       style="width: 200px;
       right: 0;
       float: right;
       margin-top: 3px;clear:none">
+      
       <input
         class="input is-small"
         type="text"
@@ -534,15 +546,6 @@
         on:keypress={(e) => {
           if (e.key === "Enter") {
             fetchData("fresh")
-            //API do search
-            // API.get("/search", {
-            //   my_timeline: "test",
-            //   query: rightSearchTerm,
-            //   time_from: minTS['search'],
-            //   time_to: maxTS['search'],
-            // }).then((res) => {
-            //   timeline = res;
-            // });
           }
         }}
         autocomplete="off" />
@@ -550,6 +553,16 @@
         <i class="fas fa-search" />
       </span>
     </div>
+    {:else}
+    <div class="columnSwitcher" style="float:right">
+      <span
+        on:click={() => {
+          markAllAsRead();
+        }}
+        ><i class="fas fa-check"></i> 全部標記為已讀
+      </span>
+    </div>
+    {/if}
     <div style="clear:both" />
   </div>
 
@@ -624,7 +637,7 @@
     z-index: 3;
     position: fixed;
     bottom: 9px;
-    right: calc(42vw + 23px);
+    right: calc(49vw + 23px);
   }
   .app-box{
     border: 1px solid #ccc;

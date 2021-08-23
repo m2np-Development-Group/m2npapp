@@ -99,35 +99,35 @@
 </script>
 
 <div style={style}>
-  <textarea name="content" bind:this={textContent} placeholder={placeholder}
-    >{initialText}</textarea>
+  <textarea name="content" bind:this={textContent} placeholder={placeholder}>{initialText}</textarea>
 
   <div class="toolbar">
-    {#if showEmojiSelector}
-      <EmojiSelector onInsert={(id) => editor.replaceSelection(`[emo${id}]`)} />
-    {/if}
+    <div class="toolbar-left">
+      {#if showEmojiSelector}
+        <EmojiSelector onInsert={(id) => editor.replaceSelection(`[emo${id}]`)} />
+      {/if}
 
-    <label for="smiley">
-      <i
-        class="fas fa-smile"
-        on:click={() => {
-          showEmojiSelector = !showEmojiSelector;
-        }} />
-    </label>
+      <label for="smiley">
+        <i
+          class="fas fa-smile big-icon"
+          on:click={() => {
+            showEmojiSelector = !showEmojiSelector;
+          }} />
+      </label>
 
-    <label for="file-input">
-      <i class="fas fa-file-image" />
-    </label>
+      <label for="file-input">
+        <i class="fas fa-file-image big-icon" />
+      </label>
 
-    <input type="file" id="file-input" style="display:none" bind:files />
-    {#if files && files[0]}
-      <p>
-        {files[0].name}
-      </p>
-    {/if}
+      <input type="file" id="file-input" style="display:none" bind:files />
+      {#if files && files[0]}
+        <p>
+          {files[0].name}
+        </p>
+      {/if}
 
-    <span style="opacity:0.6">按 Ctrl+Enter 送出</span>
-
+      <span style="opacity:0.6">按 Ctrl+Enter 送出</span>
+    </div>
     <div class="submit_buttons">
       {#if exists(onCancel)}
         <Button size="is-small" rounded on:click={onCancel(editor.getValue())}
@@ -151,15 +151,22 @@
     width: 100%;
   }
   .toolbar {
-    padding-top: 1px;
+    padding-top: 3px;
   }
-  .toolbar > * {
+  .toolbar-left {
     display: block;
     float: left;
-    padding: 2px;
+    padding: 3px 0 0 3px;
+  }
+  .toolbar-left i {
+    padding-right:3px;
   }
   .submit_buttons {
     float: right;
     padding: 0;
+  }
+  .big-icon{
+    font-size:16px;
+    color:dimgray;
   }
 </style>

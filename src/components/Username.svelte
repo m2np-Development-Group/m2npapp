@@ -6,7 +6,7 @@
 </script>
 
 <a class='un' href={"/user/" + $userStore.username[userId]} use:link>
-  <span style={"color:" + colorMap[$userStore.color[userId]]}
+  <span style={"color: #" + colorMap[$userStore.color[userId]]}
     >{$userStore.displayname[userId]}</span>
 </a>
 

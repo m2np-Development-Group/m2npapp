@@ -3,6 +3,8 @@ import AvatarBox from "./AvatarBox.svelte";
 import {myMarked,getDateDiff} from "../utils/util";
 import {userStore} from "../stores"
 import Username from "./Username.svelte"
+
+let isUserMenuShowing=false;
 export let cellData;
 export let isUnread;
 export let onCellClick=()=>{};
@@ -21,14 +23,25 @@ export let onCellClick=()=>{};
 <article class="media cell" class:isUnread={isUnread}>
   <div style='' class='nor'>{cellData.nor}</div>
   <figure class="media-left">
-    <p class="image is-32x32">
-      {#if $userStore.avatar[cellData.user_id] != null}
-      <img
-        src={$userStore.avatar[cellData.user_id]??"https://bulma.io/images/placeholders/128x128.png"}
-        class="avatars"
-        alt="avatar" />
-    {/if}
-    </p>
+      <div class="dropdown is-up" class:is-active={isUserMenuShowing}>
+        <div class="dropdown-trigger" on:click={()=>{isUserMenuShowing=!isUserMenuShowing;}}>
+          <img
+          src={$userStore.avatar[cellData.user_id]??"https://bulma.io/images/placeholders/128x128.png"}
+          class="avatars"
+          alt="avatar"
+          width="32"
+          aria-haspopup="true" 
+          aria-controls="dropdown-menu7"
+          />
+        </div>
+        <div class="dropdown-menu" id="dropdown-menu7" role="menu">
+          <div class="dropdown-content">
+            <div class="dropdown-item">
+              <p>testing</p>
+            </div>
+          </div>
+        </div>
+      </div>
   </figure>
   <div class="media-content">
     <div class="content" on:click={onCellClick}>
@@ -51,9 +64,11 @@ export let onCellClick=()=>{};
   .media-content{
     margin-top:-3px;
     overflow:hidden;
+    cursor: pointer;
   }
   .media-left{
     margin:0px 5px;
+    cursor:crosshair
   }
   .cell {
     padding: 6px 0;

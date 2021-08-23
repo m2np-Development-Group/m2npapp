@@ -24,9 +24,8 @@
   export let url = "";
 
   onMount(async () => {
-    console.log("%cM2NP WebFrontEnd v20210403", "font-weight:bold");
+    console.log("%cM2NP WebFrontEnd v20210803", "font-weight:bold");
     unsub = globalHistory.listen(({ location, action }) => {
-      console.log(location, action);
       $currentPath = location.pathname;
 
       url = $currentPath;
@@ -45,8 +44,6 @@
   //   }
   //   typeSound.play();
   // });
-
-  //$wallpaper='https://wallpapercave.com/wp/wp5005408.jpg';
 </script>
 
 <!-- primary={false} makes route do not autofocus -->

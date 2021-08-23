@@ -1,6 +1,7 @@
 <script>
   import SvelteMarkdown from 'svelte-markdown'
   import Link from "./markdown/Link.svelte";
+  import Text from "./markdown/Text.svelte";
 
   export let content="";
 </script>
@@ -9,5 +10,5 @@
     breaks:true,
   }}
   isInline={true}
-  renderers={{"link": Link}}
+  renderers={{"link": Link, "text": Text}}
   />  

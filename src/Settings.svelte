@@ -1,7 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import { Select, Field, Input, Button } from "svelma";
-
+  import {colorMap} from "./utils/util"
   import API from "./utils/Api";
   import { Warning, Success } from "./components/Notification";
   import { myInfoStore, userStore } from "./stores";
@@ -89,9 +89,8 @@
   let oldPassword;
   let newPassword;
   let isShowUpdatePassword=false;
-  $:color, console.log(color);
 
-  let colors = ['1abc9c', '2cprocessing3e50', '2980b9', '7f8c8d', 'f1c40f', 'd35400', '27ae60'];
+  
 
 </script>
 <div class="modal" class:is-active={active}>
@@ -134,12 +133,9 @@
           <Field label="名字顏色">
             <div class="control has-icons-left">
               <div class="select">
-                <select bind:value={color}>
-                  {#each color as v}
-                  <option value="1">紅</option>
-                  <option value="2">黃</option>
-                  <option value="3">藍</option>
-                  <option value="4">綠</option>
+                <select bind:value={color} style="background-color:#{colorMap[color]}">
+                  {#each colorMap as v, i}
+                  <option value="{i}" style="background-color:#{v};font-size:1.5em"></option>
                   {/each}
                 </select>
               </div>

@@ -63,12 +63,12 @@
     background-color: white;
     border-radius: 4px;
 		width:100%;
+    border:1px dimgray solid;
   }
 
   .list-item {
 		width:30px;
 		border: 1px solid #dbdbdb;
-		margin:2px;
 		padding:2px;
   }
 

@@ -111,5 +111,5 @@ export const myMarked = (str) => {
 			'<a href="/hashtag/$1">#$1</a>'
 		);
 };
-
-export const colorMap = {1:"red",2:"yellow",3:"blue",4:"green"}
+export const colorMap = ['1abc9c', '2c3e50', '2980b9', '7f8c8d', 'f1c40f', 'd35400', '27ae60'];
+//export const colorMap = {1:"red",2:"yellow",3:"blue",4:"green"}
