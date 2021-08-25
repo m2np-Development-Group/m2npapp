@@ -11,6 +11,8 @@ export const userStore = writable({avatar:{},username:{},displayname:{},displayn
 export const wallpaper = writable("");
 export const playerSrc = writable("");
 
+export const userIdEmojiMap = writable({});
+
 let userStoreValue;
 
 const unsubscribe = userStore.subscribe(value => {

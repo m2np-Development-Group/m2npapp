@@ -268,7 +268,7 @@
     </div>
   </Modal>
   <nav class="small_nav left">
-    <a href="/" use:link><i class="fa fa-home" aria-hidden="false" /></a>
+    <a href="/" use:link><i class="fa fa-home" aria-hidden="false" style="filter: drop-shadow(2px 4px 6px white);" /></a>
   </nav>
 
   <nav class="small_nav" style="background:#EEE">

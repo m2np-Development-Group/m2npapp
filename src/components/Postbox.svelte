@@ -95,23 +95,32 @@
       }
     };
   });
-  let showEmojiSelector = false;
+  let isShowEmojiSelector = false;
+  let isShowFileUploader = false;
 </script>
 
 <div style={style}>
   <textarea name="content" bind:this={textContent} placeholder={placeholder}>{initialText}</textarea>
 
+  {#if isShowEmojiSelector}
+  <div style='margin-top:3px'>
+    <EmojiSelector onInsert={(id) => editor.replaceSelection(` \$${id} `)} />
+    </div>
+  {/if}
+  {#if isShowFileUploader}
+  <div style='margin-top:3px'>
+    FS (WIP)
+    </div>
+  {/if}
   <div class="toolbar">
     <div class="toolbar-left">
-      {#if showEmojiSelector}
-        <EmojiSelector onInsert={(id) => editor.replaceSelection(`[emo${id}]`)} />
-      {/if}
+
 
       <label for="smiley">
         <i
           class="fas fa-smile big-icon"
           on:click={() => {
-            showEmojiSelector = !showEmojiSelector;
+            isShowEmojiSelector = !isShowEmojiSelector;
           }} />
       </label>
 
