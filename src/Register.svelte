@@ -50,7 +50,9 @@
         type="username"
         placeholder="Username"
         bind:value={username}
-        on:keypress={onKp} />
+        on:keypress={onKp} 
+        autocomplete="off"
+        />
     </Field>
 
     <Field label="Email (其他人不會看到)" message={invalidEmailMessage}>
@@ -58,7 +60,9 @@
         type="email"
         placeholder="E-Mail"
         bind:value={email}
-        on:keypress={onKp} />
+        on:keypress={onKp}
+        autocomplete="off"
+        />
     </Field>
 
     <Field label="Password" message={invalidPasswordMessage}>
@@ -66,12 +70,17 @@
         type="password"
         placeholder="Password"
         bind:value={password}
-        on:keypress={onKp} />
+        on:keypress={onKp}
+        autocomplete="off"
+        />
     </Field>
     <Button type="is-primary" on:click={register}>Register</Button>
   {:else}
     註冊成功，請檢查郵箱。
   {/if}
-  <hr />
-  <Link to="/login">已有賬戶？按我登入。</Link>
+</div>
+
+<div style='position:fixed;left:1em;bottom:1em; padding:.3em;border-radius:.3em'>
+  <a href="/login" use:link>已有賬戶？按我登入。</a><br />
+  <a href="https://m2np.com/reset-pw" target="_blank">重設密碼</a>
 </div>
