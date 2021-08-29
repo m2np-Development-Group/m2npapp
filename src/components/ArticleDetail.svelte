@@ -130,7 +130,7 @@
     border-bottom: 1px solid rgba(50, 50, 50, 0.2);
   }
   .replies {
-    max-height: calc(50vh - 50px);
+    max-height: calc(100vh - 400px);
 
     overflow-y: auto;
   }

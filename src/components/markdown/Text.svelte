@@ -77,7 +77,7 @@
 </script>
 {#each parts as component}
     {#if component.hasOwnProperty('text')}
-        {component.text+" "}
+        {" "+component.text+" "}
     {:else}
         <svelte:component this={component.component} { ...component.props }>{component.slot}</svelte:component>
     {/if}

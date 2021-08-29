@@ -1,11 +1,9 @@
 <script>
-  //       <ReplyEntry userId={reply.user_id} content={reply.content}
   import Username from "./Username.svelte";
-  import { exists, myMarked } from "../utils/util";
+  import { exists} from "../utils/util";
   import API from "../utils/Api";
   import { Warning } from "./Notification";
   import Postbox from "./Postbox.svelte";
-  import SvelteMarkdown from 'svelte-markdown'
   import Markdown from "./Markdown.svelte";
 
   export let reply;
@@ -76,7 +74,7 @@
 
 <style>
   .reply_box_outer:hover {
-    background-color: #ddd;
+    background-color: #f7f7fa;
   }
   .reply_box_outer {
     position: relative;

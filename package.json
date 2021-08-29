@@ -30,6 +30,7 @@
     "svelte-heatmap": "^1.0.2",
     "svelte-images": "0.0.95",
     "svelte-infinite-scroll": "^1.5.2",
+    "svelte-lazy-image": "^0.2.0",
     "svelte-markdown": "abbychau/svelte-markdown#9cb12e9f39f85dc84602ae3431e9e9cfab6396ea",
     "svelte-navigator": "^3.1.5",
     "svelte-notifications": "^0.9.9",

@@ -3,6 +3,8 @@
   import Link from "./markdown/Link.svelte";
   import Text from "./markdown/Text.svelte";
   import Image from "./markdown/Image.svelte";
+  import Html from "./markdown/Html.svelte";
+  import CodeSpan from "./markdown/CodeSpan.svelte";
 
   export let content="";
 
@@ -11,6 +13,6 @@
     gfm:true,
     breaks:true,
   }}
-  isInline={true}
-  renderers={{"link": Link, "text": Text, "image": Image}}
+  isInline={false}
+  renderers={{"link": Link, "text": Text, "image": Image, "html": Html, "codespan":CodeSpan}}
   />  
