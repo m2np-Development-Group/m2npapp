@@ -348,7 +348,7 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
   <div class="columns is-mobile is-variable is-1" style='position:fixed; top:40px;left:3px;bottom:3px;right:3px;margin:0'>
     <div class="column is-2 is-hidden-mobile">
       <LeftBar 
-      style='background:white; overflow-y: scroll; padding:3px'
+      style='background:white; overflow-y: scroll; padding:3px;height:100%'
       bind:profile={profile} />
     </div>
     <div class="column is-4" bind:this={cellsSection} style='position:relative'>
@@ -384,10 +384,10 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
     </div>
     <div class="column">
 
-      <div class='app-box' style='padding:3px; position:relative'>
+      <div class='' style='position:relative;height:100%;'>
         {#if exists(showingArticle.id)}
           <Button
-            style="position: absolute;right: .3em; z-index:4;"
+            style="position: absolute;right: .5em; top:.5em; z-index:4;"
             size="is-small"
             on:click={() => {
               showingArticle = {};
@@ -395,6 +395,7 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
             iconRight="times"
             rounded>關閉</Button>
           <ArticleDetail
+            style="background:white; border:#ccc solid 1px; padding:3px"
             onArticleContentChanged={(content) => {
               timeline = timeline.map((v) => {
                 if (v.id == showingArticle.id) {
@@ -413,7 +414,16 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
             article={showingArticle}
             replies={replies} />
         {/if}
-        <div style="width:100%;">
+        <div style="
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        padding: 3px;
+        background: white;
+        
+        ">
           <Postbox
             onSubmit={(txt) => {
               if (exists(showingArticle.id)) {
@@ -644,4 +654,5 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
     text-align: center;
     color: inherit;
   }
+  .column{padding-top:3px;padding-bottom:3px;}
 </style>

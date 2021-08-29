@@ -13,6 +13,8 @@
   
   export let onArticleContentChanged=(content)=>{}
   export let article;
+  export let style;
+  export let classes;
   $: if (article.id) {
     if (editingArticle.id != article.id) {
       editingArticle = {};
@@ -22,6 +24,7 @@
   export let onDelete = () => {};
   let isCarViewActive = false;
   let editingArticle = {};
+
 </script>
 
 <Modal bind:active={isCarViewActive}>
@@ -30,87 +33,89 @@
   </div>
 </Modal>
 
-<article>
-  <AvatarBox userId={article["user_id"]}>
-    <small>
-      {getDateDiff(article.created_at)}
-    </small>
-    <!-- class:red={article.nor > 0} -->
-    | <small class="reply_count">{article.nor} 則回應</small>
-  </AvatarBox>
 
-  {#if !exists(editingArticle.id)}
-    <div class="post_content marked">
-      <Markdown content={article["content"]} />
-    </div>
-  {:else}
-    <Postbox
-      finishHandler={(content) => {
-        // console.log("fin"+content);
-        article.content = content;
-        editingArticle = {};
-        onArticleContentChanged(content);
-      }}
-      onCancel={(txt) => {
-        if (txt != article["content"]) {
-          alert("Work in progress");
-        } else {
+<div style={style} class={classes}>
+  <article>
+    <AvatarBox userId={article["user_id"]}>
+      <small>
+        {getDateDiff(article.created_at)}
+      </small>
+      <!-- class:red={article.nor > 0} -->
+      | <small class="reply_count">{article.nor} 則回應</small>
+    </AvatarBox>
+
+    {#if !exists(editingArticle.id)}
+      <div class="post_content marked">
+        <Markdown content={article["content"]} />
+      </div>
+    {:else}
+      <Postbox
+        finishHandler={(content) => {
+          // console.log("fin"+content);
+          article.content = content;
           editingArticle = {};
-        }
-      }}
-      onSubmit={(txt) => API.post("update_post", { id: article.id, content: txt })}
-      initialText={article["content"]} />
-  {/if}
-
-  
-  {#if $myInfoStore.user.id == article.user_id}
-    <i
-      class="fa fa-pencil-alt"
-      on:click={() => {
-        editingArticle = article;
-      }} />
-  {/if}
-  <i
-    on:click={() => {
-      isCarViewActive = !isCarViewActive;
-    }}
-    class="fa fa-train" />
-
-  {#if article.user_id == $myInfoStore.user.id}
-    <i
-      on:click={() => {
-        if (confirm("你確定要刪除嗎?" + article.id)) {
-          API.post("/delete_post", { id: article.id }).then((res) => {
-            if (res.msg == "ok") {
-              onDelete();
-            } else {
-              Warning(res.msg);
-            }
-          });
-        }
-      }}
-      class="fa fa-trash-alt" />
-  {/if}
-  {#if article.user_id != $myInfoStore.user.id}
-    <span on:click={() => Warning("work in progress")}
-      ><i class="fa fa-retweet" /></span>
-  {/if}
-  <span on:click={() => Warning("like")}><i class="fa fa-heart-o" /></span>
-</article>
-
-<div class="replies">
-  {#if replies === undefined}
-    <i class="fas fa-spinner fa-pulse" /> LOADING...
-  {:else}
-    {#each replies as reply}
-      <ReplyEntry reply={reply} />
-    {/each}
-    {#if replies.length == 0}
-      No Replies.
+          onArticleContentChanged(content);
+        }}
+        onCancel={(txt) => {
+          if (txt != article["content"]) {
+            alert("Work in progress");
+          } else {
+            editingArticle = {};
+          }
+        }}
+        onSubmit={(txt) => API.post("update_post", { id: article.id, content: txt })}
+        initialText={article["content"]} />
     {/if}
-  {/if}
-</div>
 
+    
+    {#if $myInfoStore.user.id == article.user_id}
+      <i
+        class="fa fa-pencil-alt"
+        on:click={() => {
+          editingArticle = article;
+        }} />
+    {/if}
+    <i
+      on:click={() => {
+        isCarViewActive = !isCarViewActive;
+      }}
+      class="fa fa-train" />
+
+    {#if article.user_id == $myInfoStore.user.id}
+      <i
+        on:click={() => {
+          if (confirm("你確定要刪除嗎?" + article.id)) {
+            API.post("/delete_post", { id: article.id }).then((res) => {
+              if (res.msg == "ok") {
+                onDelete();
+              } else {
+                Warning(res.msg);
+              }
+            });
+          }
+        }}
+        class="fa fa-trash-alt" />
+    {/if}
+    {#if article.user_id != $myInfoStore.user.id}
+      <span on:click={() => Warning("work in progress")}
+        ><i class="fa fa-retweet" /></span>
+    {/if}
+    <span on:click={() => Warning("like")}><i class="fa fa-heart-o" /></span>
+  </article>
+
+  <div class="replies">
+    {#if replies === undefined}
+      <i class="fas fa-spinner fa-pulse" /> LOADING...
+    {:else}
+      {#each replies as reply}
+        <ReplyEntry reply={reply} />
+      {/each}
+      {#if replies.length == 0}
+        No Replies.
+      {/if}
+    {/if}
+  </div>
+</div>
 <style>
   :global(.marked) {
     word-break: break-all;
