@@ -10,7 +10,7 @@ export const userStore = writable({avatar:{},username:{},displayname:{},displayn
 
 export const wallpaper = writable("");
 export const playerSrc = writable("");
-
+export const globalPopOver = writable({isShow:false, top:0, left:0, content:"html"});
 export const userIdEmojiMap = writable({});
 
 let userStoreValue;

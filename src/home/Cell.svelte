@@ -1,31 +1,44 @@
 <script>
-import AvatarBox from "./AvatarBox.svelte";
+import AvatarBox from "../components/AvatarBox.svelte";
 import {myMarked,getDateDiff} from "../utils/util";
-import {userStore} from "../stores"
-import Username from "./Username.svelte"
+import {userStore, globalPopOver} from "../stores"
+import Username from "../components/Username.svelte"
 
 let isUserMenuShowing=false;
 export let cellData;
 export let isUnread;
 export let onCellClick=()=>{};
+
+let imgDom;
 </script>
 
-<!-- <a class="level-item">
-  <span class="icon is-small"><i class="fas fa-reply"></i>{cellData.nor}</span>
-</a>
-<a class="level-item">
-  <span class="icon is-small"><i class="fas fa-retweet"></i></span>
-</a>
-<a class="level-item">
-  <span class="icon is-small"><i class="fas fa-heart"></i></span>
-</a> -->
+{#if isUserMenuShowing}
 
+<div>
+  <button class="button is-small">Small</button>
+
+  <p>testing1</p>
+</div>
+
+{/if}
 <article class="media cell" class:isUnread={isUnread}>
   <div style='' class='nor'>{cellData.nor}</div>
   <figure class="media-left">
-      <div class="dropdown is-up" class:is-active={isUserMenuShowing}>
-        <div class="dropdown-trigger" on:click={()=>{isUserMenuShowing=!isUserMenuShowing;}}>
+      
+        <div class="dropdown-trigger" on:click={
+          ()=>{
+            var topPos = imgDom.getBoundingClientRect().top + window.scrollY;
+            var leftPos = imgDom.getBoundingClientRect().left + window.scrollX;
+
+            $globalPopOver={
+              isShow:true, top:topPos, left:leftPos, 
+              title:$userStore.username[cellData.user_id],
+              content:$userStore.username[cellData.user_id]
+            }
+          }
+        }>
           <img
+          bind:this={imgDom}
           src={$userStore.avatar[cellData.user_id]??"https://bulma.io/images/placeholders/128x128.png"}
           class="avatars"
           alt="avatar"
@@ -34,19 +47,13 @@ export let onCellClick=()=>{};
           aria-controls="dropdown-menu7"
           />
         </div>
-        <div class="dropdown-menu" id="dropdown-menu7" role="menu">
-          <div class="dropdown-content">
-            <div class="dropdown-item">
-              <p>testing</p>
-            </div>
-          </div>
-        </div>
-      </div>
+
   </figure>
   <div class="media-content">
     <div class="content" on:click={onCellClick}>
       
-        <strong>{$userStore.displayname[cellData.user_id]}</strong> <small>@{$userStore.username[cellData.user_id]}</small> <small>{getDateDiff(cellData.created_at)}</small>
+        <strong title="@{$userStore.username[cellData.user_id]}">{$userStore.displayname[cellData.user_id]}</strong>
+        <small>{getDateDiff(cellData.created_at)}</small>
         
         <div style='overflow:hidden'>
         <!-- {@html myMarked(cellData["content"])} -->

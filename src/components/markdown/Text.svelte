@@ -4,16 +4,13 @@
     import {userIdEmojiMap} from '../../stores'
     import {BasicStickers,BasicStickersUrlPrefix} from "../../utils/const"
 
-    export let text; text;
+    export let text; 
     export let raw; raw;
 
-    if(text!=raw){
-        console.log(text)
-        console.log(raw)
-    }
-    
+   
     let parts = [];
-    if(text != ""){
+    $: if(text){
+        parts=[]
         const regexMention = new RegExp(/@([a-z\d_]+)/gi);
         const regexHash = new RegExp(/\B#([\u4e00-\u9fa5_a-zA-Z0-9]+)/g);
         const regexEmoji = new RegExp(/\B\$([\u4e00-\u9fa5_a-zA-Z0-9()-]+)/g);
@@ -66,6 +63,7 @@
                     )
                 }
             }else{
+                
                 parts.push(
                     {
                         text:e
@@ -73,7 +71,9 @@
                 )
             }
         })
+        parts = parts //trigger svelte
     }
+    
 </script>
 {#each parts as component}
     {#if component.hasOwnProperty('text')}

@@ -1,22 +1,20 @@
 <script>
-  import { onMount, getContext } from "svelte";
-  import Markdown from "./components/Markdown.svelte"
   import { link } from "svelte-navigator";
   import Postbox from "./components/Postbox.svelte";
-  import { exists, getDateDiff, myMarked } from "./utils/util";
-  import { Warning } from "./components/Notification";
+  import { exists } from "./utils/util";
   import API from "./utils/Api";
-  import InfiniteScroll from "./components/InfiniteScroll.svelte";
   // import { parse } from "QS";
-  import Cell from "./components/Cell.svelte";
-  import Username from "./components/Username.svelte";
+  import LeftBar from "./home/LeftBar.svelte"
+  import ArticleSelector from "./home/ArticleSelector.svelte"
   import {
     myInfoStore,
     filluserStore,
     docClicked,
     myUnreadIds,
     wallpaper,
-    playerSrc
+    playerSrc,
+    globalPopOver
+
   } from "./stores.js";
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./Settings.svelte";
@@ -90,14 +88,7 @@
       $wallpaper=profile.user.wallpaper
     });
   }
-  function markAsRead(postId) {
-    API.post("/mark_as_read", { postId: postId }).then((res) => {
-      if (res.msg != "ok") {
-        return;
-      }
-      $myUnreadIds = $myUnreadIds.filter((m) => m != postId);
-    });
-  }
+
   function markAllAsRead(){
     API.post("/mark_all_as_read", { postId: postId }).then((res) => {
       if (res.msg != "ok") {
@@ -174,34 +165,14 @@
       replies = res;
     });
   }
-  const unfollow = (user) => {
-    API.post("/unfollow", { user_id: user.id }).then((res) => {
-      if (res.msg == "ok") {
-        $myInfoStore.followings = $myInfoStore.followings.filter(
-          (x) => x.id != user.id
-        );
-
-        profile.followers = profile.followers.filter((x) => x.id != user.id);
-      } else {
-        Warning(res.msg);
-      }
-    });
-  };
-  const follow = (user) => {
-    API.post("/follow", { user_id: user.id }).then((res) => {
-      if (res.msg == "ok") {
-        let smallUser = {
-          display_name: user.display_name,
-          id: user.id,
-          username: user.username,
-        };
-        $myInfoStore.followings = [...$myInfoStore.followings, smallUser];
-        profile.followers = [...profile.followers, smallUser];
-      } else {
-        Warning(res.msg);
-      }
-    });
-  };
+  function markAsRead(postId) {
+        API.post("/mark_as_read", { postId: postId }).then((res) => {
+        if (res.msg != "ok") {
+            return;
+        }
+        $myUnreadIds = $myUnreadIds.filter((m) => m != postId);
+        });
+    }
 
 
   const hideAllPopup = () => {
@@ -227,6 +198,29 @@
 </script>
 
 <main>
+{#if $globalPopOver.isShow}
+
+<article class="message is-dark"
+style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; background:white; z-index:5'
+>
+  <div class="message-header">
+    <p>{$globalPopOver.title}</p>
+    <button class="delete" aria-label="delete" on:click={
+      ()=>{$globalPopOver={}}
+    }></button>
+  </div>
+  <div class="message-body">
+    {$globalPopOver.content}
+  </div>
+</article>
+
+
+<div >
+
+</div>
+{/if}
+
+
   {#if $playerSrc != ""}
     <iframe
     style="    z-index: 10;
@@ -235,7 +229,7 @@
     position: fixed;"
       width="560"
       height="315"
-      src="https://www.youtube.com/embed/{$playerSrc}"
+      src="{$playerSrc}"
       title="YouTube video player"
       frameborder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -349,152 +343,110 @@
         }} />
     </div>
   </nav>
-  <div class="left-bar app-box">
-    {#if profile.user}
-      <div style="display:flex">
-        <div style="padding:2px">
-          {#if profile?.user?.avatar}
-            <img width="40" src={profile?.user?.avatar} alt="avatar" />
-          {/if}
-        </div>
-        <div>
-          {profile?.user?.display_name}<br />
-          <!-- {JSON.stringify($myInfoStore?.followers)} -->
-          {#if $myInfoStore?.followers
-            ?.map((x) => x.id)
-            .includes(profile.user.id)}
-            正在跟隨你。
-          {/if}
-          {#if profile.user.id != $myInfoStore?.user?.id}
-            {#if $myInfoStore?.followings
-              ?.map((x) => x.id)
-              .includes(profile.user.id)}
-              <Button
-                size="is-small"
-                iconRight="arrow-right"
-                on:click={() => {
-                  unfollow(profile.user);
-                }}>Unfollow</Button>
-            {:else}
-              <Button
-                size="is-small"
-                iconLeft="arrow-right"
-                on:click={() => {
-                  follow(profile.user);
-                }}>Follow</Button>
-            {/if}
-          {/if}
-        </div>
+
+
+  <div class="columns is-mobile is-variable is-1" style='position:fixed; top:40px;left:3px;bottom:3px;right:3px;margin:0'>
+    <div class="column is-2 is-hidden-mobile">
+      <LeftBar 
+      style='background:white; overflow-y: scroll; padding:3px'
+      bind:profile={profile} />
+    </div>
+    <div class="column is-4" bind:this={cellsSection} style='position:relative'>
+      <ArticleSelector
+      style='background:white; overflow-y: scroll; height:100%; overflow-x:hidden'
+      bind:timeline={timeline}
+      hasMore={newBatch.length > 0}
+      loadMore={()=>fetchData("append")}
+      onCellClick={(v) => {
+        showingArticle = v;
+        refreshReplies(v.id);
+        markAsRead(v.id);
+      }}
+      />
+      <div style="position:absolute; bottom:1em;right:2em">
+        <Button
+          size="is-small"
+          on:click={() => {
+            cellsSection.scrollTop = 0; //scroll top
+            fetchData("prepend")
+          }}
+          rounded
+          iconRight="arrow-up">Prepend</Button>
+        <Button
+          size="is-small"
+          on:click={() => {
+            cellsSection.scrollTop = cellsSection.scrollHeight; //scroll bottom
+            fetchData("append")
+          }}
+          rounded
+          iconRight="arrow-down">Append</Button>
       </div>
+    </div>
+    <div class="column">
 
-      跟蹤:<br />
-      {#if profile.followings.length > 0}
-        {#each profile.followings as v}
-          <Username userId={v.id} /><br />
-        {/each}
-      {:else}
-        沒有
-      {/if}
-      <br />
-      粉絲: <br />
-      {#if profile.followers.length > 0}
-        {#each profile.followers as v}
-          <Username userId={v.id} /><br />
-        {/each}
-      {:else}
-        沒有
-      {/if}
-      <br />
-      自介: <br />
-      <div class="marked">
-        <Markdown content={profile?.user?.description} />
+      <div class='app-box' style='padding:3px; position:relative'>
+        {#if exists(showingArticle.id)}
+          <Button
+            style="position: absolute;right: .3em; z-index:4;"
+            size="is-small"
+            on:click={() => {
+              showingArticle = {};
+            }}
+            iconRight="times"
+            rounded>關閉</Button>
+          <ArticleDetail
+            onArticleContentChanged={(content) => {
+              timeline = timeline.map((v) => {
+                if (v.id == showingArticle.id) {
+                  v.content = content;
+                }
+                return v;
+              });
+            }}
+            onDelete={() => {
+              timeline = timeline.filter((v) => v.id != showingArticle.id);
+              showingArticle = {};
+              if (profile.user.id == $myInfoStore.user.id) {
+                profile.user.article_count--;
+              }
+            }}
+            article={showingArticle}
+            replies={replies} />
+        {/if}
+        <div style="width:100%;">
+          <Postbox
+            onSubmit={(txt) => {
+              if (exists(showingArticle.id)) {
+                return API.post("/post_reply", {
+                  post_id: showingArticle.id,
+                  content: txt,
+                });
+              } else {
+                return API.post("/post_post", { content: txt });
+              }
+            }}
+            placeholder={exists(showingArticle.id) ? "回覆Po" : "發新Po"}
+            finishHandler={(content) => {
+              if (exists(showingArticle.id)) {
+                //reply
+                refreshReplies(showingArticle.id);
+              } else {
+                //create
+                if (currentChannel != "inbox") {
+                  fetchData("prepend");
+                }
+
+                if (profile.user.id == $myInfoStore.user.id) {
+                  profile.user.article_count++;
+                }
+              }
+            }} />
+        </div>
+
       </div>
-
-      <br />
-      <br />
-      最後登入: <strong>{getDateDiff(profile.user?.last_login)}</strong><br />
-      Po文: <strong>{profile.user?.article_count}</strong>則<br />
-    {/if}
-  </div>
-
-  <div class="postbox app-box">
-    {#if exists(showingArticle.id)}
-      <Button
-        style="position: absolute;right: .3em; z-index:4;"
-        size="is-small"
-        on:click={() => {
-          showingArticle = {};
-        }}
-        iconRight="times"
-        rounded>關閉</Button>
-      <ArticleDetail
-        onArticleContentChanged={(content) => {
-          timeline = timeline.map((v) => {
-            if (v.id == showingArticle.id) {
-              v.content = content;
-            }
-            return v;
-          });
-        }}
-        onDelete={() => {
-          timeline = timeline.filter((v) => v.id != showingArticle.id);
-          showingArticle = {};
-          if (profile.user.id == $myInfoStore.user.id) {
-            profile.user.article_count--;
-          }
-        }}
-        article={showingArticle}
-        replies={replies} />
-    {/if}
-
-    <div style="width:100%;">
-      <Postbox
-        onSubmit={(txt) => {
-          if (exists(showingArticle.id)) {
-            return API.post("/post_reply", {
-              post_id: showingArticle.id,
-              content: txt,
-            });
-          } else {
-            return API.post("/post_post", { content: txt });
-          }
-        }}
-        placeholder={exists(showingArticle.id) ? "回覆Po" : "發新Po"}
-        finishHandler={(content) => {
-          if (exists(showingArticle.id)) {
-            //reply
-            refreshReplies(showingArticle.id);
-          } else {
-            //create
-            if (currentChannel != "inbox") {
-              fetchData("prepend");
-            }
-
-            if (profile.user.id == $myInfoStore.user.id) {
-              profile.user.article_count++;
-            }
-          }
-        }} />
     </div>
   </div>
-  <div class="prepend-buttons">
-    <Button
-      size="is-small"
-      on:click={() => {
-        cellsSection.scrollTop = 0; //scroll top
-        fetchData("prepend");
-      }}
-      rounded
-      iconRight="arrow-up">Prepend</Button>
-    <Button
-      size="is-small"
-      on:click={() => {
-        cellsSection.scrollTop = cellsSection.scrollHeight; //scroll bottom
-        fetchData("append");
-      }}
-      rounded
-      iconRight="arrow-down">Append</Button>
-  </div>
+
   <div class="rightSearch app-box">
     <div class="columnSwitcher" style="">
       {#if isMyself}
@@ -565,28 +517,10 @@
     {/if}
     <div style="clear:both" />
   </div>
+<!-- 
+  <div class="rightColumn app-box" >
 
-  <div class="rightColumn app-box" bind:this={cellsSection}>
-    <section class="cells">
-      {#each timeline as v}
-        <Cell
-          isUnread={$myUnreadIds.includes(v.id)}
-          onCellClick={() => {
-            showingArticle = v;
-            refreshReplies(v.id);
-            markAsRead(v.id);
-          }}
-          cellData={v} />
-      {/each}
-    </section>
-
-    <InfiniteScroll
-      hasMore={newBatch.length > 0}
-      threshold={500}
-      on:loadMore={() => {
-        fetchData("append");
-      }} />
-  </div>
+  </div> -->
 </main>
 
 <style>
@@ -633,16 +567,42 @@
   .small_nav i {
     cursor: pointer;
   }
-  .prepend-buttons {
-    z-index: 3;
-    position: fixed;
-    bottom: 9px;
-    right: calc(49vw + 23px);
-  }
+
   .app-box{
     border: 1px solid #ccc;
     background-color: var(--box-background);
     opacity:0.97;
+  }
+
+  .rightSearch {
+    padding: 0 4px;
+    height: 32px;
+    top: 6px;
+    left: calc(16vw + 10px);
+    position: fixed;
+    width: calc(42vw - 10px);
+    overflow: hidden;
+    justify-content: flex-start;
+    z-index: 3;
+  }
+
+
+  nav i {
+    color: dimgray;
+    display: inline-block;
+    padding: 5px 5px;
+    height: 20px;
+    vertical-align: top;
+  }
+
+  /*
+  //old layout
+  .cells {
+    width: 100%;
+    overflow-x: hidden;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    height: fit-content;
   }
   .left-bar {
     position: fixed;
@@ -662,17 +622,7 @@
     z-index: 1;
     padding: 0.3em;
   }
-  .rightSearch {
-    padding: 0 4px;
-    height: 32px;
-    top: 6px;
-    left: calc(16vw + 10px);
-    position: fixed;
-    width: calc(42vw - 10px);
-    overflow: hidden;
-    justify-content: flex-start;
-    z-index: 3;
-  }
+
   .rightColumn {
     height: var(--frame-height);
     bottom: 3px;
@@ -683,28 +633,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
-  }
-
-  .marked {
-    word-break: break-all;
-  }
-
-
-  nav i {
-    color: dimgray;
-    display: inline-block;
-    padding: 5px 5px;
-    height: 20px;
-    vertical-align: top;
-  }
-
-  .cells {
-    width: 100%;
-    overflow-x: hidden;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    height: fit-content;
-  }
+  } */
 
 
   .dropdown-item {
