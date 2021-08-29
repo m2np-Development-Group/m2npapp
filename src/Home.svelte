@@ -221,20 +221,7 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
 {/if}
 
 
-  {#if $playerSrc != ""}
-    <iframe
-    style="    z-index: 10;
-    right: 10px;
-    top: 42px;
-    position: fixed;"
-      width="560"
-      height="315"
-      src="{$playerSrc}"
-      title="YouTube video player"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen />
-  {/if}
+
 
   <div class="modal" class:is-active={coverMessage != ""}>
     <div class="modal-background" />
@@ -352,8 +339,35 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
       bind:profile={profile} />
     </div>
     <div class="column is-4" bind:this={cellsSection} style='position:relative'>
+
+      {#if $playerSrc != ""}
+  
+      <div style="width: 100%;
+      height: 300px;
+      top: 0em;
+      left: 0;
+      z-index: 10;">
+
+        <Button
+          style="position: absolute;right: .5em; top:.5em; z-index:4;"
+          size="is-small"
+          on:click={() => {
+            $playerSrc=""
+          }}
+          iconRight="times"
+          rounded>關閉Player</Button>
+        <iframe
+        style="width:100%;height:100%"
+          src="{$playerSrc}"
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen />
+        </div>
+      {/if}
+
       <ArticleSelector
-      style='background:white; overflow-y: scroll; height:100%; overflow-x:hidden'
+      style='background:white; overflow-y: scroll; height:calc(100% - {$playerSrc != ""?300:0}px); overflow-x:hidden'
       bind:timeline={timeline}
       hasMore={newBatch.length > 0}
       loadMore={()=>fetchData("append")}
@@ -414,6 +428,10 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
             article={showingArticle}
             replies={replies} />
         {/if}
+
+
+
+
         <div style="
         width: 100%;
         position: absolute;
