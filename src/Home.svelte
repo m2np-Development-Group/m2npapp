@@ -3,9 +3,9 @@
   import Postbox from "./components/Postbox.svelte";
   import { exists } from "./utils/util";
   import API from "./utils/Api";
-  // import { parse } from "QS";
   import LeftBar from "./home/LeftBar.svelte"
   import ArticleSelector from "./home/ArticleSelector.svelte"
+
   import {
     myInfoStore,
     filluserStore,
@@ -16,6 +16,7 @@
     globalPopOver
 
   } from "./stores.js";
+  import {getUrlExtension, matchYoutubeUrl} from "./utils/util"
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./Settings.svelte";
   import Search from "./components/Search.svelte";
@@ -346,7 +347,9 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
       height: 300px;
       top: 0em;
       left: 0;
-      z-index: 10;">
+      z-index: 10;
+      background:#white;overflow:hidden;
+      border-radius:.5em .5em 0 0;background:white">
 
         <Button
           style="position: absolute;right: .5em; top:.5em; z-index:4;"
@@ -356,13 +359,26 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
           }}
           iconRight="times"
           rounded>關閉Player</Button>
-        <iframe
-        style="width:100%;height:100%"
-          src="{$playerSrc}"
-          title="YouTube video player"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen />
+          <Button
+          style="position: absolute;right: .5em; top:3.5em; z-index:4;"
+          size="is-small"
+          iconPack="fas"
+          on:click={() => {
+            window.open($playerSrc, '_blank').focus();
+          }}
+          iconRight="external-link-alt"
+          rounded>開新</Button>
+          {#if matchYoutubeUrl($playerSrc)}
+            <iframe
+            style="width:100%;height:100%"
+            src="{$playerSrc}"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen />
+          {:else}
+          <img src={$playerSrc} alt='image' style="max-width:100%;height:100%" />
+          {/if}
         </div>
       {/if}
 

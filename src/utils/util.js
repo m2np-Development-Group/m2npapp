@@ -14,7 +14,9 @@ export const exists = (v) => {
 	}
 	return true
 }
-
+export const getUrlExtension = ( url ) => {
+    return url.split(/[#?]/)[0].split('.').pop().trim();
+}
 export const timeConverter = (UNIX_timestamp) => {
 	const a = new Date(UNIX_timestamp * 1000);
 	const months = [
@@ -78,7 +80,7 @@ export const getDateDiff = (dateTimeStamp) => {
 
 const renderer = new marked.Renderer();
 
-function matchYoutubeUrl(url) {
+export const matchYoutubeUrl = (url) => {
     var p = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
     if(url.match(p)){
         return url.match(p)[1];

@@ -27,12 +27,6 @@
 
 </script>
 
-<Modal bind:active={isCarViewActive}>
-  <div style="background:white;padding:1em;border-radius:1em;overflow:hidden">
-    <Carousel />
-  </div>
-</Modal>
-
 
 <div style={style} class={classes}>
   <article>
@@ -75,11 +69,6 @@
           editingArticle = article;
         }} />
     {/if}
-    <i
-      on:click={() => {
-        isCarViewActive = !isCarViewActive;
-      }}
-      class="fa fa-train" />
 
     {#if article.user_id == $myInfoStore.user.id}
       <i
