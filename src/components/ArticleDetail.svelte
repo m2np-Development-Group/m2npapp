@@ -1,12 +1,10 @@
 <script>
-  import { getDateDiff, myMarked, colorMap } from "../utils/util";
-  import { myInfoStore, userStore } from "../stores.js";
+  import { getDateDiff} from "../utils/util";
+  import { myInfoStore } from "../stores.js";
   import { exists } from "../utils/util";
   import API from "../utils/Api";
   import { Warning } from "./Notification";
   import AvatarBox from "./AvatarBox.svelte";
-  import Carousel from "./Carousel.svelte";
-  import { Modal } from "svelma";
   import Postbox from "./Postbox.svelte";
   import ReplyEntry from "./ReplyEntry.svelte";
   import Markdown from "./Markdown.svelte";
@@ -22,7 +20,6 @@
   }
   export let replies;
   export let onDelete = () => {};
-  let isCarViewActive = false;
   let editingArticle = {};
 
 </script>

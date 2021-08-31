@@ -7,7 +7,7 @@
   export let raw=''; raw;
 </script>
   
-  <img src={href} {title} alt={text} width="100" on:click={()=>{
+  <img src={href} {title} alt={text} on:click={()=>{
     $playerSrc=href
   }} />
   <!-- <LazyImage
@@ -20,4 +20,8 @@
   <!-- should not happen -->
   <slot />
   {/if}
-  
+<style>
+  img{
+    max-width: 100px;
+  }
+</style>

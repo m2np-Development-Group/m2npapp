@@ -2,7 +2,6 @@
     import {myUnreadIds} from "../stores"
     import Cell from "./Cell.svelte"
     import InfiniteScroll from "../components/InfiniteScroll.svelte"
-    import {Button} from "svelma";
 
     export let timeline = [];
     export let onCellClick = (id)=>{};
@@ -11,9 +10,10 @@
 
     export let style;
 
+    export let dom;
 </script>
 
-<section class="cells" style={style}>
+<section class="cells" style={style} bind:this={dom}>
     {#each timeline as v}
       <Cell
         isUnread={$myUnreadIds.includes(v.id)}
@@ -22,9 +22,6 @@
         }}
         cellData={v} />
     {/each}
-
-
-
   <InfiniteScroll
     hasMore={hasMore}
     threshold={500}

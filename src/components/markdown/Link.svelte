@@ -20,7 +20,6 @@
       ext = getUrlExtension(href);
       if(ext!=""){
         ext = ext.toLowerCase();
-        console.log(ext+"XX")
       }
 
     }

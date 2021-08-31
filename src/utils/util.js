@@ -1,7 +1,6 @@
 import { writable } from "svelte/store"
-import marked from "marked";
 import {userStore} from "../stores.js"
-import Link from "../components/markdown/Link.svelte";
+//import Link from "../components/markdown/Link.svelte";
 
 let displaynames;
 const unsubscribe = userStore.subscribe(value => {
@@ -77,9 +76,6 @@ export const getDateDiff = (dateTimeStamp) => {
 	return result;
 }
 
-
-const renderer = new marked.Renderer();
-
 export const matchYoutubeUrl = (url) => {
     var p = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
     if(url.match(p)){
@@ -88,30 +84,30 @@ export const matchYoutubeUrl = (url) => {
     return false;
 }
 
-renderer.link = (href, title, text) => Link;
-// renderer.blockquote = (text) => text;
-const tokenizer = new marked.Tokenizer();
-tokenizer.blockquote = ()=>{};
-const markedOptions = { tokenizer:tokenizer, renderer: renderer, breaks: true };
+// const renderer = new marked.Renderer();
+// renderer.link = (href, title, text) => Link;
+// // renderer.blockquote = (text) => text;
+// const tokenizer = new marked.Tokenizer();
+// tokenizer.blockquote = ()=>{};
+// const markedOptions = { tokenizer:tokenizer, renderer: renderer, breaks: true };
 
-export const myMarked = (str) => {
-	// console.log(displaynames)
-	if (str == undefined || str == null) {
-		return "";
-	}
-	return marked(str, markedOptions)
-		.replaceAll("&#39;", "&apos;")
-		.replace(/@([a-z\d_]+)/gi, (match,capture)=>
-		{
-			return `<a href="/user/${capture}">`+displaynames[capture]+"</a>"
-		}
-		)//mention
-		.replaceAll("<p>", "")
-		.replaceAll("</p>", "<br />")
-		.replace(
-			/\B#([\u4e00-\u9fa5_a-zA-Z0-9]+)/g,
-			'<a href="/hashtag/$1">#$1</a>'
-		);
-};
+// export const myMarked = (str) => {
+// 	if (str == undefined || str == null) {
+// 		return "";
+// 	}
+// 	return marked(str, markedOptions)
+// 		.replaceAll("&#39;", "&apos;")
+// 		.replace(/@([a-z\d_]+)/gi, (match,capture)=>
+// 		{
+// 			return `<a href="/user/${capture}">`+displaynames[capture]+"</a>"
+// 		}
+// 		)//mention
+// 		.replaceAll("<p>", "")
+// 		.replaceAll("</p>", "<br />")
+// 		.replace(
+// 			/\B#([\u4e00-\u9fa5_a-zA-Z0-9]+)/g,
+// 			'<a href="/hashtag/$1">#$1</a>'
+// 		);
+// };
+
 export const colorMap = ['1abc9c', '2c3e50', '2980b9', '7f8c8d', 'f1c40f', 'd35400', '27ae60'];
-//export const colorMap = {1:"red",2:"yellow",3:"blue",4:"green"}

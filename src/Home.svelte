@@ -5,6 +5,7 @@
   import API from "./utils/Api";
   import LeftBar from "./home/LeftBar.svelte"
   import ArticleSelector from "./home/ArticleSelector.svelte"
+	import { onMount } from 'svelte';
 
   import {
     myInfoStore,
@@ -45,8 +46,20 @@
   let isUserMenuShowing = false;
   let isNotificationMenuShowing = false;
   
+  const source = new EventSource('https://m2np.com/api/streams/'+localStorage.getItem("M2NP_TOKEN"), {withCredentials: true});
+    source.addEventListener('news', function (event) {
+        const obj = JSON.parse(event.data);
+        $myUnreadIds=obj;
+        //console.log(event.data);
+        if(event.data==""){
+          source.close(); // disconnect stream
+        }
+    }, false);
   // Get the data from the api, after the page is mounted.
-  // onMount(async () => {mount()});
+  onMount(async () => {
+
+
+  });
   function mount(){
     timeline = [];
 
@@ -98,14 +111,14 @@
       $myUnreadIds = [];
     });
   }
-  function fetchUnreadIds() {
-    API.get("/get_unread").then((res) => {
-      if (res.msg != "ok") {
-        return;
-      }
-      $myUnreadIds = res.data;
-    });
-  }
+  // function fetchUnreadIds() {
+  //   API.get("/get_unread").then((res) => {
+  //     if (res.msg != "ok") {
+  //       return;
+  //     }
+  //     $myUnreadIds = res.data;
+  //   });
+  // }
   //"fresh" =new
   //"prepend" =load new
   //"append" = load old
@@ -126,7 +139,7 @@
     }
 
     API.get(url, params).then((res) => {
-      fetchUnreadIds();
+      //fetchUnreadIds();
       filluserStore(res.users);
       if (
         Array.isArray(res.posts) &&
@@ -158,7 +171,7 @@
 
 
   setInterval(function () {
-    fetchUnreadIds()
+    //fetchUnreadIds()
   }, 30000);
   function refreshReplies(post_id) {
     replies=undefined;
@@ -339,28 +352,28 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
       style='background:white; overflow-y: scroll; padding:3px;height:100%'
       bind:profile={profile} />
     </div>
-    <div class="column is-4" bind:this={cellsSection} style='position:relative'>
+    <div class="column is-4"  style='position:relative'>
 
       {#if $playerSrc != ""}
   
       <div style="width: 100%;
-      height: 300px;
+      max-height: 300px;
       top: 0em;
       left: 0;
       z-index: 10;
-      background:#white;overflow:hidden;
+      background:#white;overflow:auto;
       border-radius:.5em .5em 0 0;background:white">
 
         <Button
-          style="position: absolute;right: .5em; top:.5em; z-index:4;"
+          style="position: absolute;left: 0.5em; top:.5em; z-index:4;"
           size="is-small"
           on:click={() => {
             $playerSrc=""
           }}
           iconRight="times"
-          rounded>關閉Player</Button>
+          rounded>關閉</Button>
           <Button
-          style="position: absolute;right: .5em; top:3.5em; z-index:4;"
+          style="position: absolute;left: .5em; top:3.5em; z-index:4;"
           size="is-small"
           iconPack="fas"
           on:click={() => {
@@ -383,6 +396,7 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
       {/if}
 
       <ArticleSelector
+      bind:dom={cellsSection}
       style='background:white; overflow-y: scroll; height:calc(100% - {$playerSrc != ""?300:0}px); overflow-x:hidden'
       bind:timeline={timeline}
       hasMore={newBatch.length > 0}
@@ -417,7 +431,7 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
       <div class='' style='position:relative;height:100%;'>
         {#if exists(showingArticle.id)}
           <Button
-            style="position: absolute;right: .5em; top:.5em; z-index:4;"
+            style="position: absolute;right: 2.5em; top:.5em; z-index:4;"
             size="is-small"
             on:click={() => {
               showingArticle = {};
