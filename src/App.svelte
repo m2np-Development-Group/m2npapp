@@ -24,7 +24,7 @@
   export let url = "";
 
   onMount(async () => {
-    console.log("%cM2NP WebFrontEnd v20210803", "font-weight:bold");
+    console.log("%cM2NP WebFrontEnd v20210901 : 幽城", "font-weight:bold");
     unsub = globalHistory.listen(({ location, action }) => {
       $currentPath = location.pathname;
 
