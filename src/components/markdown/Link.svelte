@@ -1,5 +1,5 @@
 <script>
-  import {playerSrc} from "../../stores.js";
+  import {playerLinks} from "../../stores.js";
   import Image from './Image.svelte';
 
   import {getUrlExtension, matchYoutubeUrl} from "../../utils/util"
@@ -28,7 +28,15 @@
 </script>
 {#if ytid!=""}
   <a on:click={()=>{
-    $playerSrc="https://www.youtube.com/embed/"+ytid
+    const ytHref="https://www.youtube.com/embed/"+ytid;
+    if(!$playerLinks.links.includes(ytHref)){
+      $playerLinks.links.push(ytHref);
+      $playerLinks.currentIndex = $playerLinks.links.length-1;
+    }else{
+      $playerLinks.currentIndex = $playerLinks.links.indexOf(ytHref);
+    }
+    $playerLinks=$playerLinks;
+
   }} {title}>YT: {ytid}</a>
 {:else}
   {#if (ext=='jpg'||ext=='png'||ext=='gif'||ext=='jpeg')}

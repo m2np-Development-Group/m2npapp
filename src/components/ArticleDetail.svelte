@@ -109,7 +109,6 @@
   :global(.marked hr) {
     display: none;
   }
-.post_content{overflow:auto}
   article {
     overflow:auto;
     max-height: calc(50vh - 50px);
@@ -122,7 +121,7 @@
   }
 
   .post_content {
-    font-size: 13px;
+    overflow:auto;
   }
   :global(.post_content table) {
     border-spacing: 0;

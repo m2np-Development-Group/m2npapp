@@ -9,7 +9,7 @@ export const myUnreadIds = writable([]);
 export const userStore = writable({avatar:{},username:{},displayname:{},displaynameOfUsername:{},color:{}});
 
 export const wallpaper = writable("");
-export const playerSrc = writable("");
+export const playerLinks = writable({links:[],currentIndex:0});
 export const globalPopOver = writable({isShow:false, top:0, left:0, content:"html"});
 export const userIdEmojiMap = writable({});
 

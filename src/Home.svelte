@@ -13,7 +13,7 @@
     docClicked,
     myUnreadIds,
     wallpaper,
-    playerSrc,
+    playerLinks,
     globalPopOver
 
   } from "./stores.js";
@@ -212,6 +212,59 @@
 </script>
 
 <main>
+
+
+{#if $playerLinks.links.length > 0}
+  
+  <div style="
+  width: calc(66.7% - 9px);
+  top: 43px;
+  left: 6px;
+  bottom: 6px;
+  z-index: 10;
+  position: fixed;
+  overflow: auto;
+  background: white;
+  text-align: center;
+  border:#CCC 1px solid;
+  background:#000;
+  ">
+  <span class="" style="    display: inline-block;
+  height: 100%;
+  vertical-align: middle;"></span>
+    <Button
+      style="position: absolute;right: 0.5em; top:.5em; z-index:4;"
+      size="is-small"
+      on:click={() => {
+        $playerLinks.links=[]
+      }}
+      iconRight="times"
+      rounded>關閉</Button>
+      <Button
+      style="position: absolute;right: .5em; top:3.5em; z-index:4;"
+      size="is-small"
+      iconPack="fas"
+      on:click={() => {
+        window.open($playerLinks.links[$playerLinks.currentIndex], '_blank').focus();
+      }}
+      iconRight="external-link-alt"
+      rounded>開新</Button>
+      {#if matchYoutubeUrl($playerLinks.links[$playerLinks.currentIndex])}
+        <iframe
+        style="width:95%; height:95%; vertical-align: middle;"
+        src="{$playerLinks.links[$playerLinks.currentIndex]}"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen />
+      {:else}
+      <img src={$playerLinks.links[$playerLinks.currentIndex]} alt='carousel' 
+      style="max-width:95%; max-height:95%; vertical-align: middle;" />
+      {/if}
+    </div>
+  {/if}
+
+
 {#if $globalPopOver.isShow}
 
 <article class="message is-dark"
@@ -352,52 +405,15 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
       style='background:white; overflow-y: scroll; padding:3px;height:100%'
       bind:profile={profile} />
     </div>
-    <div class="column is-4"  style='position:relative'>
+    <div class="column" 
+    class:is-4={$playerLinks.links.length == 0} 
+    class:is-6={$playerLinks.links.length > 0}
+    style='position:relative'>
 
-      {#if $playerSrc != ""}
-  
-      <div style="width: 100%;
-      max-height: 300px;
-      top: 0em;
-      left: 0;
-      z-index: 10;
-      background:#white;overflow:auto;
-      border-radius:.5em .5em 0 0;background:white">
-
-        <Button
-          style="position: absolute;left: 0.5em; top:.5em; z-index:4;"
-          size="is-small"
-          on:click={() => {
-            $playerSrc=""
-          }}
-          iconRight="times"
-          rounded>關閉</Button>
-          <Button
-          style="position: absolute;left: .5em; top:3.5em; z-index:4;"
-          size="is-small"
-          iconPack="fas"
-          on:click={() => {
-            window.open($playerSrc, '_blank').focus();
-          }}
-          iconRight="external-link-alt"
-          rounded>開新</Button>
-          {#if matchYoutubeUrl($playerSrc)}
-            <iframe
-            style="width:100%;height:100%"
-            src="{$playerSrc}"
-            title="YouTube video player"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen />
-          {:else}
-          <img src={$playerSrc} alt='carousel' style="max-width:100%;height:100%" />
-          {/if}
-        </div>
-      {/if}
 
       <ArticleSelector
       bind:dom={cellsSection}
-      style='background:white; overflow-y: scroll; height:calc(100% - {$playerSrc != ""?300:0}px); overflow-x:hidden'
+      style='background:white; overflow-y: scroll; height:100%; overflow-x:hidden'
       bind:timeline={timeline}
       hasMore={newBatch.length > 0}
       loadMore={()=>fetchData("append")}
