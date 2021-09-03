@@ -1,6 +1,6 @@
 <script>
 import AvatarBox from "../components/AvatarBox.svelte";
-import {myMarked,getDateDiff} from "../utils/util";
+import {getDateDiff} from "../utils/util";
 import {userStore, globalPopOver} from "../stores"
 import Username from "../components/Username.svelte"
 

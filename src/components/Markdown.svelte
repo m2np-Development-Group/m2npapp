@@ -5,6 +5,7 @@
   import Image from "./markdown/Image.svelte";
   import Html from "./markdown/Html.svelte";
   import CodeSpan from "./markdown/CodeSpan.svelte";
+  import Paragraph from "./markdown/Paragraph.svelte";
 
   export let content="";
 
@@ -14,5 +15,5 @@
     breaks:true,
   }}
   isInline={false}
-  renderers={{"link": Link, "text": Text, "image": Image, "html": Html, "codespan":CodeSpan}}
+  renderers={{"link": Link, "text": Text, "image": Image, "html": Html, "codespan":CodeSpan, "paragraph": Paragraph}}
   />  

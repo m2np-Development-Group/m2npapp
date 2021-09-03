@@ -2,7 +2,7 @@
 <script>
   import { onMount, onDestroy } from "svelte";
   import { globalHistory } from "svelte-navigator/src/history";
-  import { Router, Link, Route, navigate, links } from "svelte-navigator";
+  import { Router, Route } from "svelte-navigator";
 
   import PrivateRoute from "./PrivateRoute.svelte";
 
@@ -77,6 +77,8 @@
   /* dark */
   /* @import "https://jenil.github.io/bulmaswatch/darkly/bulmaswatch.min.css"; */
   @import "https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css";
+  @import "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.css";
+  @import "https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.2/css/all.min.css";
   /* light */
   /* @import "https://jenil.github.io/bulmaswatch/flatly/bulmaswatch.min.css"; */
   /* @import 'bulma/css/bulma.css'; */
@@ -92,33 +94,4 @@
     opacity: 0.6;
   }
 
-  :global(a) {
-    text-decoration: none;
-  }
-  :global(code){
-    padding: 1px .5em 1px;
-  }
-
-  :global(hr) {
-    height: 0px;
-    border: none;
-    border-top: 1px solid #bfc2c7;
-  }
-  :global(h1:focus) {
-    outline: none;
-  }
-  :global(html,body) {
-      height: 100%;
-      font-size: 13px;
-      overflow: hidden
-    }
-
-  :global(pre) {
-    padding: 0
-  }
-  :global(.marked th) {
-    border-bottom: 1px solid;
-    text-align: left;
-    font-weight: 700;
-  }
 </style>

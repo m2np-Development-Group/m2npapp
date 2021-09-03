@@ -1,7 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import { Button } from "svelma";
-  import inlineAttachment from "./inlineAttachment";
+  import CodeMirror from "./CodeMirror.svelte";
   import { Warning } from "../components/Notification";
   import EmojiSelector from "./EmojiSelector.svelte";
   import { exists } from "../utils/util";
@@ -34,58 +34,10 @@
       }
     });
   };
-  let textContent;
   let overridden = false; //override close window
   let editor;
 
   onMount(function () {
-    editor = CodeMirror.fromTextArea(textContent, {
-      mode: {
-        name: "gfm",
-        tokenTypeOverrides: {
-          emoji: "emoji",
-        },
-      },
-      lineWrapping: true,
-      extraKeys: { Enter: "newlineAndIndentContinueMarkdownList" },
-
-      lineNumbers: true,
-      matchBrackets: true,
-      indentUnit: 4,
-      indentWithTabs: true,
-      enterMode: "keep",
-      tabMode: "shift",
-      extraKeys: {
-        "Ctrl-Enter": (cm) => {
-          submitPost();
-        },
-        "Cmd-Enter": (cm) => {
-          submitPost();
-        },
-      },
-    });
-    inlineAttachment.editors.codemirror4.attach(editor, {
-      onFileUploadResponse: function (xhr) {
-        const result = JSON.parse(xhr.responseText),
-          filename = result[this.settings.jsonFieldName];
-
-        if (result && filename) {
-          let newValue;
-          if (typeof this.settings.urlText === "function") {
-            newValue = this.settings.urlText.call(this, filename, result);
-          } else {
-            newValue = this.settings.urlText.replace(
-              this.filenameTag,
-              filename
-            );
-          }
-          const text = this.editor.getValue().replace(this.lastValue, newValue);
-          this.editor.setValue(text);
-          this.settings.onFileUploaded.call(this, filename);
-        }
-        return false;
-      },
-    });
 
     window.onbeforeunload = function () {
       if (editor.getValue() != "") {
@@ -100,7 +52,7 @@
 </script>
 
 <div style={style}>
-  <textarea name="content" bind:this={textContent} placeholder={placeholder}>{initialText}</textarea>
+  <CodeMirror bind:editor onSubmit={submitPost} />
 
   {#if isShowEmojiSelector}
   <div style='margin-top:3px'>

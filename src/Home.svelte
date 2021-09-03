@@ -390,7 +390,7 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen />
           {:else}
-          <img src={$playerSrc} alt='image' style="max-width:100%;height:100%" />
+          <img src={$playerSrc} alt='carousel' style="max-width:100%;height:100%" />
           {/if}
         </div>
       {/if}

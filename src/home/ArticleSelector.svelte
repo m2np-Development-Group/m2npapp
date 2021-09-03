@@ -10,7 +10,7 @@
 
     export let style;
 
-    export let dom;
+    export let dom={};
 </script>
 
 <section class="cells" style={style} bind:this={dom}>
@@ -28,6 +28,5 @@
     on:loadMore={() => {
       loadMore();
     }} />
-
 
 </section>
