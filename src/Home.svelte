@@ -315,105 +315,21 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
       <Search />
     </div>
   </Modal>
-  <nav class="small_nav left">
-    <a href="/" use:link><i class="fa fa-home" aria-hidden="false" style="filter: drop-shadow(2px 4px 6px white);" /></a>
-  </nav>
-
-  <nav class="small_nav" style="background:#EEE">
-    <div class="dropdown is-right userMenu" class:is-active={isUserMenuShowing}>
-      <div
-        style="padding-right:1em;display: inline-block;"
-        class="dropdown-trigger"
-        on:click={() => {
-          isUserMenuShowing = !isUserMenuShowing;
-        }}>
-        <div
-          style="cursor:pointer"
-          aria-haspopup="true"
-          aria-controls="dropdown-menu2">
-          {#if $myInfoStore?.user?.avatar}
-            <img
-              src={$myInfoStore?.user?.avatar}
-              alt="avatar"
-              style="border-radius:3px;width:20px" />
-          {/if}
-          <span>{$myInfoStore?.user?.display_name}</span>
-        </div>
-      </div>
-      <div class="dropdown-menu" id="dropdown-menu2" role="menu">
-        <div class="dropdown-content">
-          <div
-            class="dropdown-item"
-            on:click={() => {
-              isSettingsShowing = true;
-            }}>
-            <i class="fa fa-cog" aria-hidden="true" alt="設定" />
-            設定
-          </div>
-          <hr class="dropdown-divider" />
-          <div class="dropdown-item">
-            <a href="/logout" use:link
-              ><i class="fa fa-sign-out-alt" aria-hidden="true" /> Sign Out</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div
-      class="dropdown is-right userMenu"
-      class:is-active={isNotificationMenuShowing}>
-      <i
-        class="fa fa-bell dropdown-trigger"
-        aria-hidden="true"
-        on:click={() => {
-          isNotificationMenuShowing = !isNotificationMenuShowing;
-        }}
-        on:open={() => {
-          API.get("/notifications").then((res) => {
-            notifications = res;
-          });
-        }} />
-      <div class="dropdown-menu" id="dropdown-menu3" role="menu">
-        <div class="dropdown-content">
-          <div class="dropdown-item">
-            {#if notifications.length > 0}
-              {#each notifications as v}
-                <a href={v.url} use:link>{v.message}</a>
-              {/each}
-            {:else}
-              🤗沒有通知很棒棒
-            {/if}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div>
-      <i
-        class="fa fa-search"
-        aria-hidden="true"
-        on:click={() => {
-          showSearch = !showSearch;
-        }} />
-    </div>
-  </nav>
-
 
   <div class="columns is-mobile is-variable is-1" style='position:fixed; top:40px;left:3px;bottom:3px;right:3px;margin:0'>
     <div class="column is-2 is-hidden-mobile">
-      <LeftBar 
-      style='background:white; overflow-y: scroll; padding:3px;height:100%'
-      bind:profile={profile} />
+        <LeftBar 
+        style='background:white; overflow-y: auto; padding:3px;max-height:100%;border-radius:.3em;border:2px solid #CCC;'
+        bind:profile={profile} />
+      
     </div>
     <div class="column" 
     class:is-4={$playerLinks.links.length == 0} 
     class:is-6={$playerLinks.links.length > 0}
     style='position:relative'>
-
-
       <ArticleSelector
       bind:dom={cellsSection}
-      style='background:white; overflow-y: scroll; height:100%; overflow-x:hidden'
+      style='background:white; overflow-y: auto; height:100%; overflow-x:hidden; border-radius:.3em;border:2px solid #CCC;'
       bind:timeline={timeline}
       hasMore={newBatch.length > 0}
       loadMore={()=>fetchData("append")}
@@ -444,7 +360,7 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
     </div>
     <div class="column">
 
-      <div class='' style='position:relative;height:100%;'>
+      <div style='position:relative;height:100%;'>
         {#if exists(showingArticle.id)}
           <Button
             style="position: absolute;right: 2.5em; top:.5em; z-index:4;"
@@ -454,6 +370,7 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
             }}
             iconRight="times"
             rounded>關閉</Button>
+            <div class='app-box'>
           <ArticleDetail
             style="background:white; border:#ccc solid 1px; padding:3px"
             onArticleContentChanged={(content) => {
@@ -473,6 +390,7 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
             }}
             article={showingArticle}
             replies={replies} />
+          </div>
         {/if}
 
 
@@ -521,75 +439,162 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
     </div>
   </div>
 
-  <div class="rightSearch app-box">
-    <div class="columnSwitcher" style="">
-      {#if isMyself}
-        <span
+  <div class="columns is-mobile is-variable is-1" style='position:fixed; top:0;left:3px;right:3px;margin:0'>
+    <div class='column is-2'>
+      <a href="/" use:link style='display:block;margin:.5em 0 0 .5em;color:#333'><i class="fa fa-home" aria-hidden="false" style="filter: drop-shadow(2px 4px 6px white);" /></a>
+    </div>
+    <div class='column is-6'>
+      <div class='app-box' style='border:2px solid #CCC;border-radius:.3em;'>
+        <div class="columnSwitcher" style="margin-left:.5em">
+          {#if isMyself}
+            <span
+              on:click={() => {
+                changeToTab("inbox")
+              }}
+              class:active={currentChannel == "inbox"}>
+              <i class="fas fa-inbox" /> 進口
+            </span>
+          {/if}
+          <span
+            on:click={() => {
+              changeToTab("outbox")
+            }}
+            class:active={currentChannel == "outbox"}>
+            <i class="fas fa-newspaper" /> 出口
+          </span>
+          <span
+            on:click={() => {
+              changeToTab("public")
+            }}
+            class:active={currentChannel == "public"}
+            ><i class="fas fa-water" /> 海洋
+          </span>
+          {#if $myUnreadIds.length > 0 || currentChannel == "updated"}
+          <span
+            on:click={() => {
+              changeToTab("updated")
+            }}
+            class:active={currentChannel == "updated"}
+            ><i class="fas fa-comment-dots"></i> 未讀
+          </span>
+          {/if}
+        </div>
+        {#if isShowFilterBox}
+        <div
+          class="control has-icons-left"
+          style="width: 200px;
+          right: 0;
+          float: right;clear:none">
+          
+          <input
+            class="input is-small"
+            style='font-size:13px'
+            type="text"
+            placeholder=""
+            bind:value={rightSearchTerm}
+            on:keypress={(e) => {
+              if (e.key === "Enter") {
+                fetchData("fresh")
+              }
+            }}
+            autocomplete="off" />
+          <span class="icon is-small is-left">
+            <i class="fas fa-search" />
+          </span>
+        </div>
+        {:else}
+        <div class="columnSwitcher" style="float:right">
+          <span
+            on:click={() => {
+              markAllAsRead();
+            }}
+            ><i class="fas fa-check"></i> 全部標記為已讀
+          </span>
+        </div>
+        {/if}
+        <div style="clear:both" />
+      </div>
+    </div>
+    <div class='column'>
+      <div class='app-box small_nav'>
+      <div class="dropdown is-right userMenu" class:is-active={isUserMenuShowing}>
+        <div
+          style="padding-right:1em;display: inline-block;"
+          class="dropdown-trigger"
           on:click={() => {
-            changeToTab("inbox")
+            isUserMenuShowing = !isUserMenuShowing;
+          }}>
+          <div
+            style="cursor:pointer"
+            aria-haspopup="true"
+            aria-controls="dropdown-menu2">
+            {#if $myInfoStore?.user?.avatar}
+              <img
+                src={$myInfoStore?.user?.avatar}
+                alt="avatar"
+                style="border-radius:3px;width:20px" />
+            {/if}
+            <span>{$myInfoStore?.user?.display_name}</span>
+          </div>
+        </div>
+        <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+          <div class="dropdown-content">
+            <div
+              class="dropdown-item"
+              on:click={() => {
+                isSettingsShowing = true;
+              }}>
+              <i class="fa fa-cog" aria-hidden="true" alt="設定" />
+              設定
+            </div>
+            <hr class="dropdown-divider" />
+            <div class="dropdown-item">
+              <a href="/logout" use:link
+                ><i class="fa fa-sign-out-alt" aria-hidden="true" /> Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <div
+        class="dropdown is-right userMenu"
+        class:is-active={isNotificationMenuShowing}>
+        <i
+          class="fa fa-bell dropdown-trigger"
+          aria-hidden="true"
+          on:click={() => {
+            isNotificationMenuShowing = !isNotificationMenuShowing;
           }}
-          class:active={currentChannel == "inbox"}>
-          <i class="fas fa-inbox" /> 進口
-        </span>
-      {/if}
-      <span
-        on:click={() => {
-          changeToTab("outbox")
-        }}
-        class:active={currentChannel == "outbox"}>
-        <i class="fas fa-newspaper" /> 出口
-      </span>
-      <span
-        on:click={() => {
-          changeToTab("public")
-        }}
-        class:active={currentChannel == "public"}
-        ><i class="fas fa-water" /> 海洋
-      </span>
-      {#if $myUnreadIds.length > 0 || currentChannel == "updated"}
-      <span
-        on:click={() => {
-          changeToTab("updated")
-        }}
-        class:active={currentChannel == "updated"}
-        ><i class="fas fa-comment-dots"></i> 未讀
-      </span>
-      {/if}
+          on:open={() => {
+            API.get("/notifications").then((res) => {
+              notifications = res;
+            });
+          }} />
+        <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+          <div class="dropdown-content">
+            <div class="dropdown-item">
+              {#if notifications.length > 0}
+                {#each notifications as v}
+                  <a href={v.url} use:link>{v.message}</a>
+                {/each}
+              {:else}
+                🤗沒有通知很棒棒
+              {/if}
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <div>
+        <i
+          class="fa fa-search"
+          aria-hidden="true"
+          on:click={() => {
+            showSearch = !showSearch;
+          }} />
+      </div>
+      </div>
     </div>
-    {#if isShowFilterBox}
-    <div
-      class="control has-icons-left"
-      style="width: 200px;
-      right: 0;
-      float: right;
-      margin-top: 3px;clear:none">
-      
-      <input
-        class="input is-small"
-        type="text"
-        placeholder=""
-        bind:value={rightSearchTerm}
-        on:keypress={(e) => {
-          if (e.key === "Enter") {
-            fetchData("fresh")
-          }
-        }}
-        autocomplete="off" />
-      <span class="icon is-small is-left">
-        <i class="fas fa-search" />
-      </span>
-    </div>
-    {:else}
-    <div class="columnSwitcher" style="float:right">
-      <span
-        on:click={() => {
-          markAllAsRead();
-        }}
-        ><i class="fas fa-check"></i> 全部標記為已讀
-      </span>
-    </div>
-    {/if}
-    <div style="clear:both" />
   </div>
 <!-- 
   <div class="rightColumn app-box" >
@@ -625,11 +630,11 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
     display: flex;
     padding: 0.3em;
     margin-bottom: 1.2em;
-    position: fixed;
     top: 0px;
     z-index: 3;
     right: 0px;
     font-size: 15px;
+    float:right;
   }
   .small_nav.left {
     right: unset;
@@ -643,9 +648,8 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
   }
 
   .app-box{
-    border: 1px solid #ccc;
+    border:2px solid #CCC;border-radius:.3em;
     background-color: var(--box-background);
-    opacity:0.97;
   }
 
   .rightSearch {
@@ -661,54 +665,13 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
   }
 
 
-  nav i {
+  .small_nav i {
     color: dimgray;
     display: inline-block;
     padding: 5px 5px;
     height: 20px;
     vertical-align: top;
   }
-
-  /*
-  //old layout
-  .cells {
-    width: 100%;
-    overflow-x: hidden;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    height: fit-content;
-  }
-  .left-bar {
-    position: fixed;
-    width: 16vw;
-    height: var(--frame-height);
-    overflow-y: auto;
-    left: 3px;
-    bottom: 3px;
-    z-index: 0;
-    padding: 0.3em;
-  }
-  .postbox {
-    position: fixed;
-    width: calc(49vw - 9px);
-    right: 3px;
-    bottom: 3px;
-    z-index: 1;
-    padding: 0.3em;
-  }
-
-  .rightColumn {
-    height: var(--frame-height);
-    bottom: 3px;
-    left: calc(16vw + 10px);
-    position: fixed;
-    width: calc(35vw - 9px);
-    overflow-y: scroll;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-  } */
-
 
   .dropdown-item {
     cursor: pointer;

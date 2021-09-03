@@ -26,7 +26,7 @@
         Logout M2NP?
       </h1>
       <h2 class="subtitle">
-        mm~ {message}
+        {message}
       </h2>
     </div>
   </div>

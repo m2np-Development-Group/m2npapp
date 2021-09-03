@@ -62,10 +62,10 @@ let onParticlesLoaded = (event) => {
 
 <div style='padding:1em'>
 <h1 class="title">
-  登入 M2NP?
+  m2np
 </h1>
 <h2 class="subtitle">
-  mm~ no problem
+  Messages, are meant to be navigated, without problem.
 </h2>
 </div>
 

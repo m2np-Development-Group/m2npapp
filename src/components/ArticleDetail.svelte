@@ -83,7 +83,15 @@
         class="fa fa-trash-alt" />
     {/if}
     {#if article.user_id != $myInfoStore.user.id}
-      <span on:click={() => Warning("work in progress")}
+      <span on:click={() => {
+        API.post("/retweet", { postId: article.id }).then((res) => {
+        if (res.msg != "ok") {
+          return;
+        }else{
+          alert("success");
+        }
+        });
+      }}
         ><i class="fa fa-retweet" /></span>
     {/if}
     <span on:click={() => Warning("like")}><i class="fa fa-heart-o" /></span>

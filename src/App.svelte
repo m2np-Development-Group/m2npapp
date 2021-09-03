@@ -76,9 +76,9 @@
 
   /* dark */
   /* @import "https://jenil.github.io/bulmaswatch/darkly/bulmaswatch.min.css"; */
-  @import "https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css";
+  /* @import "https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css";
   @import "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.css";
-  @import "https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.2/css/all.min.css";
+  @import "https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.2/css/all.min.css"; */
   /* light */
   /* @import "https://jenil.github.io/bulmaswatch/flatly/bulmaswatch.min.css"; */
   /* @import 'bulma/css/bulma.css'; */

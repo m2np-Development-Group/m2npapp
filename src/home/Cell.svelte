@@ -1,8 +1,6 @@
 <script>
-  import AvatarBox from "../components/AvatarBox.svelte";
   import { getDateDiff } from "../utils/util";
   import { userStore, globalPopOver } from "../stores";
-  import Username from "../components/Username.svelte";
 
   let isUserMenuShowing = false;
   export let cellData;

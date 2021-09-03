@@ -12,7 +12,7 @@
     <div>
       {#if $userStore.avatar[userId] != null}
         <img
-          width="30"
+          width="33"
           src={$userStore.avatar[userId]}
           class="avatars"
           alt="avatar" />
@@ -28,8 +28,9 @@
 
 <style>
   .names {
-    padding-left: 0.5em;
+    padding: 0 .5em 0 .2em;
     line-height: 1em;
+    margin-top: -3px;
   }
   .avatar_box{
     padding-bottom: 6px;
