@@ -52,7 +52,7 @@
 </script>
 
 <div style={style}>
-  <CodeMirror bind:editor onSubmit={submitPost} />
+  <CodeMirror bind:editor onSubmit={submitPost} initialText={initialText} />
 
   {#if isShowEmojiSelector}
   <div style='margin-top:3px'>

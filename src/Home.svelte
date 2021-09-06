@@ -372,7 +372,7 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
             rounded>關閉</Button>
             <div class='app-box'>
           <ArticleDetail
-            style="background:white; border:#ccc solid 1px; padding:3px"
+            style="padding:3px"
             onArticleContentChanged={(content) => {
               timeline = timeline.map((v) => {
                 if (v.id == showingArticle.id) {
@@ -404,8 +404,7 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
         left: 0;
         padding: 3px;
         background: white;
-        
-        ">
+        " class='app-box'>
           <Postbox
             onSubmit={(txt) => {
               if (exists(showingArticle.id)) {
@@ -444,7 +443,9 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
       <a href="/" use:link style='display:block;margin:.5em 0 0 .5em;color:#333'><i class="fa fa-home" aria-hidden="false" style="filter: drop-shadow(2px 4px 6px white);" /></a>
     </div>
     <div class='column is-6'>
-      <div class='app-box' style='border:2px solid #CCC;border-radius:.3em;'>
+      <div class='app-box thin' style='
+      border:2px solid #CCC;border-radius:.3em;
+      '>
         <div class="columnSwitcher" style="margin-left:.5em">
           {#if isMyself}
             <span
@@ -481,14 +482,15 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
         </div>
         {#if isShowFilterBox}
         <div
-          class="control has-icons-left"
-          style="width: 200px;
+          style="
           right: 0;
           float: right;clear:none">
           
           <input
-            class="input is-small"
-            style='font-size:13px'
+            style='font-size: 13px;
+            margin: 4px;
+            border: 2px dotted #CCC;
+            color: #333;'
             type="text"
             placeholder=""
             bind:value={rightSearchTerm}
@@ -498,9 +500,6 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
               }
             }}
             autocomplete="off" />
-          <span class="icon is-small is-left">
-            <i class="fas fa-search" />
-          </span>
         </div>
         {:else}
         <div class="columnSwitcher" style="float:right">
@@ -516,7 +515,7 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
       </div>
     </div>
     <div class='column'>
-      <div class='app-box small_nav'>
+      <div class='app-box thin small_nav'>
       <div class="dropdown is-right userMenu" class:is-active={isUserMenuShowing}>
         <div
           style="padding-right:1em;display: inline-block;"
@@ -596,10 +595,7 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
       </div>
     </div>
   </div>
-<!-- 
-  <div class="rightColumn app-box" >
 
-  </div> -->
 </main>
 
 <style>
@@ -651,7 +647,9 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
     border:2px solid #CCC;border-radius:.3em;
     background-color: var(--box-background);
   }
-
+  .app-box.thin{
+    height: 36px;
+  }
   .rightSearch {
     padding: 0 4px;
     height: 32px;

@@ -48,7 +48,7 @@
 
 <!-- primary={false} makes route do not autofocus -->
 <Router primary={false}>
-  <div id='wallpaper' style='background-image: url({$wallpaper});'></div>
+  <div id='wallpaper' style='background-image: url({$wallpaper});background-color:#DDD'></div>
   <Notifications>
     <Route path="/" component={Login} />
     <Route path="/login" component={Login} />

@@ -49,7 +49,9 @@
         }}
         onCancel={(txt) => {
           if (txt != article["content"]) {
-            alert("Work in progress");
+            if (confirm("你有改過喔! 確定要取消嗎? ")){
+              editingArticle = {};
+            }
           } else {
             editingArticle = {};
           }
@@ -102,7 +104,12 @@
       <i class="fas fa-spinner fa-pulse" /> LOADING...
     {:else}
       {#each replies as reply}
-        <ReplyEntry reply={reply} />
+        <ReplyEntry reply={reply} onDelete={(id)=>{
+          article.nor--
+          replies=replies.filter((v)=>{
+            return v.id != id
+          })
+        }} />
       {/each}
       {#if replies.length == 0}
         No Replies.

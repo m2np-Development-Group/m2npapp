@@ -60,14 +60,6 @@ let onParticlesLoaded = (event) => {
 </script>
 
 
-<div style='padding:1em'>
-<h1 class="title">
-  m2np
-</h1>
-<h2 class="subtitle">
-  Messages, are meant to be navigated, without problem.
-</h2>
-</div>
 
 <!-- <Particles
   id="tsparticles"
@@ -77,8 +69,12 @@ let onParticlesLoaded = (event) => {
 /> -->
 
 
-<div class='x' style='padding:1em;max-width:400px;opacity:.9'>
-  
+<div style='padding:1em;max-width:400px;margin:0 auto'>
+  <h1 style='font-size: 4em;
+  text-align: center;
+  text-decoration: line-through;
+  color: black;
+  font-weight: 400;'>M2NP</h1>
 <Field label="E-Mail" type:is-danger={false} message={invalidEmailMessage}>
   <Input
   on:keypress={onKp}
@@ -102,19 +98,11 @@ let onParticlesLoaded = (event) => {
 
 <div style='position:fixed;left:1em;bottom:1em; padding:.3em;border-radius:.3em'>
   <a href="/register" use:link>登記</a><br />
-  <a href="https://m2np.com/reset-pw" target="_blank">重設密碼</a>
+  <a href="https://m2np.com/reset-pw" target="_blank">重設密碼(暫用)</a>
   </div>
 
 <style>
-  /* :global(.x .label){
-    color:white
-  }
-  * {color:white}
-  :global(#tsparticles) {
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    z-index: -2;
-    top:0;
-  } */
+.title,.subtitle{
+  color:black;
+}
 </style>

@@ -57,7 +57,7 @@
     if (editor) element.innerHTML = "";
 
     editor = CodeMirror(element, options);
-    editor.setValue(initialText)
+    editor.setValue(initialText.trim())
 
     inlineAttachment.editors.codemirror4.attach(editor, {
       onFileUploadResponse: function (xhr) {

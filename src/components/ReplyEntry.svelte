@@ -6,6 +6,7 @@
   import Postbox from "./Postbox.svelte";
   import Markdown from "./Markdown.svelte";
 
+  export let onDelete = ()=>{};
   export let reply;
   let editingReply = {};
   $: if (reply.id) {
@@ -41,9 +42,9 @@
         <i
           on:click={() => {
             if (confirm("你確定要刪除嗎?" + reply.id)) {
-              API.post("/delete_post", { id: reply.id }).then((res) => {
+              API.post("/delete_reply", { id: reply.id }).then((res) => {
                 if (res.msg == "ok") {
-                  // onDelete();
+                  onDelete(reply.id);
                 } else {
                   Warning(res.msg);
                 }
