@@ -3,7 +3,7 @@
 npm install node-sass sass -g
 npm install -g typescript
 npm link typescript
-
+https://use.fontawesome.com/releases/v5.15.4/fontawesome-free-5.15.4-web.zip
 ```
 Scripts:
 

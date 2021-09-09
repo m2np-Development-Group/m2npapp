@@ -93,7 +93,7 @@
     position: absolute;
     right: 0.7em;
     top: 3px;
-    padding: 2px 4px;
+    font-size:13px;
   }
   .isUnread .nor {
     background: red;

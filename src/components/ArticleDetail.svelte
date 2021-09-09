@@ -8,7 +8,8 @@
   import Postbox from "./Postbox.svelte";
   import ReplyEntry from "./ReplyEntry.svelte";
   import Markdown from "./Markdown.svelte";
-  
+  import { watchResize } from "svelte-watch-resize";
+
   export let onArticleContentChanged=(content)=>{}
   export let article;
   export let style;
@@ -21,12 +22,13 @@
   export let replies;
   export let onDelete = () => {};
   let editingArticle = {};
-
+  let height;
+  let articleDom;
 </script>
 
 
 <div style={style} class={classes}>
-  <article>
+  <article bind:this={articleDom}>
     <AvatarBox userId={article["user_id"]}>
       <small>
         {getDateDiff(article.created_at)}
@@ -84,27 +86,21 @@
         }}
         class="fa fa-trash-alt" />
     {/if}
-    {#if article.user_id != $myInfoStore.user.id}
-      <span on:click={() => {
-        API.post("/retweet", { postId: article.id }).then((res) => {
-        if (res.msg != "ok") {
-          return;
-        }else{
-          alert("success");
-        }
-        });
-      }}
-        ><i class="fa fa-retweet" /></span>
-    {/if}
     <span on:click={() => Warning("like")}><i class="fa fa-heart-o" /></span>
   </article>
 
-  <div class="replies">
+  <div class="replies" use:watchResize={(node)=>{
+    height=articleDom.clientHeight
+  }} style="max-height:calc(100vh - {height+145}px)">
     {#if replies === undefined}
       <i class="fas fa-spinner fa-pulse" /> LOADING...
     {:else}
       {#each replies as reply}
-        <ReplyEntry reply={reply} onDelete={(id)=>{
+        <ReplyEntry 
+        reply={reply} 
+        
+        threadAuthorId={article["user_id"]}
+        onDelete={(id)=>{
           article.nor--
           replies=replies.filter((v)=>{
             return v.id != id
@@ -112,7 +108,11 @@
         }} />
       {/each}
       {#if replies.length == 0}
-        No Replies.
+      <div style="font-size: 13px;
+      text-align: center;
+      color: #CCC; padding:1em">
+        還沒有人回應哦，趕快來搶頭香囉！:)
+      </div>
       {/if}
     {/if}
   </div>
@@ -130,9 +130,8 @@
     border-bottom: 1px solid rgba(50, 50, 50, 0.2);
   }
   .replies {
-    max-height: calc(100vh - 400px);
-
-    overflow-y: auto;
+    /* max-height: calc(100vh - 400px); */
+    overflow:auto;
   }
 
   .post_content {

@@ -37,10 +37,7 @@ let onParticlesLoaded = (event) => {
           $myInfoStore = res.user;
           filluserStore(res.user.followings);
           filluserStore(res.user.followers);
-          
 
-
-          console.log($myInfoStore);
           localStorage.setItem("M2NP_TOKEN", res.token);
           // const from = ($location.state && $location.state.from) || "/home";
           navigate("/home");

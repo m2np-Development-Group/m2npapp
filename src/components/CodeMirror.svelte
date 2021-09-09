@@ -111,4 +111,7 @@
   :global(.CodeMirror pre.CodeMirror-placeholder) {
     color: #999;
   }
+  :global(.CodeMirror-wrap pre.CodeMirror-line, .CodeMirror-wrap pre.CodeMirror-line-like) {
+    word-break: break-all;
+  }
 </style>

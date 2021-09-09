@@ -5,7 +5,7 @@
   import { Warning } from "./Notification";
   import Postbox from "./Postbox.svelte";
   import Markdown from "./Markdown.svelte";
-
+  import {myInfoStore} from "../stores"
   export let onDelete = ()=>{};
   export let reply;
   let editingReply = {};
@@ -15,16 +15,17 @@
     }
   }
   let show = false;
-
-  function toggleShow() {
-    show = !show;
-  }
+  export let threadAuthorId;
 </script>
 
 <div
   class="reply_box_outer"
-  on:mouseenter={toggleShow}
-  on:mouseleave={toggleShow}>
+  on:mouseenter={()=>{
+    if(reply.user_id==$myInfoStore.user.id || threadAuthorId == $myInfoStore.user.id){
+      show=true;
+    }
+  }}
+  on:mouseleave={()=>{show=false}}>
   {#if !exists(editingReply.id)}
     <div class="reply_box">
       <Username userId={reply.user_id} />:
@@ -34,11 +35,13 @@
     </div>
     {#if show}
       <div class="editbox">
+        {#if reply.user_id==$myInfoStore.user.id}
         <i
           class="fa fa-pencil-alt"
           on:click={() => {
             editingReply = reply;
           }} />
+        {/if}
         <i
           on:click={() => {
             if (confirm("你確定要刪除嗎?" + reply.id)) {
@@ -55,6 +58,8 @@
       </div>
     {/if}
   {:else}
+  <div style='background-color: #f7f7fa;'>
+    <Username userId={reply.user_id} />:<br />
     <Postbox
       finishHandler={(content) => {
         reply.content = content;
@@ -62,15 +67,18 @@
       }}
       onCancel={(txt) => {
         if (txt != reply.content) {
-          alert("Work in progress");
+          //alert("Work in progress");
         } else {
-          editingReply = {};
+          
         }
+        editingReply = {};
       }}
       onSubmit={(txt) =>
         API.post("update_reply", { id: reply.id, content: txt })}
       initialText={reply.content} />
+    </div>
   {/if}
+  
 </div>
 
 <style>
@@ -81,9 +89,16 @@
     position: relative;
   }
   .editbox {
+    border: 1px solid #CCC;
     position: absolute;
     right: 0;
-    top: 0;
+    top: -15px;
     color: #bbb;
+    background: white;
+    border-radius: 2px;
+    padding: 0 3px;
+  }
+  .editbox i {
+    cursor: pointer;
   }
 </style>

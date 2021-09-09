@@ -370,27 +370,27 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
             }}
             iconRight="times"
             rounded>關閉</Button>
-            <div class='app-box'>
-          <ArticleDetail
-            style="padding:3px"
-            onArticleContentChanged={(content) => {
-              timeline = timeline.map((v) => {
-                if (v.id == showingArticle.id) {
-                  v.content = content;
+          <div class='app-box' style='max-height: calc(100% - 83px);'>
+            <ArticleDetail
+              style="padding:3px"
+              onArticleContentChanged={(content) => {
+                timeline = timeline.map((v) => {
+                  if (v.id == showingArticle.id) {
+                    v.content = content;
+                  }
+                  return v;
+                });
+              }}
+              onDelete={() => {
+                timeline = timeline.filter((v) => v.id != showingArticle.id);
+                showingArticle = {};
+                if (profile.user.id == $myInfoStore.user.id) {
+                  profile.user.article_count--;
                 }
-                return v;
-              });
-            }}
-            onDelete={() => {
-              timeline = timeline.filter((v) => v.id != showingArticle.id);
-              showingArticle = {};
-              if (profile.user.id == $myInfoStore.user.id) {
-                profile.user.article_count--;
-              }
-            }}
-            article={showingArticle}
-            replies={replies} />
-          </div>
+              }}
+              article={showingArticle}
+              replies={replies} />
+            </div>
         {/if}
 
 
