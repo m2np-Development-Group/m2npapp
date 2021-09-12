@@ -56,19 +56,3 @@
   <Button on:click={goTop} rounded iconRight="arrow-up">Top</Button>
 </div> -->
 
-<style>
-  .back-to-top {
-    opacity: 1;
-    transition: opacity 0.5s, visibility 0.5s;
-    position: fixed;
-    z-index: 99;
-    right: 20px;
-    user-select: none;
-    bottom: 20px;
-  }
-
-  .back-to-top.hidden {
-    opacity: 0;
-    visibility: hidden;
-  }
-</style>

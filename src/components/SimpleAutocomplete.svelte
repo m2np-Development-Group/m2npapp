@@ -574,6 +574,7 @@
       top: 0px;
       border: 1px solid #999;
       max-height: calc(15 * (1rem + 10px) + 15px);
+      -webkit-user-select: none;
       user-select: none;
     }
     .autocomplete-list:empty {

@@ -1,4 +1,5 @@
 <script>
+	import HeroFullHeight from './components/HeroFullHeight.svelte';
   import { link } from "svelte-navigator";
   import { onMount } from "svelte";
   import API from "./utils/Api";
@@ -19,19 +20,21 @@
     });
   });
 </script>
-<section class="hero is-info">
-  <div class="hero-body">
-    <div class="container">
-      <h1 class="title">
-        Logout M2NP?
-      </h1>
-      <h2 class="subtitle">
-        {message}
-      </h2>
-    </div>
+
+<HeroFullHeight>
+  <div slot="main">
+  {message}
+  <div style='padding:1em'>
+    <a href="/login"><i class="fa fa-sign-in-alt" /> 登入</a><br />
+    <a href="/register" use:link><i class="fa fa-pencil-alt" /> 註冊</a>
   </div>
-</section>
-<div style='padding:1em'>
-<a href="/login"><i class="fa fa-sign-in-alt" /> 回去登入</a>
-<a href="/register" use:link><i class="fa fa-pencil-alt" /> 回去註冊</a>
-</div>
+  </div>
+</HeroFullHeight>
+<style>
+  a:hover{
+    text-decoration: underline;
+  }
+  a {
+    font-weight: bold;
+  }
+</style>

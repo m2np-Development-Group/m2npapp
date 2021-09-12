@@ -303,6 +303,7 @@
 
   <div
     class="columns is-mobile is-variable is-1"
+    on:click={()=>{isNotificationMenuShowing=false;isUserMenuShowing=false}}
     style="position:fixed; top:40px;left:3px;bottom:3px;right:3px;margin:0">
     <div class="column is-2 is-hidden-mobile">
       <div
@@ -502,7 +503,7 @@
               autocomplete="off" />
           </div>
         {:else}
-          <div class="columnSwitcher" style="float:right">
+          <div class="columnSwitcher" style="float:right;padding-right:3px">
             <span
               on:click={() => {
                 markAllAsRead();
@@ -523,6 +524,7 @@
             style="padding-right:1em;display: inline-block;cursor:pointer"
             class="dropdown-trigger"
             on:click={() => {
+              isNotificationMenuShowing=false;
               isUserMenuShowing = !isUserMenuShowing;
             }}>
             <div
@@ -567,6 +569,7 @@
             class="fa fa-bell dropdown-trigger"
             aria-hidden="true"
             on:click={() => {
+              isUserMenuShowing=false;
               isNotificationMenuShowing = !isNotificationMenuShowing;
             }}
             on:open={() => {
