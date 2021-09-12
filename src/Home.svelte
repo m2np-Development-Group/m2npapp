@@ -219,21 +219,7 @@
 
 <main>
   {#if $playerLinks.links.length > 0}
-    <div
-      style="
-  width: calc(66.7% - 10px);
-  top: 43px;
-  left: 6px;
-  bottom: 6px;
-  z-index: 10;
-  position: fixed;
-  overflow: auto;
-  background: white;
-  text-align: center;
-  border:#CCC 2px solid;
-  border-radius:3px;
-  background:#000;
-  ">
+    <div id="media-player">
       <span
         style="display: inline-block;height: 100%;vertical-align: middle;" />
       <Button
@@ -319,10 +305,10 @@
     class="columns is-mobile is-variable is-1"
     style="position:fixed; top:40px;left:3px;bottom:3px;right:3px;margin:0">
     <div class="column is-2 is-hidden-mobile">
-      <div class='app-box' style="overflow-y: auto; padding:3px;max-height:100%;">
-      <LeftBar
-        
-        bind:profile />
+      <div
+        class="app-box"
+        style="overflow-y: auto; padding:3px;max-height:100%;">
+        <LeftBar bind:profile />
       </div>
     </div>
     <div
@@ -343,7 +329,9 @@
             markAsRead(v.id);
           }
         }} />
-      <div style="position:absolute; bottom:1em;right:2em">
+      <div
+        style="position:absolute; bottom:1em;right:2em"
+        class="is-hidden-mobile">
         <Button
           size="is-small"
           on:click={() => {
@@ -687,5 +675,29 @@
   .column {
     padding-top: 3px;
     padding-bottom: 3px;
+  }
+  #media-player {
+    top: 43px;
+    left: 6px;
+    bottom: 6px;
+    z-index: 10;
+    position: fixed;
+    overflow: auto;
+    background: white;
+    text-align: center;
+    border: #ccc 2px solid;
+    border-radius: 3px;
+    background: #000;
+  }
+  @media only screen and (max-width: 768px) {
+    #media-player {
+      width: auto;
+      right: 6px;
+    }
+  }
+  @media only screen and (min-width: 769px) {
+    #media-player {
+      width: calc(66.7% - 10px);
+    }
   }
 </style>

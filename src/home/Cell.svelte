@@ -21,9 +21,8 @@
   {#if cellData.nor > 0}
   <div class="nor">{cellData.nor}</div>
   {/if}
-  <figure class="media-left">
+  <figure class="media-left is-hidden-mobile">
     <div
-      class="dropdown-trigger"
       on:click={() => {
         var topPos = imgDom.getBoundingClientRect().top + window.scrollY;
         var leftPos = imgDom.getBoundingClientRect().left + window.scrollX;
@@ -103,6 +102,8 @@
   .isUnread .nor {
     background: red;
     color: white;
-    
+  }
+  .content small{
+    color:#999;
   }
 </style>
