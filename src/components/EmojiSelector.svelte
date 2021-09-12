@@ -3,14 +3,8 @@
   import { onMount } from "svelte";
   import API from "../utils/Api";
   import {BasicStickers} from "../utils/const"
+  import {BasicStickersUrlPrefix} from "../utils/const"
 
-  let list = [
-    { url: "https://picsum.photos/seed/4/30", id: 0 },
-    { url: "https://picsum.photos/seed/43/30", id: 1 },
-    { url: "https://picsum.photos/seed/4123/30", id: 2 },
-    { url: "https://picsum.photos/seed/44/30", id: 3 },
-    { url: "https://picsum.photos/seed/444/30", id: 4 },
-  ];
   let hovering = false;
 
   const drop = (event, target) => {
@@ -54,7 +48,7 @@
       on:dragenter={() => (hovering = index)}
       class:is-active={hovering === index}>
       <img
-        src="https://f000.backblazeb2.com/file/kiyomi/smilies/{url}"
+        src="{BasicStickersUrlPrefix}{url}"
         on:click={() => {
           onInsert(key);
         }}

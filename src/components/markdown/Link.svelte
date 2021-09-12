@@ -1,48 +1,79 @@
 <script>
-  import {playerLinks} from "../../stores.js";
-  import Image from './Image.svelte';
+  import { playerLinks } from "../../stores.js";
+  import Image from "./Image.svelte";
 
-  import {getUrlExtension, matchYoutubeUrl} from "../../utils/util"
-  export let href = ''
-  export let title = undefined
+  import {
+    getUrlExtension,
+    matchYoutubeUrl,
+    generateYoutubeEmbedUrl,
+    matchSoundCloudUrl,
+    generateSoundCloudEmbedUrl,
+  } from "../../utils/util";
+  export let href = "";
+  export let title = undefined;
 
-  export let raw = ''
-  export let text = ''
-
+  export let raw = "";
+  export let text = "";
 
   let ytid;
+  let scid;
   let ext;
 
-  $: if(href){
-    
+  $: if (href) {
     ytid = matchYoutubeUrl(href);
-    if(ytid==""){
-      ext = getUrlExtension(href);
-      if(ext!=""){
-        ext = ext.toLowerCase();
+    if (ytid == "") {
+      scid = matchSoundCloudUrl(href);
+      if (scid == "") {
+        ext = getUrlExtension(href);
+        if (ext != "") {
+          ext = ext.toLowerCase();
+        }
       }
-
     }
   }
-
-</script>
-{#if ytid!=""}
-  <a on:click={()=>{
-    const ytHref="https://www.youtube.com/embed/"+ytid;
-    if(!$playerLinks.links.includes(ytHref)){
-      $playerLinks.links.push(ytHref);
-      $playerLinks.currentIndex = $playerLinks.links.length-1;
-    }else{
-      $playerLinks.currentIndex = $playerLinks.links.indexOf(ytHref);
+  function pushPlayerLink(href, type) {
+    if (!$playerLinks.links.includes(href)) {
+      $playerLinks.links.push([href, type]);
+      $playerLinks.currentIndex = $playerLinks.links.length - 1;
+    } else {
+      $playerLinks.currentIndex = $playerLinks.links.indexOf([href, type]);
     }
-    $playerLinks=$playerLinks;
+    $playerLinks = $playerLinks;
+  }
+</script>
 
-  }} {title}>YT: {ytid}</a>
+{#if ytid != ""}
+  <span
+    class="brand-link"
+    on:click={() => {
+      const link = generateYoutubeEmbedUrl(ytid);
+      pushPlayerLink(link, "yt");
+    }}
+    title={title}><i class="fab fa-youtube" /> {ytid}</span>
+{:else if scid != ""}
+  <span
+    class="brand-link"
+    on:click={() => {
+      const link = generateSoundCloudEmbedUrl(href);
+      pushPlayerLink(link, "sc");
+    }}
+    title={title}><i class="fab fa-soundcloud" /> {scid}</span>
+{:else if ext == "jpg" || ext == "png" || ext == "gif" || ext == "jpeg"}
+  <Image href={href} />
 {:else}
-  {#if (ext=='jpg'||ext=='png'||ext=='gif'||ext=='jpeg')}
-    <Image href={href} />
-  {:else}
-    <a {href} {title} target="_blank"><slot></slot></a>
-  {/if}
-
+  <a href={href} title={title} target="_blank"><slot /></a>
 {/if}
+
+<style>
+  .brand-link {
+    background-color: #ccc;
+    color: white;
+    border-radius: 3px;
+    padding-right: 2px;
+    padding-left: 2px;
+    cursor: pointer;
+  }
+  .brand-link:hover {
+    background-color: #666;
+  }
+</style>

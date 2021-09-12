@@ -9,10 +9,10 @@
   
   <img src={href} {title} alt={text} on:click={()=>{
     if(!$playerLinks.links.includes(href)){
-      $playerLinks.links.push(href);
+      $playerLinks.links.push([href,'img']);
       $playerLinks.currentIndex = $playerLinks.links.length-1;
     }else{
-      $playerLinks.currentIndex = $playerLinks.links.indexOf(href);
+      $playerLinks.currentIndex = $playerLinks.links.indexOf([href,'img']);
     }
     $playerLinks=$playerLinks;
   }} />
@@ -30,5 +30,6 @@
   img{
     cursor: pointer;
     max-width: 100px;
+    border-radius:3px;
   }
 </style>

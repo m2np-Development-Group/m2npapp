@@ -81,8 +81,28 @@ export const matchYoutubeUrl = (url) => {
     if(url.match(p)){
         return url.match(p)[1];
     }
-    return false;
+    return "";
 }
+
+export const matchSoundCloudUrl = (url) => {
+    var p = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:soundcloud\.com\/|soundcloud\.com\/(?:tracks\/|playlists\/|users\/|groups\/|sounds\/|sets\/))((\w|-){11})(?:\S+)?$/;
+    if(url.match(p)){
+        return url.match(p)[1];
+    }
+    return "";
+}
+
+
+//generate soundcloud embed url
+export const generateSoundCloudEmbedUrl = (url) => {
+	return "https://w.soundcloud.com/player/?url="+url+"&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true";
+}
+
+//generate soundcloud embed url
+export const generateYoutubeEmbedUrl = (id) => {
+	return "https://www.youtube.com/embed/"+id;
+}
+
 
 // const renderer = new marked.Renderer();
 // renderer.link = (href, title, text) => Link;

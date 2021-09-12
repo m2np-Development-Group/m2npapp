@@ -14,7 +14,7 @@
       editingReply = {};
     }
   }
-  let show = false;
+  let isFloatingBoxShow = false;
   export let threadAuthorId;
 </script>
 
@@ -22,10 +22,10 @@
   class="reply_box_outer"
   on:mouseenter={()=>{
     if(reply.user_id==$myInfoStore.user.id || threadAuthorId == $myInfoStore.user.id){
-      show=true;
+      isFloatingBoxShow=true;
     }
   }}
-  on:mouseleave={()=>{show=false}}>
+  on:mouseleave={()=>{isFloatingBoxShow=false}}>
   {#if !exists(editingReply.id)}
     <div class="reply_box">
       <Username userId={reply.user_id} />:
@@ -33,7 +33,7 @@
         <Markdown content={reply.content} />
       </span>
     </div>
-    {#if show}
+    {#if isFloatingBoxShow}
       <div class="editbox">
         {#if reply.user_id==$myInfoStore.user.id}
         <i
@@ -54,7 +54,7 @@
               });
             }
           }}
-          class="fa fa-trash-alt" />
+          class="fa fa-trash" />
       </div>
     {/if}
   {:else}
@@ -87,18 +87,24 @@
   }
   .reply_box_outer {
     position: relative;
+    padding:1px;
   }
   .editbox {
-    border: 1px solid #CCC;
     position: absolute;
     right: 0;
-    top: -15px;
+    top: 0px;
     color: #bbb;
     background: white;
-    border-radius: 2px;
-    padding: 0 3px;
+    border-radius: 3px;
+    padding: 0 1px 1px 1px;
   }
   .editbox i {
+    padding: 3px;
     cursor: pointer;
+    border-radius: 3px;
+  }
+  .editbox i:hover {
+    color:white;
+    background-color:#CCC;
   }
 </style>

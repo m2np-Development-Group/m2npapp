@@ -18,7 +18,7 @@
       <Cell
         isUnread={$myUnreadIds.includes(v.id)}
         onCellClick={()=>{
-            onCellClick(v)
+          onCellClick(v)
         }}
         cellData={v} />
     {/each}

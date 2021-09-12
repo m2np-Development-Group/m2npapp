@@ -1,5 +1,5 @@
 <script>
-  import { getDateDiff} from "../utils/util";
+  import { getDateDiff } from "../utils/util";
   import { myInfoStore } from "../stores.js";
   import { exists } from "../utils/util";
   import API from "../utils/Api";
@@ -10,7 +10,7 @@
   import Markdown from "./Markdown.svelte";
   import { watchResize } from "svelte-watch-resize";
 
-  export let onArticleContentChanged=(content)=>{}
+  export let onArticleContentChanged = (content) => {};
   export let article;
   export let style;
   export let classes;
@@ -19,13 +19,13 @@
       editingArticle = {};
     }
   }
-  export let replies;
+  export let replies = [];
   export let onDelete = () => {};
+  export let isLiked = false;
   let editingArticle = {};
   let height;
   let articleDom;
 </script>
-
 
 <div style={style} class={classes}>
   <article bind:this={articleDom}>
@@ -41,6 +41,51 @@
       <div class="post_content marked">
         <Markdown content={article["content"]} />
       </div>
+
+      <div>
+        {#if $myInfoStore.user.id == article.user_id}
+          <i
+            class="fa fa-pencil-alt smallButtons editButton"
+            on:click={() => {
+              editingArticle = article;
+            }} />
+        {/if}
+
+        {#if isLiked}
+          <i
+            class="fas fa-heart smallButtons"
+            style="color:red"
+            on:click={() => {
+              API.post("/unlike", { postId: article.id }).then((res) => {
+                isLiked = false;
+              });
+            }} />
+        {:else}
+          <i
+            class="far fa-heart likeButton smallButtons"
+            on:click={() => {
+              API.post("/like", { postId: article.id }).then((res) => {
+                isLiked = true;
+              });
+            }} />
+        {/if}
+
+        {#if article.user_id == $myInfoStore.user.id}
+          <i
+            on:click={() => {
+              if (confirm("你確定要刪除嗎?" + article.id)) {
+                API.post("/delete_post", { id: article.id }).then((res) => {
+                  if (res.msg == "ok") {
+                    onDelete();
+                  } else {
+                    Warning(res.msg);
+                  }
+                });
+              }
+            }}
+            class="fa fa-trash trashButton smallButtons" />
+        {/if}
+      </div>
     {:else}
       <Postbox
         finishHandler={(content) => {
@@ -51,72 +96,53 @@
         }}
         onCancel={(txt) => {
           if (txt != article["content"]) {
-            if (confirm("你有改過喔! 確定要取消嗎? ")){
+            if (confirm("你有改過喔! 確定要取消嗎? ")) {
               editingArticle = {};
             }
           } else {
             editingArticle = {};
           }
         }}
-        onSubmit={(txt) => API.post("update_post", { id: article.id, content: txt })}
+        onSubmit={(txt) =>
+          API.post("update_post", { id: article.id, content: txt })}
         initialText={article["content"]} />
     {/if}
-
-    
-    {#if $myInfoStore.user.id == article.user_id}
-      <i
-        class="fa fa-pencil-alt"
-        on:click={() => {
-          editingArticle = article;
-        }} />
-    {/if}
-
-    {#if article.user_id == $myInfoStore.user.id}
-      <i
-        on:click={() => {
-          if (confirm("你確定要刪除嗎?" + article.id)) {
-            API.post("/delete_post", { id: article.id }).then((res) => {
-              if (res.msg == "ok") {
-                onDelete();
-              } else {
-                Warning(res.msg);
-              }
-            });
-          }
-        }}
-        class="fa fa-trash-alt" />
-    {/if}
-    <span on:click={() => Warning("like")}><i class="fa fa-heart-o" /></span>
   </article>
 
-  <div class="replies" use:watchResize={(node)=>{
-    height=articleDom.clientHeight
-  }} style="max-height:calc(100vh - {height+145}px)">
+  <div
+    class="replies"
+    use:watchResize={(node) => {
+      height = articleDom.clientHeight;
+    }}
+    style="max-height:calc(100vh - {height + 145}px)">
     {#if replies === undefined}
       <i class="fas fa-spinner fa-pulse" /> LOADING...
     {:else}
+      {#if Array.isArray(replies)}
       {#each replies as reply}
-        <ReplyEntry 
-        reply={reply} 
-        
-        threadAuthorId={article["user_id"]}
-        onDelete={(id)=>{
-          article.nor--
-          replies=replies.filter((v)=>{
-            return v.id != id
-          })
-        }} />
+        <ReplyEntry
+          reply={reply}
+          threadAuthorId={article["user_id"]}
+          onDelete={(id) => {
+            article.nor--;
+            replies = replies.filter((v) => {
+              return v.id != id;
+            });
+          }} />
       {/each}
+      {/if}
       {#if replies.length == 0}
-      <div style="font-size: 13px;
+        <div
+          style="font-size: 13px;
       text-align: center;
       color: #CCC; padding:1em">
-        還沒有人回應哦，趕快來搶頭香囉！:)
-      </div>
+          還沒有人回應哦，趕快來搶頭香囉！:)
+        </div>
       {/if}
     {/if}
   </div>
 </div>
+
 <style>
   :global(.marked) {
     word-break: break-all;
@@ -125,17 +151,37 @@
     display: none;
   }
   article {
-    overflow:auto;
+    overflow: auto;
     max-height: calc(50vh - 50px);
     border-bottom: 1px solid rgba(50, 50, 50, 0.2);
+    padding-bottom: 3px;
+    margin-bottom: 3px;
   }
   .replies {
     /* max-height: calc(100vh - 400px); */
-    overflow:auto;
+    overflow: auto;
+  }
+
+  .smallButtons {
+    border-radius: 3px;
+    padding: 3px;
+  }
+
+  .trashButton:hover {
+    background: #666;
+    color: white;
+  }
+  .likeButton:hover {
+    background: red;
+    color: white;
+  }
+  .editButton:hover {
+    background: #050b15;
+    color: white;
   }
 
   .post_content {
-    overflow:auto;
+    overflow: auto;
   }
   :global(.post_content table) {
     border-spacing: 0;
@@ -144,5 +190,4 @@
     padding-right: 1em;
     /* border-bottom: #fbbc2a67 1px solid; */
   }
-
 </style>

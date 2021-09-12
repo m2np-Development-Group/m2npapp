@@ -34,54 +34,77 @@
     }
   };
 </script>
-<h1 style='font-size: 4em;
-text-align: center;
-text-decoration: line-through;
-color: black;
-font-weight: 400;'>註冊M2NP</h1>
-<div style="padding:1em; max-width:400px; margin:0 auto;">
-  <form autocomplete="off">
-  {#if beforeReg}
-    <Field label="@Username (alphabet/0-9/_)" message={invalidUsernameMessage}>
-      <Input
-        type="username"
-        placeholder="Username"
-        bind:value={username}
-        on:keypress={onKp} 
-        autocomplete="off"
-        />
-    </Field>
 
-    <Field label="Email (其他人不會看到)" message={invalidEmailMessage}>
-      <Input
-        type="email"
-        placeholder="E-Mail"
-        bind:value={email}
-        on:keypress={onKp}
-        autocomplete="off"
-        icon="envelope"
-        />
-    </Field>
+<section class="hero is-primary is-fullheight">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-5-tablet is-4-desktop is-3-widescreen">
+          <div class="box">
+            <form autocomplete="off">
+              {#if beforeReg}
+                <Field
+                  label="@Username (alphabet/0-9/_)"
+                  message={invalidUsernameMessage}>
+                  <Input
+                    type="username"
+                    placeholder="Username"
+                    bind:value={username}
+                    on:keypress={onKp}
+                    autocomplete="off" />
+                </Field>
 
-    <Field label="Password" message={invalidPasswordMessage}>
-      <Input
-        type="password"
-        placeholder="Password"
-        bind:value={password}
-        on:keypress={onKp}
-        autocomplete="new-password"
-        icon="key"
-        passwordReveal={true}
-        />
-    </Field>
-    <Button type="is-primary" on:click={register}>Register</Button>
-  {:else}
-    註冊成功，請檢查郵箱。
-  {/if}
-  </form>
+                <Field
+                  label="Email (其他人不會看到)"
+                  message={invalidEmailMessage}>
+                  <Input
+                    type="email"
+                    placeholder="E-Mail"
+                    bind:value={email}
+                    on:keypress={onKp}
+                    autocomplete="off"
+                    icon="envelope" />
+                </Field>
+
+                <Field label="Password" message={invalidPasswordMessage}>
+                  <Input
+                    type="password"
+                    placeholder="Password"
+                    bind:value={password}
+                    on:keypress={onKp}
+                    autocomplete="new-password"
+                    icon="key"
+                    passwordReveal={true} />
+                </Field>
+                <Button type="is-primary" on:click={register}>Register</Button>
+              {:else}
+                註冊成功，請檢查郵箱。
+              {/if}
+            </form>
+          </div>
+          已有賬戶？<a href="/login" use:link>按我登入</a><br />
+          <a href="https://m2np.com/reset-pw" target="_blank">重設密碼(暫用)</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div
+  style="
+position: fixed;
+right: 1em;
+bottom: .5em;
+color: white;
+font-size: 2em;
+opacity: 0.7;
+font-weight: lighter;
+text-decoration: overline;
+">
+  m2np v20210913
 </div>
-
-<div style='position:fixed;left:1em;bottom:1em; padding:.3em;border-radius:.3em'>
-  <a href="/login" use:link>已有賬戶？按我登入。</a><br />
-  <a href="https://m2np.com/reset-pw" target="_blank">重設密碼(暫用)</a>
-</div>
+<style>
+  a {
+    font-weight: bold;
+  }
+</style>

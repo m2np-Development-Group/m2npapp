@@ -108,9 +108,6 @@
 </div>
 
 <style>
-  textarea {
-    width: 100%;
-  }
   .toolbar {
     padding-top: 3px;
   }

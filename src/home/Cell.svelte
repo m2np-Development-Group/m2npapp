@@ -18,7 +18,9 @@
   </div>
 {/if}
 <article class="media cell" class:isUnread>
-  <div style="" class="nor">{cellData.nor}</div>
+  {#if cellData.nor > 0}
+  <div class="nor">{cellData.nor}</div>
+  {/if}
   <figure class="media-left">
     <div
       class="dropdown-trigger"
@@ -37,7 +39,7 @@
       <img
         bind:this={imgDom}
         src={$userStore.avatar[cellData.user_id] ??
-          "https://bulma.io/images/placeholders/128x128.png"}
+          "/assets/anonymous-avatar-sm.jpg"}
         class="avatars"
         alt="avatar"
         width="32"
@@ -73,7 +75,6 @@
     font-size: 13px;
   }
   .media-content {
-    margin-top: -3px;
     overflow: hidden;
     cursor: pointer;
   }
@@ -82,7 +83,7 @@
     cursor: crosshair;
   }
   .cell {
-    padding: 6px 0;
+    padding: 6px 0 2px 0;
     line-height: 1em;
     width: 100%;
     margin: 2px;
@@ -93,10 +94,15 @@
     position: absolute;
     right: 0.7em;
     top: 3px;
-    font-size:13px;
+    font-size:12px;
+    padding: 2px 3px;
+    border-radius: 3px;
+    background: #EEE;
+    font-weight:bold;
   }
   .isUnread .nor {
     background: red;
     color: white;
+    
   }
 </style>

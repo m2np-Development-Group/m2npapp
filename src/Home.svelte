@@ -3,9 +3,9 @@
   import Postbox from "./components/Postbox.svelte";
   import { exists } from "./utils/util";
   import API from "./utils/Api";
-  import LeftBar from "./home/LeftBar.svelte"
-  import ArticleSelector from "./home/ArticleSelector.svelte"
-	import { onMount } from 'svelte';
+  import LeftBar from "./home/LeftBar.svelte";
+  import ArticleSelector from "./home/ArticleSelector.svelte";
+  import { onMount } from "svelte";
 
   import {
     myInfoStore,
@@ -14,10 +14,13 @@
     myUnreadIds,
     wallpaper,
     playerLinks,
-    globalPopOver
-
+    globalPopOver,
   } from "./stores.js";
-  import {getUrlExtension, matchYoutubeUrl} from "./utils/util"
+  import {
+    getUrlExtension,
+    matchYoutubeUrl,
+    matchSoundCloudUrl,
+  } from "./utils/util";
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./Settings.svelte";
   import Search from "./components/Search.svelte";
@@ -42,25 +45,29 @@
   let cellsSection;
   let coverMessage = "";
   let showSearch = false;
-  let isShowFilterBox=true;
+  let isShowFilterBox = true;
   let isUserMenuShowing = false;
   let isNotificationMenuShowing = false;
-  
-  const source = new EventSource('https://m2np.com/api/streams/'+localStorage.getItem("M2NP_TOKEN"), {withCredentials: true});
-    source.addEventListener('news', function (event) {
-        const obj = JSON.parse(event.data);
-        $myUnreadIds=obj;
-        //console.log(event.data);
-        if(event.data==""){
-          source.close(); // disconnect stream
-        }
-    }, false);
+
+  const source = new EventSource(
+    "https://m2np.com/api/streams/" + localStorage.getItem("M2NP_TOKEN"),
+    { withCredentials: true }
+  );
+  source.addEventListener(
+    "news",
+    function (event) {
+      const obj = JSON.parse(event.data);
+      $myUnreadIds = obj;
+      //console.log(event.data);
+      if (event.data == "") {
+        source.close(); // disconnect stream
+      }
+    },
+    false
+  );
   // Get the data from the api, after the page is mounted.
-  onMount(async () => {
-
-
-  });
-  function mount(){
+  onMount(async () => {});
+  function mount() {
     timeline = [];
 
     if (isMyself) {
@@ -73,18 +80,17 @@
     fetchProfile();
     fetchData("fresh");
   }
-  $: if(username){
-    if(username != null && username != ""){
+  $: if (username) {
+    if (username != null && username != "") {
       isMyself = username == $myInfoStore?.user?.username;
-      mount()
+      mount();
     }
   }
-
 
   function fetchProfile() {
     if (isMyself) {
       profile = $myInfoStore;
-      $wallpaper=profile.user.wallpaper
+      $wallpaper = profile.user.wallpaper;
       filluserStore([profile.user]);
       return;
     }
@@ -99,11 +105,11 @@
         profile = res.data;
         filluserStore(res.data.users);
       }
-      $wallpaper=profile.user.wallpaper
+      $wallpaper = profile.user.wallpaper;
     });
   }
 
-  function markAllAsRead(){
+  function markAllAsRead() {
     API.post("/mark_all_as_read", { postId: postId }).then((res) => {
       if (res.msg != "ok") {
         return;
@@ -130,8 +136,11 @@
     let url = "/get_" + channel;
 
     //set params
-    rightSearchTerm = rightSearchTerm.trim()
-    let params = { username: pUser, filter: rightSearchTerm==""?null:rightSearchTerm };
+    rightSearchTerm = rightSearchTerm.trim();
+    let params = {
+      username: pUser,
+      filter: rightSearchTerm == "" ? null : rightSearchTerm,
+    };
     if (mode === "append") {
       params.less_than_ts = minTS[channel];
     } else if (mode === "prepend") {
@@ -168,26 +177,23 @@
     });
   }
 
-
-
   setInterval(function () {
     //fetchUnreadIds()
   }, 30000);
   function refreshReplies(post_id) {
-    replies=undefined;
+    replies = undefined;
     API.get("/get_replies", { post_id: post_id }).then((res) => {
       replies = res;
     });
   }
   function markAsRead(postId) {
-        API.post("/mark_as_read", { postId: postId }).then((res) => {
-        if (res.msg != "ok") {
-            return;
-        }
-        $myUnreadIds = $myUnreadIds.filter((m) => m != postId);
-        });
-    }
-
+    API.post("/mark_as_read", { postId: postId }).then((res) => {
+      if (res.msg != "ok") {
+        return;
+      }
+      $myUnreadIds = $myUnreadIds.filter((m) => m != postId);
+    });
+  }
 
   const hideAllPopup = () => {
     isNotificationMenuShowing = false;
@@ -199,24 +205,22 @@
   let columnSelected = [true, false, false];
 
   const changeToTab = (id) => {
-    isShowFilterBox = id!='updated';
+    isShowFilterBox = id != "updated";
 
     if (currentChannel == id) {
       return false;
     }
     currentChannel = id;
-    rightSearchTerm=""
+    rightSearchTerm = "";
     fetchData("fresh");
     return true;
   };
 </script>
 
 <main>
-
-
-{#if $playerLinks.links.length > 0}
-  
-  <div style="
+  {#if $playerLinks.links.length > 0}
+    <div
+      style="
   width: calc(66.7% - 9px);
   top: 43px;
   left: 6px;
@@ -226,69 +230,66 @@
   overflow: auto;
   background: white;
   text-align: center;
-  border:#CCC 1px solid;
+  border:#CCC 2px solid;
+  border-radius:3px;
   background:#000;
   ">
-  <span class="" style="    display: inline-block;
-  height: 100%;
-  vertical-align: middle;"></span>
-    <Button
-      style="position: absolute;right: 0.5em; top:.5em; z-index:4;"
-      size="is-small"
-      on:click={() => {
-        $playerLinks.links=[]
-      }}
-      iconRight="times"
-      rounded>關閉</Button>
+      <span
+        style="display: inline-block;height: 100%;vertical-align: middle;" />
       <Button
-      style="position: absolute;right: .5em; top:3.5em; z-index:4;"
-      size="is-small"
-      iconPack="fas"
-      on:click={() => {
-        window.open($playerLinks.links[$playerLinks.currentIndex], '_blank').focus();
-      }}
-      iconRight="external-link-alt"
-      rounded>開新</Button>
-      {#if matchYoutubeUrl($playerLinks.links[$playerLinks.currentIndex])}
+        style="position: absolute;right: 0.5em; top:.5em; z-index:4;"
+        size="is-small"
+        on:click={() => {
+          $playerLinks.links = [];
+        }}
+        iconRight="times">關閉</Button>
+      <Button
+        style="position: absolute;right: 7em; top: .5em; z-index:4;"
+        size="is-small"
+        iconPack="fas"
+        on:click={() => {
+          window
+            .open($playerLinks.links[$playerLinks.currentIndex][0], "_blank")
+            .focus();
+        }}
+        iconRight="external-link-alt">開新</Button>
+      {#if $playerLinks.links[$playerLinks.currentIndex][1] != "img"}
         <iframe
-        style="width:95%; height:95%; vertical-align: middle;"
-        src="{$playerLinks.links[$playerLinks.currentIndex]}"
-        title="YouTube video player"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen />
+          style="width:95%; height:calc(100% - 80px); vertical-align: middle;"
+          src={$playerLinks.links[$playerLinks.currentIndex][0]}
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen />
       {:else}
-      <img src={$playerLinks.links[$playerLinks.currentIndex]} alt='carousel' 
-      style="max-width:95%; max-height:95%; vertical-align: middle;" />
+        <img
+          src={$playerLinks.links[$playerLinks.currentIndex][0]}
+          alt="carousel"
+          style="max-width:95%; max-height:calc(100% - 80px); vertical-align: middle;" />
       {/if}
     </div>
   {/if}
 
+  {#if $globalPopOver.isShow}
+    <article
+      class="message is-dark"
+      style="position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; background:white; z-index:5">
+      <div class="message-header">
+        <p>{$globalPopOver.title}</p>
+        <button
+          class="delete"
+          aria-label="delete"
+          on:click={() => {
+            $globalPopOver = {};
+          }} />
+      </div>
+      <div class="message-body">
+        {$globalPopOver.content}
+      </div>
+    </article>
 
-{#if $globalPopOver.isShow}
-
-<article class="message is-dark"
-style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; background:white; z-index:5'
->
-  <div class="message-header">
-    <p>{$globalPopOver.title}</p>
-    <button class="delete" aria-label="delete" on:click={
-      ()=>{$globalPopOver={}}
-    }></button>
-  </div>
-  <div class="message-body">
-    {$globalPopOver.content}
-  </div>
-</article>
-
-
-<div >
-
-</div>
-{/if}
-
-
-
+    <div />
+  {/if}
 
   <div class="modal" class:is-active={coverMessage != ""}>
     <div class="modal-background" />
@@ -308,43 +309,46 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
 
   <Settings bind:active={isSettingsShowing} />
 
-
-
   <Modal bind:active={showSearch}>
     <div style="background:white;padding:1em;border-radius:1em">
       <Search />
     </div>
   </Modal>
 
-  <div class="columns is-mobile is-variable is-1" style='position:fixed; top:40px;left:3px;bottom:3px;right:3px;margin:0'>
+  <div
+    class="columns is-mobile is-variable is-1"
+    style="position:fixed; top:40px;left:3px;bottom:3px;right:3px;margin:0">
     <div class="column is-2 is-hidden-mobile">
-        <LeftBar 
-        style='background:white; overflow-y: auto; padding:3px;max-height:100%;border-radius:.3em;border:2px solid #CCC;'
-        bind:profile={profile} />
-      
+      <div class='app-box' style="overflow-y: auto; padding:3px;max-height:100%;">
+      <LeftBar
+        
+        bind:profile />
+      </div>
     </div>
-    <div class="column" 
-    class:is-4={$playerLinks.links.length == 0} 
-    class:is-6={$playerLinks.links.length > 0}
-    style='position:relative'>
+    <div
+      class="column"
+      class:is-4={$playerLinks.links.length == 0}
+      class:is-6={$playerLinks.links.length > 0}
+      style="position:relative">
       <ArticleSelector
-      bind:dom={cellsSection}
-      style='background:white; overflow-y: auto; height:100%; overflow-x:hidden; border-radius:.3em;border:2px solid #CCC;'
-      bind:timeline={timeline}
-      hasMore={newBatch.length > 0}
-      loadMore={()=>fetchData("append")}
-      onCellClick={(v) => {
-        showingArticle = v;
-        refreshReplies(v.id);
-        markAsRead(v.id);
-      }}
-      />
+        bind:dom={cellsSection}
+        style="background:white; overflow-y: auto; height:100%; overflow-x:hidden; border-radius:.3em;border:2px solid #CCC;"
+        bind:timeline
+        hasMore={newBatch.length > 0}
+        loadMore={() => fetchData("append")}
+        onCellClick={(v) => {
+          showingArticle = v;
+          refreshReplies(v.id);
+          if ($myUnreadIds.includes(v.id)) {
+            markAsRead(v.id);
+          }
+        }} />
       <div style="position:absolute; bottom:1em;right:2em">
         <Button
           size="is-small"
           on:click={() => {
             cellsSection.scrollTop = 0; //scroll top
-            fetchData("prepend")
+            fetchData("prepend");
           }}
           rounded
           iconRight="arrow-up">Prepend</Button>
@@ -352,15 +356,14 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
           size="is-small"
           on:click={() => {
             cellsSection.scrollTop = cellsSection.scrollHeight; //scroll bottom
-            fetchData("append")
+            fetchData("append");
           }}
           rounded
           iconRight="arrow-down">Append</Button>
       </div>
     </div>
     <div class="column">
-
-      <div style='position:relative;height:100%;'>
+      <div style="position:relative;height:100%;">
         {#if exists(showingArticle.id)}
           <Button
             style="position: absolute;right: 2.5em; top:.5em; z-index:4;"
@@ -370,7 +373,9 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
             }}
             iconRight="times"
             rounded>關閉</Button>
-          <div class='app-box' style='max-height: calc(100% - 83px);'>
+          <div
+            class="app-box"
+            style="max-height: calc(100% - 83px);padding:3px">
             <ArticleDetail
               style="padding:3px"
               onArticleContentChanged={(content) => {
@@ -390,13 +395,11 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
               }}
               article={showingArticle}
               replies={replies} />
-            </div>
+          </div>
         {/if}
 
-
-
-
-        <div style="
+        <div
+          style="
         width: 100%;
         position: absolute;
         bottom: 0;
@@ -404,7 +407,8 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
         left: 0;
         padding: 3px;
         background: white;
-        " class='app-box'>
+        "
+          class="app-box">
           <Postbox
             onSubmit={(txt) => {
               if (exists(showingArticle.id)) {
@@ -433,24 +437,32 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
               }
             }} />
         </div>
-
       </div>
     </div>
   </div>
 
-  <div class="columns is-mobile is-variable is-1" style='position:fixed; top:0;left:3px;right:3px;margin:0'>
-    <div class='column is-2'>
-      <a href="/" use:link style='display:block;margin:.5em 0 0 .5em;color:#333'><i class="fa fa-home" aria-hidden="false" style="filter: drop-shadow(2px 4px 6px white);" /></a>
+  <div
+    class="columns is-mobile is-variable is-1"
+    style="position:fixed; top:0;left:3px;right:3px;margin:0">
+    <div class="column is-2 is-hidden-mobile">
+      <a href="/" use:link style="display:block;margin:.5em 0 0 .5em;color:#333"
+        ><i
+          class="fa fa-home"
+          aria-hidden="false"
+          style="filter: drop-shadow(2px 4px 6px white);" /></a>
     </div>
-    <div class='column is-6'>
-      <div class='app-box thin' style='
+    <div class="column is-6">
+      <div
+        class="app-box thin"
+        style="
       border:2px solid #CCC;border-radius:.3em;
-      '>
+      overflow:hidden;
+      ">
         <div class="columnSwitcher" style="margin-left:.5em">
           {#if isMyself}
             <span
               on:click={() => {
-                changeToTab("inbox")
+                changeToTab("inbox");
               }}
               class:active={currentChannel == "inbox"}>
               <i class="fas fa-inbox" /> 進口
@@ -458,144 +470,148 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
           {/if}
           <span
             on:click={() => {
-              changeToTab("outbox")
+              changeToTab("outbox");
             }}
             class:active={currentChannel == "outbox"}>
             <i class="fas fa-newspaper" /> 出口
           </span>
           <span
             on:click={() => {
-              changeToTab("public")
+              changeToTab("public");
             }}
             class:active={currentChannel == "public"}
             ><i class="fas fa-water" /> 海洋
           </span>
           {#if $myUnreadIds.length > 0 || currentChannel == "updated"}
-          <span
-            on:click={() => {
-              changeToTab("updated")
-            }}
-            class:active={currentChannel == "updated"}
-            ><i class="fas fa-comment-dots"></i> 未讀
-          </span>
+            <span
+              on:click={() => {
+                changeToTab("updated");
+              }}
+              style="color:red"
+              class:active={currentChannel == "updated"}
+              ><i class="fas fa-comment-dots" /> 未讀
+            </span>
           {/if}
         </div>
         {#if isShowFilterBox}
-        <div
-          style="
+          <div
+            style="
           right: 0;
           float: right;clear:none">
-          
-          <input
-            style='font-size: 13px;
+            <input
+              style="font-size: 13px;
             margin: 4px;
             border: 2px dotted #CCC;
-            color: #333;'
-            type="text"
-            placeholder=""
-            bind:value={rightSearchTerm}
-            on:keypress={(e) => {
-              if (e.key === "Enter") {
-                fetchData("fresh")
-              }
-            }}
-            autocomplete="off" />
-        </div>
+            color: #333;"
+              type="text"
+              placeholder=""
+              bind:value={rightSearchTerm}
+              on:keypress={(e) => {
+                if (e.key === "Enter") {
+                  fetchData("fresh");
+                }
+              }}
+              autocomplete="off" />
+          </div>
         {:else}
-        <div class="columnSwitcher" style="float:right">
-          <span
-            on:click={() => {
-              markAllAsRead();
-            }}
-            ><i class="fas fa-check"></i> 全部標記為已讀
-          </span>
-        </div>
+          <div class="columnSwitcher" style="float:right">
+            <span
+              on:click={() => {
+                markAllAsRead();
+              }}
+              ><i class="fas fa-check" /> 全部標記為已讀
+            </span>
+          </div>
         {/if}
         <div style="clear:both" />
       </div>
     </div>
-    <div class='column'>
-      <div class='app-box thin small_nav'>
-      <div class="dropdown is-right userMenu" class:is-active={isUserMenuShowing}>
+    <div class="column">
+      <div class="app-box thin small_nav" style="">
         <div
-          style="padding-right:1em;display: inline-block;"
-          class="dropdown-trigger"
-          on:click={() => {
-            isUserMenuShowing = !isUserMenuShowing;
-          }}>
+          class="dropdown is-right userMenu"
+          class:is-active={isUserMenuShowing}>
           <div
-            style="cursor:pointer"
-            aria-haspopup="true"
-            aria-controls="dropdown-menu2">
-            {#if $myInfoStore?.user?.avatar}
-              <img
-                src={$myInfoStore?.user?.avatar}
-                alt="avatar"
-                style="border-radius:3px;width:20px" />
-            {/if}
-            <span>{$myInfoStore?.user?.display_name}</span>
-          </div>
-        </div>
-        <div class="dropdown-menu" id="dropdown-menu2" role="menu">
-          <div class="dropdown-content">
+            style="padding-right:1em;display: inline-block;"
+            class="dropdown-trigger"
+            on:click={() => {
+              isUserMenuShowing = !isUserMenuShowing;
+            }}>
             <div
-              class="dropdown-item"
-              on:click={() => {
-                isSettingsShowing = true;
-              }}>
-              <i class="fa fa-cog" aria-hidden="true" alt="設定" />
-              設定
-            </div>
-            <hr class="dropdown-divider" />
-            <div class="dropdown-item">
-              <a href="/logout" use:link
-                ><i class="fa fa-sign-out-alt" aria-hidden="true" /> Sign Out</a>
-            </div>
-          </div>
-        </div>
-      </div>
-  
-      <div
-        class="dropdown is-right userMenu"
-        class:is-active={isNotificationMenuShowing}>
-        <i
-          class="fa fa-bell dropdown-trigger"
-          aria-hidden="true"
-          on:click={() => {
-            isNotificationMenuShowing = !isNotificationMenuShowing;
-          }}
-          on:open={() => {
-            API.get("/notifications").then((res) => {
-              notifications = res;
-            });
-          }} />
-        <div class="dropdown-menu" id="dropdown-menu3" role="menu">
-          <div class="dropdown-content">
-            <div class="dropdown-item">
-              {#if notifications.length > 0}
-                {#each notifications as v}
-                  <a href={v.url} use:link>{v.message}</a>
-                {/each}
-              {:else}
-                🤗沒有通知很棒棒
+              style="cursor:pointer
+              overflow: hidden;
+              height: 24.25px;
+              "
+              aria-haspopup="true"
+              aria-controls="dropdown-menu2">
+              {#if $myInfoStore?.user?.avatar}
+                <img
+                  src={$myInfoStore?.user?.avatar}
+                  alt="avatar"
+                  style="border-radius:3px;width:20px" />
               {/if}
+              <span>{$myInfoStore?.user?.display_name}</span>
+            </div>
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+            <div class="dropdown-content">
+              <div
+                class="dropdown-item"
+                on:click={() => {
+                  isSettingsShowing = true;
+                }}>
+                <i class="fa fa-cog" aria-hidden="true" alt="設定" />
+                設定
+              </div>
+              <hr class="dropdown-divider" />
+              <div class="dropdown-item">
+                <a href="/logout" use:link
+                  ><i class="fa fa-sign-out-alt" aria-hidden="true" /> Sign Out</a>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-  
-      <div>
-        <i
-          class="fa fa-search"
-          aria-hidden="true"
-          on:click={() => {
-            showSearch = !showSearch;
-          }} />
-      </div>
+
+        <div
+          class="dropdown is-right userMenu"
+          class:is-active={isNotificationMenuShowing}>
+          <i
+            class="fa fa-bell dropdown-trigger"
+            aria-hidden="true"
+            on:click={() => {
+              isNotificationMenuShowing = !isNotificationMenuShowing;
+            }}
+            on:open={() => {
+              API.get("/notifications").then((res) => {
+                notifications = res;
+              });
+            }} />
+          <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+            <div class="dropdown-content">
+              <div class="dropdown-item">
+                {#if notifications.length > 0}
+                  {#each notifications as v}
+                    <a href={v.url} use:link>{v.message}</a>
+                  {/each}
+                {:else}
+                  🤗沒有通知很棒棒
+                {/if}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <i
+            class="fa fa-search"
+            aria-hidden="true"
+            on:click={() => {
+              showSearch = !showSearch;
+            }} />
+        </div>
       </div>
     </div>
   </div>
-
 </main>
 
 <style>
@@ -630,7 +646,7 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
     z-index: 3;
     right: 0px;
     font-size: 15px;
-    float:right;
+    float: right;
   }
   .small_nav.left {
     right: unset;
@@ -643,25 +659,14 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
     cursor: pointer;
   }
 
-  .app-box{
-    border:2px solid #CCC;border-radius:.3em;
+  .app-box {
+    border: 2px solid #ccc;
+    border-radius: 0.3em;
     background-color: var(--box-background);
   }
-  .app-box.thin{
+  .app-box.thin {
     height: 36px;
   }
-  .rightSearch {
-    padding: 0 4px;
-    height: 32px;
-    top: 6px;
-    left: calc(16vw + 10px);
-    position: fixed;
-    width: calc(42vw - 10px);
-    overflow: hidden;
-    justify-content: flex-start;
-    z-index: 3;
-  }
-
 
   .small_nav i {
     color: dimgray;
@@ -679,5 +684,8 @@ style='position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; 
     text-align: center;
     color: inherit;
   }
-  .column{padding-top:3px;padding-bottom:3px;}
+  .column {
+    padding-top: 3px;
+    padding-bottom: 3px;
+  }
 </style>

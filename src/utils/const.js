@@ -50,4 +50,4 @@ export const BasicStickers = {
   "(blush)": "8924117d7b11b5cec86e.gif",
 };
 
-export const BasicStickersUrlPrefix = "https://f000.backblazeb2.com/file/kiyomi/smilies/"
+export const BasicStickersUrlPrefix = "https://cdn0.m2np.com/file/kiyomi/smilies/"

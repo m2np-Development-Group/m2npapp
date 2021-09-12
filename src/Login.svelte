@@ -52,54 +52,88 @@ let onParticlesLoaded = (event) => {
     if (e.key === "Enter") login();
   };
   let emailInput;
-  let invalidEmailMessage;
-  let invalidPasswordMessage;
+  let invalidEmailMessage="";
+  let invalidPasswordMessage="";
 </script>
 
 
+<section class="hero is-primary is-fullheight">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-5-tablet is-4-desktop is-3-widescreen">
+          <div class="box">
+            <div class="field">
+              <label for="" class="label">Email</label>
+              <div class="control has-icons-left">
+                <input type="email"
+                on:keypress={onKp}
+                bind:this={emailInput}
+                bind:value={email}
+                placeholder="e.g. abbychau@gmail.com" 
+                class="input"
+                
+                required>
+                <span class="icon is-small is-left">
+                  <i class="fa fa-envelope"></i>
+                </span>
+              </div>
+              {#if invalidEmailMessage!=""}
+              <p class="help is-danger">{invalidEmailMessage}</p>
+              {/if}
+            </div>
+            <div class="field">
+              <label for="" class="label">Password</label>
+              <div class="control has-icons-left">
+                <input 
+                on:keypress={onKp}
+                bind:value={password} passwordReveal={true}
+                type="password" placeholder="*******" class="input" required>
+                <span class="icon is-small is-left">
+                  <i class="fa fa-lock"></i>
+                </span>
+              </div>
+              {#if invalidPasswordMessage!=""}
+              <p class="help is-danger">{invalidPasswordMessage}</p>
+              {/if}
+            </div>
+            <div class="field">
+              <label for="" class="checkbox">
+                <input type="checkbox">
+               Remember me
+              </label>
+            </div>
+            <div class="field">
+              <button class="button is-success" on:click={login}>
+                Login
+              </button>
+            </div>
+          </div>
+          沒有賬號？<a href="/register" use:link>按我註冊</a><br />
+          <a href="https://m2np.com/reset-pw" target="_blank">重設密碼(暫用)</a>
 
-<!-- <Particles
-  id="tsparticles"
-  options="{Config}"
-  on:particlesLoaded="{onParticlesLoaded}"
-  on:particlesInit="{onParticlesInit}"
-/> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 
-<div style='padding:1em;max-width:400px;margin:0 auto'>
-  <h1 style='font-size: 4em;
-  text-align: center;
-  text-decoration: line-through;
-  color: black;
-  font-weight: 400;'>M2NP</h1>
-<Field label="E-Mail" type:is-danger={false} message={invalidEmailMessage}>
-  <Input
-  on:keypress={onKp}
-  type="email"
-  placeholder="E-Mail"
-  required="required"
-  bind:this={emailInput}
-  bind:value={email}
-  icon="envelope"
-  />
-  
-</Field>
-
-<Field label="密碼" message={invalidPasswordMessage}> 
-  <Input on:keypress={onKp} placeholder="Password" type="password" bind:value={password} passwordReveal={true} icon="key" />
-</Field>
-<Button type="is-primary" on:click={login}><i class="fa fa-sign-in-alt" /> 登入</Button>
-
-
+<div style='
+position: fixed;
+right: 1em;
+bottom: .5em;
+color: white;
+font-size: 2em;
+opacity: 0.7;
+font-weight: lighter;
+text-decoration: overline;
+'>
+  m2np v20210913
 </div>
 
-<div style='position:fixed;left:1em;bottom:1em; padding:.3em;border-radius:.3em'>
-  <a href="/register" use:link>登記</a><br />
-  <a href="https://m2np.com/reset-pw" target="_blank">重設密碼(暫用)</a>
-  </div>
-
 <style>
-.title,.subtitle{
-  color:black;
-}
+  a {
+    font-weight: bold;
+  }
 </style>
