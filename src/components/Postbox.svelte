@@ -5,6 +5,7 @@
   import { Warning } from "../components/Notification";
   import EmojiSelector from "./EmojiSelector.svelte";
   import { exists } from "../utils/util";
+  import API from "../utils/Api";
 
   export let onSubmit = (txt) => {};
   export let finishHandler = (id) => {};
@@ -49,6 +50,8 @@
   });
   let isShowEmojiSelector = false;
   let isShowFileUploader = false;
+  let fileinput;
+  let uploadPercentage;
 </script>
 
 <div style={style}>
@@ -76,14 +79,50 @@
           }} />
       </label>
 
-      <label for="file-input">
-        <i class="fas fa-file-image big-icon" />
-      </label>
+      
+      <i class="fas fa-file-image big-icon"
+      on:click={() => {
+        fileinput.click();
+      }}
+      />
+      
+      <input
+      style="display:none"
+      type="file"
+      accept=".jpg, .jpeg, .png"
+      bind:this={fileinput}
+      on:change={(e) => {
+        let image = e.target.files[0];
+        let reader = new FileReader();
+        reader.readAsDataURL(image);
+        reader.onload = (e) => {
+          if (e.target.result.length > 3000 * 1000) {
+            alert("file is too large");
+            return;
+          }
+          //avatar = e.target.result;
 
-      <input type="file" id="file-input" style="display:none" bind:files />
+          let data = new FormData()
+          data.append('file', files[0])
+
+          API.formPostFile("/upload_image", data,(e)=>{
+            uploadPercentage = Math.round( (e.loaded * 100.0) / e.total)
+          }).then((res) => {
+            
+            if(res.msg=="ok"){
+              editor.replaceSelection(res.filename);
+            }else{
+              console.log(res)
+            }
+            
+          }).finally(()=>{files=null;uploadPercentage=null})
+
+        };
+      }}
+      bind:files />
       {#if files && files[0]}
         <p>
-          {files[0].name}
+          {files[0].name} : {uploadPercentage!=100?uploadPercentage+"%":"Processing..."}
         </p>
       {/if}
 
@@ -118,6 +157,7 @@
   }
   .toolbar-left i {
     padding-right:3px;
+    cursor:pointer;
   }
   .submit_buttons {
     float: right;

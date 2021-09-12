@@ -221,7 +221,7 @@
   {#if $playerLinks.links.length > 0}
     <div
       style="
-  width: calc(66.7% - 9px);
+  width: calc(66.7% - 10px);
   top: 43px;
   left: 6px;
   bottom: 6px;
@@ -532,7 +532,7 @@
           class="dropdown is-right userMenu"
           class:is-active={isUserMenuShowing}>
           <div
-            style="padding-right:1em;display: inline-block;"
+            style="padding-right:1em;display: inline-block;cursor:pointer"
             class="dropdown-trigger"
             on:click={() => {
               isUserMenuShowing = !isUserMenuShowing;

@@ -14,7 +14,7 @@
   const dispatch = createEventDispatcher();
 
   let classes = "";
-    export let initialText = "";
+  export let initialText = "";
   export let editor = null;
   let options = {
       mode: {
@@ -69,10 +69,7 @@
           if (typeof this.settings.urlText === "function") {
             newValue = this.settings.urlText.call(this, filename, result);
           } else {
-            newValue = this.settings.urlText.replace(
-              this.filenameTag,
-              filename
-            );
+            newValue = this.settings.urlText.replace(this.filenameTag,filename);
           }
           const text = this.editor.getValue().replace(this.lastValue, newValue);
           this.editor.setValue(text);

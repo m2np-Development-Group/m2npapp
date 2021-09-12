@@ -34,8 +34,8 @@
     });
   };
 
-  export let profile;
-  export let style;
+  export let profile = {};
+  export let style = "";
   export let classes = "";
 </script>
 
@@ -72,35 +72,33 @@
       {/if}
     </div>
 
-    <div style='font-size:13px;color:#666'>
-    跟蹤:<br />
-    {#if profile.followings.length > 0}
-      {#each profile.followings as v}
-        <Username userId={v.id} /><br />
-      {/each}
-    {:else}
-      沒有
-    {/if}
-    <br />
-    粉絲: <br />
-    {#if profile.followers.length > 0}
-      {#each profile.followers as v}
-        <Username userId={v.id} /><br />
-      {/each}
-    {:else}
-      沒有
-    {/if}
-    <br />
-    自介: <br />
-    
+    <div style="font-size:13px;color:#666">
+      跟蹤:<br />
+      {#if profile.followings.length > 0}
+        {#each profile.followings as v}
+          <Username userId={v.id} /><br />
+        {/each}
+      {:else}
+        沒有
+      {/if}
+      <br />
+      粉絲: <br />
+      {#if profile.followers.length > 0}
+        {#each profile.followers as v}
+          <Username userId={v.id} /><br />
+        {/each}
+      {:else}
+        沒有
+      {/if}
+      <br />
+      自介: <br />
+
       <Markdown content={profile?.user?.description} />
-    
 
-    <br />
-    <br />
-    最後登入: <strong>{getDateDiff(profile.user?.last_login)}</strong><br />
-    Po文: <strong>{profile.user?.article_count}</strong>則
-
+      <br />
+      <br />
+      最後登入: <strong>{getDateDiff(profile.user?.last_login)}</strong><br />
+      Po文: <strong>{profile.user?.article_count}</strong>則
     </div>
   {/if}
 </div>
