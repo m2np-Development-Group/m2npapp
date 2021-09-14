@@ -15,11 +15,11 @@
     return res !== null;
   }
   let parts = [];
+  const regexMention = new RegExp(/@([a-z\d_]+)/gi);
+  const regexHash = new RegExp(/^#([\u4e00-\u9fa5_a-zA-Z0-9]+)/g);
+  const regexEmoji = new RegExp(/^\$([\u4e00-\u9fa5_a-zA-Z0-9()-]+)/g);
   $: if (text) {
     parts = [];
-    const regexMention = new RegExp(/@([a-z\d_]+)/gi);
-    const regexHash = new RegExp(/^#([\u4e00-\u9fa5_a-zA-Z0-9]+)/g);
-    const regexEmoji = new RegExp(/^\$([\u4e00-\u9fa5_a-zA-Z0-9()-]+)/g);
     const all = text.split(" ");
     all.forEach((e) => {
       if (e.trim() == " ") {

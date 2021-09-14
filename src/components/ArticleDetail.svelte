@@ -182,6 +182,7 @@
 
   .post_content {
     overflow: auto;
+    padding:3px;
   }
   :global(.post_content table) {
     border-spacing: 0;

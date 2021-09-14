@@ -1,13 +1,62 @@
 <script>
+  import { matchSoundCloudUrl, matchYoutubeUrl } from "./../utils/util.js";
   import { getDateDiff } from "../utils/util";
   import { userStore, globalPopOver } from "../stores";
-
   let isUserMenuShowing = false;
   export let cellData;
   export let isUnread;
   export let onCellClick = () => {};
-
+  const regexEmoji = new RegExp(/^\$([\u4e00-\u9fa5_a-zA-Z0-9()-]+)/);
+  const regexMarkdownImage = new RegExp(/^!\[(.*)\]\((.*)\)/);
   let imgDom;
+  function isValidHttpUrl(string) {
+    let url;
+
+    try {
+      url = new URL(string);
+    } catch (_) {
+      return false;
+    }
+
+    return url;
+  }
+  function processContent(content) {
+    const firstLine = content.split("\n")[0];
+    const words = firstLine.split(" ");
+    var components = [];
+    for (var i = 0; i < words.length; i++) {
+      const word = words[i].trim();
+      if (word == "") {continue;}
+      const url = isValidHttpUrl(word);
+      if (url === false) {
+        if(regexEmoji.test(word)){
+          components.push({ type: "emoji" });
+        }else if(regexMarkdownImage.test(word)){
+          components.push({ type: "image" });
+        } else{
+          components.push({ type: "word", value: word });
+        }
+        
+        continue;
+      }
+      if (
+        url.pathname.endsWith(".png") ||
+        url.pathname.endsWith(".jpg") ||
+        url.pathname.endsWith(".jpeg") ||
+        url.pathname.endsWith(".gif")
+      ) {
+        components.push({ type: "image", value: url.href });
+      } else if (matchYoutubeUrl(url.href)) {
+        components.push({ type: "youtube", value: url.href });
+      } else if (matchSoundCloudUrl(url.href)) {
+        components.push({ type: "soundcloud", value: url.href });
+      } else {
+        components.push({ type: "link", value: url.hostname });
+      }
+    
+    }
+    return components;
+  }
 </script>
 
 {#if isUserMenuShowing}
@@ -19,7 +68,7 @@
 {/if}
 <article class="media cell" class:isUnread>
   {#if cellData.nor > 0}
-  <div class="nor">{cellData.nor}</div>
+    <div class="nor">{cellData.nor}</div>
   {/if}
   <figure class="media-left is-hidden-mobile">
     <div
@@ -48,13 +97,32 @@
   </figure>
   <div class="media-content">
     <div class="content" on:click={onCellClick}>
-      <strong class='name' title="@{$userStore.username[cellData.user_id]}"
+      <strong class="name" title="@{$userStore.username[cellData.user_id]}"
         >{$userStore.displayname[cellData.user_id]}</strong>
       <small>{getDateDiff(cellData.created_at)}</small>
 
       <div class="description">
         <!-- {@html myMarked(cellData["content"])} -->
-        {cellData["content"].split("\n")[0]}
+        {#each processContent(cellData["content"]) as component}
+          {#if component.type == "word"}
+            {component.value}&nbsp;
+          {/if}
+          {#if component.type == "image"}
+            <i class="fa fa-image" />
+          {/if}
+          {#if component.type == "youtube"}
+            <i class="fab fa-youtube" />
+          {/if}
+          {#if component.type == "soundcloud"}
+            <i class="fab fa-soundcloud" />
+          {/if}
+          {#if component.type == "emoji"}
+            <i class="fa fa-smile" />
+          {/if}
+          {#if component.type == "link"}
+            <i class="fa fa-link" />
+          {/if}
+        {/each}
       </div>
     </div>
   </div>
@@ -64,14 +132,21 @@
 </article>
 
 <style>
-  .content{
-    font-size:14px;
+  .content {
+    font-size: 14px;
   }
   .content .description {
     overflow: hidden;
     margin-top: 3px;
     color: #999;
     font-size: 13px;
+  }
+  .description i {
+    display: inline-block;
+    background:#CCC;
+    color: white;
+    padding: 2px 3px 2px 3px;
+    border-radius: 3px;
   }
   .media-content {
     overflow: hidden;
@@ -93,17 +168,17 @@
     position: absolute;
     right: 0.7em;
     top: 3px;
-    font-size:12px;
+    font-size: 12px;
     padding: 2px 3px;
     border-radius: 3px;
-    background: #EEE;
-    font-weight:bold;
+    background: #eee;
+    font-weight: bold;
   }
   .isUnread .nor {
     background: red;
     color: white;
   }
-  .content small{
-    color:#999;
+  .content small {
+    color: #999;
   }
 </style>

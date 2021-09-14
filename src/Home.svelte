@@ -180,9 +180,9 @@
   setInterval(function () {
     //fetchUnreadIds()
   }, 30000);
-  function refreshReplies(post_id) {
+  async function refreshReplies(post_id) {
     replies = undefined;
-    API.get("/get_replies", { post_id: post_id }).then((res) => {
+    await API.get("/get_replies", { post_id: post_id }).then((res) => {
       replies = res;
     });
   }
@@ -323,12 +323,13 @@
         bind:timeline
         hasMore={newBatch.length > 0}
         loadMore={() => fetchData("append")}
-        onCellClick={(v) => {
+        onCellClick={async (v) => {
           showingArticle = v;
-          refreshReplies(v.id);
+          await refreshReplies(v.id);
           if ($myUnreadIds.includes(v.id)) {
             markAsRead(v.id);
           }
+          window.hljs.highlightAll()
         }} />
       <div
         style="position:absolute; bottom:1em;right:2em"
@@ -364,7 +365,8 @@
             rounded>關閉</Button>
           <div
             class="app-box"
-            style="max-height: calc(100% - 83px);padding:3px">
+            style="max-height: calc(100% - 83px);padding: 3px;
+            background: #f0f0f0;">
             <ArticleDetail
               style="padding:3px"
               onArticleContentChanged={(content) => {

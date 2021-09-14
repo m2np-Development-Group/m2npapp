@@ -31,7 +31,7 @@
     "svelte-images": "0.0.95",
     "svelte-infinite-scroll": "^1.5.2",
     "svelte-lazy-image": "^0.2.0",
-    "svelte-markdown": "abbychau/svelte-markdown#9cb12e9f39f85dc84602ae3431e9e9cfab6396ea",
+    "svelte-markdown": "abbychau/svelte-markdown#dbe5e8641f84160331070b0c581ec63aa7f5f1fa",
     "svelte-navigator": "^3.1.5",
     "svelte-notifications": "^0.9.9",
     "svelte-preprocess": "^4.6.9",
