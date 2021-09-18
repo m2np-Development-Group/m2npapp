@@ -16,11 +16,6 @@
     playerLinks,
     globalPopOver,
   } from "./stores.js";
-  import {
-    getUrlExtension,
-    matchYoutubeUrl,
-    matchSoundCloudUrl,
-  } from "./utils/util";
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./Settings.svelte";
   import Search from "./components/Search.svelte";

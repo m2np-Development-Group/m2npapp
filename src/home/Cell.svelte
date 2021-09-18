@@ -105,7 +105,7 @@
         <!-- {@html myMarked(cellData["content"])} -->
         {#each processContent(cellData["content"]) as component}
           {#if component.type == "word"}
-            {component.value.trim()}&nbsp;
+            {component.value.trim()}
           {/if}
           {#if component.type == "image"}
             <i class="fa fa-image" />
