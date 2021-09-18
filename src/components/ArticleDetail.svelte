@@ -34,7 +34,7 @@
         {getDateDiff(article.created_at)}
       </small>
       <!-- class:red={article.nor > 0} -->
-      | <small class="reply_count">{article.nor} 則回應</small>
+      | <small class="reply_count">{replies?.length??0} 則回應</small>
     </AvatarBox>
 
     {#if !exists(editingArticle.id)}

@@ -1,6 +1,6 @@
 <script>
-    export let lang
-    export let text
-  </script>
-  
-  <pre class={lang}><code>{text}</code></pre>
+  import {trim} from '../../utils/util'
+  export let raw
+</script>
+
+<code>{trim(raw,'`')}</code>

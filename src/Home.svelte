@@ -37,6 +37,7 @@
   let maxTS = { inbox: null, outbox: null, public: null, search: null };
   let minTS = { inbox: null, outbox: null, public: null, search: null };
   let replies;
+
   let currentChannel = "outbox";
   let isMyself = false;
   let profile = {};
@@ -71,10 +72,8 @@
     timeline = [];
 
     if (isMyself) {
-      columnSelected = [true, false, false];
       currentChannel = "inbox";
     } else {
-      columnSelected = [false, true, false];
       currentChannel = "outbox";
     }
     fetchProfile();
@@ -194,6 +193,13 @@
       $myUnreadIds = $myUnreadIds.filter((m) => m != postId);
     });
   }
+  async function showArticle(v) {
+    showingArticle = v;
+    await refreshReplies(v.id);
+    if ($myUnreadIds.includes(v.id)) {
+      markAsRead(v.id);
+    }
+  }
 
   const hideAllPopup = () => {
     isNotificationMenuShowing = false;
@@ -202,8 +208,7 @@
 
   let rightSearchTerm = "";
 
-  let columnSelected = [true, false, false];
-
+  let isNotificationLoading = false;
   const changeToTab = (id) => {
     isShowFilterBox = id != "updated";
 
@@ -303,7 +308,10 @@
 
   <div
     class="columns is-mobile is-variable is-1"
-    on:click={()=>{isNotificationMenuShowing=false;isUserMenuShowing=false}}
+    on:click={() => {
+      isNotificationMenuShowing = false;
+      isUserMenuShowing = false;
+    }}
     style="position:fixed; top:40px;left:3px;bottom:3px;right:3px;margin:0">
     <div class="column is-2 is-hidden-mobile">
       <div
@@ -323,14 +331,7 @@
         bind:timeline
         hasMore={newBatch.length > 0}
         loadMore={() => fetchData("append")}
-        onCellClick={async (v) => {
-          showingArticle = v;
-          await refreshReplies(v.id);
-          if ($myUnreadIds.includes(v.id)) {
-            markAsRead(v.id);
-          }
-          window.hljs.highlightAll()
-        }} />
+        onCellClick={showArticle} />
       <div
         style="position:absolute; bottom:1em;right:2em"
         class="is-hidden-mobile">
@@ -526,7 +527,7 @@
             style="padding-right:1em;display: inline-block;cursor:pointer"
             class="dropdown-trigger"
             on:click={() => {
-              isNotificationMenuShowing=false;
+              isNotificationMenuShowing = false;
               isUserMenuShowing = !isUserMenuShowing;
             }}>
             <div
@@ -571,20 +572,40 @@
             class="fa fa-bell dropdown-trigger"
             aria-hidden="true"
             on:click={() => {
-              isUserMenuShowing=false;
+              isUserMenuShowing = false;
               isNotificationMenuShowing = !isNotificationMenuShowing;
-            }}
-            on:open={() => {
-              API.get("/notifications").then((res) => {
-                notifications = res;
-              });
+              isNotificationLoading = true;
+              API.get("/notifications")
+                .then((res) => {
+                  
+                  notifications = res.notifications.map((notification) => {
+                    notification.user = res.users[notification.user_id];
+                    return notification;
+                  })
+                })
+                .finally(() => {
+                  isNotificationLoading = false;
+                });
             }} />
           <div class="dropdown-menu" id="dropdown-menu3" role="menu">
             <div class="dropdown-content">
               <div class="dropdown-item">
-                {#if notifications.length > 0}
+                {#if isNotificationLoading}
+                  <i class="fas fa-spinner fa-pulse" /> Loading...
+                {:else if notifications.length > 0}
                   {#each notifications as v}
-                    <a href={v.url} use:link>{v.message}</a>
+                    <div on:click={()=>{
+                      //get article content
+                      API.get("/get_post/?post_id="+v.object.post_id).then((res)=>{
+                        showArticle(res)
+                      }).finally(()=>{
+                        isNotificationMenuShowing=false;
+                      });
+                      
+                    }}
+                    style='border-bottom:1px solid #ccc; padding:3px'
+                    
+                    >{JSON.stringify(v)}</div>
                   {/each}
                 {:else}
                   🤗沒有通知很棒棒
