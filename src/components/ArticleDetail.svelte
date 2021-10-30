@@ -34,7 +34,7 @@
         {getDateDiff(article.created_at)}
       </small>
       <!-- class:red={article.nor > 0} -->
-      | <small class="reply_count">{replies?.length??0} 則回應</small>
+      | <small class="reply_count">{replies?.length ?? 0} 則回應</small>
     </AvatarBox>
 
     {#if !exists(editingArticle.id)}
@@ -85,6 +85,11 @@
             }}
             class="fa fa-trash trashButton smallButtons" />
         {/if}
+        <i
+          on:click={() => {
+            window.open(`/p/${article.id}`, "_blank");
+          }}
+          class="fas fa-external-link-alt externalLinkButton smallButtons" />
       </div>
     {:else}
       <Postbox
@@ -119,17 +124,17 @@
       <i class="fas fa-spinner fa-pulse" /> LOADING...
     {:else}
       {#if Array.isArray(replies)}
-      {#each replies as reply}
-        <ReplyEntry
-          reply={reply}
-          threadAuthorId={article["user_id"]}
-          onDelete={(id) => {
-            article.nor--;
-            replies = replies.filter((v) => {
-              return v.id != id;
-            });
-          }} />
-      {/each}
+        {#each replies as reply}
+          <ReplyEntry
+            reply={reply}
+            threadAuthorId={article["user_id"]}
+            onDelete={(id) => {
+              article.nor--;
+              replies = replies.filter((v) => {
+                return v.id != id;
+              });
+            }} />
+        {/each}
       {/if}
       {#if replies.length == 0}
         <div
@@ -165,8 +170,12 @@
   .smallButtons {
     border-radius: 3px;
     padding: 3px;
+    cursor:pointer;
   }
-
+  .externalLinkButton:hover {
+    background: #333;
+    color: white;
+  }
   .trashButton:hover {
     background: #666;
     color: white;
@@ -182,7 +191,7 @@
 
   .post_content {
     overflow: auto;
-    padding:3px;
+    padding: 3px;
   }
   :global(.post_content table) {
     border-spacing: 0;

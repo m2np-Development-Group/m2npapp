@@ -26,6 +26,6 @@ text-decoration: overline;
 -webkit-user-select: none;
 user-select: none;
 ">
-  m2np v20210913
+  m2np v20211031
 </div>
 
