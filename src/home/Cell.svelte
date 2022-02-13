@@ -1,11 +1,14 @@
 <script>
   import { matchSoundCloudUrl, matchYoutubeUrl } from "./../utils/util.js";
   import { getDateDiff } from "../utils/util";
-  import { userStore, globalPopOver } from "../stores";
+  import { userStore, requestedProfile, requestedArticle } from "../stores";
   import { fade, scale } from "svelte/transition";
   import { flip } from "svelte/animate";
   import { myUnreadIds } from "../stores";
+  import API from "../utils/Api";
 
+  
+  
   let isUserMenuShowing = false;
   export let onCellClick = () => {};
   export let timeline = [];
@@ -85,16 +88,33 @@
     <figure class="media-left is-hidden-mobile">
       <div
         on:click={() => {
-          var topPos = imgDom.getBoundingClientRect().top + window.scrollY;
-          var leftPos = imgDom.getBoundingClientRect().left + window.scrollX;
+          // var topPos = imgDom.getBoundingClientRect().top + window.scrollY;
+          // var leftPos = imgDom.getBoundingClientRect().left + window.scrollX;
 
-          $globalPopOver = {
-            isShow: true,
-            top: topPos,
-            left: leftPos,
-            title: $userStore.username[cellData.user_id],
-            content: $userStore.username[cellData.user_id],
-          };
+          // $globalPopOver = {
+          //   isShow: true,
+          //   top: topPos,
+          //   left: leftPos,
+          //   title: $userStore.username[cellData.user_id],
+          //   content: $userStore.username[cellData.user_id],
+          // };
+
+          //show profile on the right column
+          
+          API.get("/get_profile", {
+            user_id: cellData.user_id,
+          }).then((res) => {
+            if (res.msg != "ok") {
+              if (res.msg == "user not found") {
+                console.log("查無此人");
+              }
+            } else {
+              $requestedProfile = res.data;
+              $requestedArticle={};
+            }
+          });
+
+          
         }}
       >
         <img
@@ -110,7 +130,10 @@
       </div>
     </figure>
     <div class="media-content">
-      <div class="content" on:click={() => onCellClick(cellData)}>
+      <div class="content" on:click={() => {
+        $requestedProfile={};
+        onCellClick(cellData)
+        }}>
         <strong class="name" title="@{$userStore.username[cellData.user_id]}"
           >{$userStore.displayname[cellData.user_id]}</strong
         >

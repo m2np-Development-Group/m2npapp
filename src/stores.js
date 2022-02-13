@@ -14,6 +14,9 @@ export const userStore = writable({
   color: {},
 });
 
+export const requestedProfile = writable({});
+export const requestedArticle = writable({});
+
 export const wallpaper = writable("");
 export const playerLinks = writable({ links: [], currentIndex: 0 });
 export const globalPopOver = writable({

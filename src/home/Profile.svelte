@@ -35,13 +35,21 @@
   };
 
   export let profile = {};
-  export let style = "";
-  export let classes = "";
+  export let showWallpaper = false;
+
 </script>
 
-<div style={style} class={classes}>
+<div style='position:relative'>
+
+  {#if showWallpaper}
+  <div
+  class="wallpaper"
+    style="background-image: url({profile.user.wallpaper});"
+  />
+  {/if}
+
   {#if profile.user}
-    <div style="margin-bottom:1em">
+    <div style="padding:1em;background:white">
       {#if profile?.user?.avatar}
         <img width="80" src={profile?.user?.avatar} alt="avatar" /><br />
       {/if}
@@ -72,38 +80,63 @@
           >
         {/if}
       {/if}
+
+
+
+
+
+
+      <div style="font-size:13px;color:#666">
+        跟蹤:<br />
+        {#if profile.followings.length > 0}
+          {#each profile.followings as v}
+            <Username userId={v.id} /><br />
+          {/each}
+        {:else}
+          沒有
+        {/if}
+        <br />
+        粉絲: <br />
+        {#if profile.followers.length > 0}
+          {#each profile.followers as v}
+            <Username userId={v.id} /><br />
+          {/each}
+        {:else}
+          沒有
+        {/if}
+        <br />
+        自介: <br />
+  
+        <Markdown content={profile?.user?.description} />
+  
+        <br />
+        <br />
+        最後登入: <strong>{getDateDiff(profile.user?.last_login)}</strong><br />
+        Po文: <strong>{profile.user?.article_count}</strong>則
+      </div>
+
+
+
+
+
+
+
+
     </div>
 
-    <div style="font-size:13px;color:#666">
-      跟蹤:<br />
-      {#if profile.followings.length > 0}
-        {#each profile.followings as v}
-          <Username userId={v.id} /><br />
-        {/each}
-      {:else}
-        沒有
-      {/if}
-      <br />
-      粉絲: <br />
-      {#if profile.followers.length > 0}
-        {#each profile.followers as v}
-          <Username userId={v.id} /><br />
-        {/each}
-      {:else}
-        沒有
-      {/if}
-      <br />
-      自介: <br />
 
-      <Markdown content={profile?.user?.description} />
-
-      <br />
-      <br />
-      最後登入: <strong>{getDateDiff(profile.user?.last_login)}</strong><br />
-      Po文: <strong>{profile.user?.article_count}</strong>則
-    </div>
   {/if}
 </div>
 
 <style>
+  .wallpaper {
+    background-color: #eee;
+    background-size: cover;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    opacity: 0.6;
+  }
 </style>

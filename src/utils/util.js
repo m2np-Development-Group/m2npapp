@@ -22,8 +22,8 @@ export const exists = (v) => {
     v === 0 ||
     v === "0" ||
     v === "" ||
-    v === "{}" ||
-    v === "[]"
+    v === {} ||
+    v === []
   ) {
     return false;
   }

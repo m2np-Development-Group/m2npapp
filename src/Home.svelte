@@ -15,6 +15,7 @@
     wallpaper,
     playerLinks,
     globalPopOver,
+    requestedProfile,requestedArticle
   } from "./stores.js";
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./Settings.svelte";
@@ -26,7 +27,6 @@
 
   let coinSound = new Audio("/assets/coin.mp3");
   let flipCoinSound = new Audio("/assets/flipcoin.mp3");
-  let showingArticle = {};
   let newBatch = [];
   let timeline = [];
   let maxTS = { inbox: null, outbox: null, public: null, search: null };
@@ -191,7 +191,7 @@
     });
   }
   async function showArticle(v) {
-    showingArticle = v;
+    $requestedArticle = v;
     await refreshReplies(v.id);
     if ($myUnreadIds.includes(v.id)) {
       markAsRead(v.id);
@@ -412,12 +412,12 @@
     </div>
     <div class="column">
       <div style="position:relative;height:100%;">
-        {#if exists(showingArticle.id)}
+        {#if exists($requestedArticle.id)}
           <Button
             style="position: absolute;right: 2.5em; top:.5em; z-index:4;"
             size="is-small"
             on:click={() => {
-              showingArticle = {};
+              $requestedArticle = {};
             }}
             iconRight="times"
             rounded>關閉</Button
@@ -431,20 +431,20 @@
               style="padding:3px"
               onArticleContentChanged={(content) => {
                 timeline = timeline.map((v) => {
-                  if (v.id == showingArticle.id) {
+                  if (v.id == $requestedArticle.id) {
                     v.content = content;
                   }
                   return v;
                 });
               }}
               onDelete={() => {
-                timeline = timeline.filter((v) => v.id != showingArticle.id);
-                showingArticle = {};
+                timeline = timeline.filter((v) => v.id != $requestedArticle.id);
+                $requestedArticle = {};
                 if (profile.user.id == $myInfoStore.user.id) {
                   profile.user.article_count--;
                 }
               }}
-              article={showingArticle}
+              article={$requestedArticle}
               replies={replies}
             />
           </div>
@@ -452,9 +452,28 @@
           <!-- if not showing an article, show profile-->
           <div
             class="app-box"
-            style="overflow-y: auto; padding:3px;max-height:100%;"
+            style="overflow-y: auto; padding:3px;max-height:calc(100% - 83px);"
           >
-            <Profile bind:profile />
+            <!--if profile request is active, then show profile with close btn-->
+            {#if $requestedProfile.user}
+              <div
+                style="position:absolute;right:2em;top:1em;z-index:4;"
+                class="is-hidden-mobile"
+              >
+                <Button
+                  size="is-small"
+                  on:click={() => {
+                    $requestedProfile = {};
+                  }}
+                  rounded
+                  iconRight="times">關閉</Button>
+              </div>
+              <Profile showWallpaper={false} profile={$requestedProfile} />
+            
+            {:else}
+
+              <Profile bind:profile />
+            {/if}
           </div>
         {/if}
 
@@ -472,20 +491,20 @@
         >
           <Postbox
             onSubmit={(txt) => {
-              if (exists(showingArticle.id)) {
+              if (exists($requestedArticle.id)) {
                 return API.post("/post_reply", {
-                  post_id: showingArticle.id,
+                  post_id: $requestedArticle.id,
                   content: txt,
                 });
               } else {
                 return API.post("/post_post", { content: txt });
               }
             }}
-            placeholder={exists(showingArticle.id) ? "回覆Po" : "發新Po"}
+            placeholder={exists($requestedArticle.id) ? "回覆Po" : "發新Po"}
             finishHandler={(content) => {
-              if (exists(showingArticle.id)) {
+              if (exists($requestedArticle.id)) {
                 //reply
-                refreshReplies(showingArticle.id);
+                refreshReplies($requestedArticle.id);
               } else {
                 //create
 

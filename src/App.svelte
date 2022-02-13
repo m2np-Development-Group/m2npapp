@@ -51,7 +51,7 @@
 <Router primary={false}>
   <div
     id="wallpaper"
-    style="background-image: url({exists($wallpaper) ? $wallpaper : defaultWallpaperSVG});"
+    style="background-image: url('{exists($wallpaper) ? $wallpaper : defaultWallpaperSVG}');"
   />
   <Notifications>
     <Route path="/" component={Login} />
@@ -87,7 +87,6 @@
   /* @import 'bulma/css/bulma.css'; */
 
   #wallpaper {
-    background-color: #eee;
     background-size: cover;
     position: absolute;
     top: 0px;
