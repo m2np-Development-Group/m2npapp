@@ -7,8 +7,6 @@
   import { myUnreadIds } from "../stores";
   import API from "../utils/Api";
 
-  
-  
   let isUserMenuShowing = false;
   export let onCellClick = () => {};
   export let timeline = [];
@@ -64,6 +62,8 @@
     }
     return components;
   }
+  // animate:flip={{ duration: 300 }}
+  //   out:scale={{ duration: 250 }}
 </script>
 
 {#if isUserMenuShowing}
@@ -78,8 +78,7 @@
   <article
     class="media cell"
     class:isUnread={$myUnreadIds.includes(cellData.id)}
-    animate:flip={{ duration: 300 }}
-    out:scale={{ duration: 250 }}
+
     in:scale={{ duration: 250 }}
   >
     {#if cellData.nor > 0}
@@ -100,7 +99,7 @@
           // };
 
           //show profile on the right column
-          
+
           API.get("/get_profile", {
             user_id: cellData.user_id,
           }).then((res) => {
@@ -110,11 +109,9 @@
               }
             } else {
               $requestedProfile = res.data;
-              $requestedArticle={};
+              $requestedArticle = {};
             }
           });
-
-          
         }}
       >
         <img
@@ -130,10 +127,13 @@
       </div>
     </figure>
     <div class="media-content">
-      <div class="content" on:click={() => {
-        $requestedProfile={};
-        onCellClick(cellData)
-        }}>
+      <div
+        class="content"
+        on:click={() => {
+          $requestedProfile = {};
+          onCellClick(cellData);
+        }}
+      >
         <strong class="name" title="@{$userStore.username[cellData.user_id]}"
           >{$userStore.displayname[cellData.user_id]}</strong
         >

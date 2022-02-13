@@ -10,7 +10,7 @@
 
   export let content = "";
 </script>
-
+{#if content}
 <SvelteMarkdown
   source={content}
   options={{
@@ -28,3 +28,4 @@
     code: Code,
   }}
 />
+{/if}

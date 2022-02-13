@@ -36,52 +36,61 @@
 
   export let profile = {};
   export let showWallpaper = false;
-
 </script>
 
-<div style='position:relative'>
-
+<div style="position:relative">
   {#if showWallpaper}
-  <div
-  class="wallpaper"
-    style="background-image: url({profile.user.wallpaper});"
-  />
+    <div
+      class="wallpaper"
+      style="background-image: url({profile.user.wallpaper});"
+    />
   {/if}
 
   {#if profile.user}
     <div style="padding:1em;background:white">
-      {#if profile?.user?.avatar}
-        <img width="80" src={profile?.user?.avatar} alt="avatar" /><br />
-      {/if}
+      <table>
 
-      {profile?.user?.display_name}<br />
-      <!-- {JSON.stringify($myInfoStore?.followers)} -->
-      {#if $myInfoStore?.followers?.map((x) => x.id).includes(profile.user.id)}
-        正在跟隨你。
-      {/if}
-      {#if profile.user.id != $myInfoStore?.user?.id}
-        {#if $myInfoStore?.followings
-          ?.map((x) => x.id)
-          .includes(profile.user.id)}
-          <Button
-            size="is-small"
-            iconRight="arrow-right"
-            on:click={() => {
-              unfollow(profile.user);
-            }}>Unfollow</Button
-          >
-        {:else}
-          <Button
-            size="is-small"
-            iconLeft="arrow-right"
-            on:click={() => {
-              follow(profile.user);
-            }}>Follow</Button
-          >
-        {/if}
-      {/if}
+        <tr>
+          <td>
+            {#if profile?.user?.avatar}
+            <img width="80" src={profile?.user?.avatar} alt="avatar" />
+          {/if}
+          </td>
+          <td style='padding-left:1em'>
 
+            <a href={`/user/${profile.user.username}`}>{profile?.user?.display_name}</a>
+            <!-- {JSON.stringify($myInfoStore?.followers)} -->
+            {#if $myInfoStore?.followers?.map((x) => x.id).includes(profile.user.id)}
+              <small>(正在跟隨你)</small>
+            {/if}
+            <br />
+            {#if profile.user.id != $myInfoStore?.user?.id}
+              {#if $myInfoStore?.followings
+                ?.map((x) => x.id)
+                .includes(profile.user.id)}
+                <Button
+                  size="is-small"
+                  iconRight="arrow-right"
+                  on:click={() => {
+                    unfollow(profile.user);
+                  }}>取消跟隨</Button
+                >
+              {:else}
+                <Button
+                  size="is-small"
+                  iconLeft="arrow-right"
+                  on:click={() => {
+                    follow(profile.user);
+                  }}>跟隨</Button
+                >
+              {/if}
+            {/if}
 
+            
+
+          </td>
+        </tr>
+      </table>
 
 
 
@@ -106,25 +115,15 @@
         {/if}
         <br />
         自介: <br />
-  
+
         <Markdown content={profile?.user?.description} />
-  
+
         <br />
         <br />
         最後登入: <strong>{getDateDiff(profile.user?.last_login)}</strong><br />
         Po文: <strong>{profile.user?.article_count}</strong>則
       </div>
-
-
-
-
-
-
-
-
     </div>
-
-
   {/if}
 </div>
 

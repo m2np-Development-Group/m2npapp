@@ -8,7 +8,7 @@
   //import Particles from "svelte-particles";
   //import Config from "./ParticleConfig"
 
-  export let location;
+  //export let location;
 
   let email = "";
   let password = "";

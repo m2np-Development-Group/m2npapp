@@ -15,7 +15,8 @@
     wallpaper,
     playerLinks,
     globalPopOver,
-    requestedProfile,requestedArticle
+    requestedProfile,
+    requestedArticle,
   } from "./stores.js";
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./Settings.svelte";
@@ -466,12 +467,11 @@
                     $requestedProfile = {};
                   }}
                   rounded
-                  iconRight="times">關閉</Button>
+                  iconRight="times">關閉</Button
+                >
               </div>
               <Profile showWallpaper={false} profile={$requestedProfile} />
-            
             {:else}
-
               <Profile bind:profile />
             {/if}
           </div>
@@ -697,7 +697,7 @@
     color: gray;
     margin: 5px 2px;
   }
-  .columnSwitcher span {
+  .columnSwitcher div {
     color: gray;
     cursor: pointer;
     font-weight: normal;
@@ -718,13 +718,6 @@
     right: 0px;
     font-size: 15px;
     float: right;
-  }
-  .small_nav.left {
-    right: unset;
-    left: 0px;
-    top: 0px;
-    font-size: 18px;
-    padding: 8px 0 0 6px;
   }
   .small_nav i {
     cursor: pointer;

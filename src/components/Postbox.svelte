@@ -89,7 +89,7 @@
         bind:this={fileinput}
         on:change={(e) => {
           let image = e.target.files[0];
-          let reader = new FileReader();
+          let reader = new window.FileReader();
           if (image && image.type.match("image.*")) {
             reader.readAsDataURL(image);
           }
@@ -100,7 +100,7 @@
             }
             //avatar = e.target.result;
 
-            let data = new FormData();
+            let data = new window.FormData();
             data.append("file", files[0]);
 
             API.formPostFile("/upload_image", data, (e) => {

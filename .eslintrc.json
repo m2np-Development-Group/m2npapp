@@ -1,14 +1,12 @@
 {
     "env": {
       "browser": true,
-      "es6": true,
-      //"jest": true,
-      "node": true
+      "es6": true
     },
     "extends": ["eslint:recommended", "plugin:import/recommended"],
     "overrides": [
       {
-        "files": ["**/*.svelte"],
+        "files": ["*.svelte"],
         "processor": "svelte3/svelte3"
       }
     ],
@@ -16,5 +14,5 @@
       "ecmaVersion": 2019,
       "sourceType": "module"
     },
-    "plugins": ["import", "svelte3"]
+    "plugins": ["svelte3"]
   }
