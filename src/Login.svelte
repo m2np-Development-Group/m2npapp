@@ -59,7 +59,8 @@
           bind:value={email}
           placeholder="e.g. abbychau@gmail.com"
           class="input"
-          required />
+          required
+        />
         <span class="icon is-small is-left">
           <i class="fa fa-envelope" />
         </span>
@@ -78,7 +79,8 @@
           type="password"
           placeholder="*******"
           class="input"
-          required />
+          required
+        />
         <span class="icon is-small is-left">
           <i class="fa fa-lock" />
         </span>
@@ -97,9 +99,8 @@
   </div>
 </HeroFullHeight>
 
-
 <style>
-  a:hover{
+  a:hover {
     text-decoration: underline;
   }
   a {

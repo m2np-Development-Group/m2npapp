@@ -9,38 +9,38 @@
   import "codemirror/mode/gfm/gfm";
   import inlineAttachment from "./inlineAttachment";
 
-  export let onSubmit = ()=>{};
-  
+  export let onSubmit = () => {};
+
   const dispatch = createEventDispatcher();
 
   let classes = "";
   export let initialText = "";
   export let editor = null;
   let options = {
-      mode: {
-        name: "gfm",
-        tokenTypeOverrides: {
-          emoji: "emoji",
-        },
+    mode: {
+      name: "gfm",
+      tokenTypeOverrides: {
+        emoji: "emoji",
       },
-      lineWrapping: true,
-      extraKeys: { Enter: "newlineAndIndentContinueMarkdownList" },
+    },
+    lineWrapping: true,
+    extraKeys: { Enter: "newlineAndIndentContinueMarkdownList" },
 
-      lineNumbers: true,
-      matchBrackets: true,
-      indentUnit: 4,
-      indentWithTabs: true,
-      enterMode: "keep",
-      tabMode: "shift",
-      extraKeys: {
-        "Ctrl-Enter": (cm) => {
-            onSubmit();
-        },
-        "Cmd-Enter": (cm) => {
-            onSubmit();
-        },
+    lineNumbers: true,
+    matchBrackets: true,
+    indentUnit: 4,
+    indentWithTabs: true,
+    enterMode: "keep",
+    tabMode: "shift",
+    extraKeys: {
+      "Ctrl-Enter": (cm) => {
+        onSubmit();
       },
-    };
+      "Cmd-Enter": (cm) => {
+        onSubmit();
+      },
+    },
+  };
   export { classes as class };
 
   let element;
@@ -57,7 +57,7 @@
     if (editor) element.innerHTML = "";
 
     editor = CodeMirror(element, options);
-    editor.setValue(initialText.trim())
+    editor.setValue(initialText.trim());
 
     inlineAttachment.editors.codemirror4.attach(editor, {
       onFileUploadResponse: function (xhr) {
@@ -69,7 +69,10 @@
           if (typeof this.settings.urlText === "function") {
             newValue = this.settings.urlText.call(this, filename, result);
           } else {
-            newValue = this.settings.urlText.replace(this.filenameTag,filename);
+            newValue = this.settings.urlText.replace(
+              this.filenameTag,
+              filename
+            );
           }
           const text = this.editor.getValue().replace(this.lastValue, newValue);
           this.editor.setValue(text);
@@ -78,7 +81,6 @@
         return false;
       },
     });
-
 
     editor.on("cursorActivity", (event) => {
       dispatch("activity", event);
@@ -108,7 +110,8 @@
   :global(.CodeMirror pre.CodeMirror-placeholder) {
     color: #999;
   }
-  :global(.CodeMirror-wrap pre.CodeMirror-line, .CodeMirror-wrap pre.CodeMirror-line-like) {
+  :global(.CodeMirror-wrap pre.CodeMirror-line, .CodeMirror-wrap
+      pre.CodeMirror-line-like) {
     word-break: break-all;
   }
 </style>

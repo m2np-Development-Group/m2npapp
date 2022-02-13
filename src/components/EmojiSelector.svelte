@@ -2,8 +2,8 @@
   import { flip } from "svelte/animate";
   import { onMount } from "svelte";
   import API from "../utils/Api";
-  import {BasicStickers} from "../utils/const"
-  import {BasicStickersUrlPrefix} from "../utils/const"
+  import { BasicStickers } from "../utils/const";
+  import { BasicStickersUrlPrefix } from "../utils/const";
 
   let hovering = false;
 
@@ -37,7 +37,7 @@
 </script>
 
 <div class="list">
-  {#each Object.entries(BasicStickers) as [key, url], index(key)}
+  {#each Object.entries(BasicStickers) as [key, url], index (key)}
     <div
       class="list-item"
       animate:flip={{ duration: 300 }}
@@ -46,13 +46,15 @@
       on:drop|preventDefault={(event) => drop(event, index)}
       ondragover="return false"
       on:dragenter={() => (hovering = index)}
-      class:is-active={hovering === index}>
+      class:is-active={hovering === index}
+    >
       <img
         src="{BasicStickersUrlPrefix}{url}"
         on:click={() => {
           onInsert(key);
         }}
-        alt="emoji" />
+        alt="emoji"
+      />
     </div>
   {/each}
 </div>

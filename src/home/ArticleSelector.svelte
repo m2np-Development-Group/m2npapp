@@ -1,16 +1,15 @@
 <script>
-    
-    import Cell from "./Cell.svelte"
-    import InfiniteScroll from "../components/InfiniteScroll.svelte"
+  import Cell from "./Cell.svelte";
+  import InfiniteScroll from "../components/InfiniteScroll.svelte";
 
-    export let timeline = [];
-    export let onCellClick = (id)=>{};
-    export let loadMore = ()=>{}
-    export let hasMore=false;
+  export let timeline = [];
+  export let onCellClick = (id) => {};
+  export let loadMore = () => {};
+  export let hasMore = false;
 
-    export let style;
+  export let style;
 
-    export let dom={};
+  export let dom = {};
 </script>
 
 <section class="cells" style={style} bind:this={dom}>
@@ -20,6 +19,6 @@
     threshold={500}
     on:loadMore={() => {
       loadMore();
-    }} />
-
+    }}
+  />
 </section>

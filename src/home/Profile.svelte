@@ -60,14 +60,16 @@
             iconRight="arrow-right"
             on:click={() => {
               unfollow(profile.user);
-            }}>Unfollow</Button>
+            }}>Unfollow</Button
+          >
         {:else}
           <Button
             size="is-small"
             iconLeft="arrow-right"
             on:click={() => {
               follow(profile.user);
-            }}>Follow</Button>
+            }}>Follow</Button
+          >
         {/if}
       {/if}
     </div>

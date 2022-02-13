@@ -2,11 +2,9 @@
   import { matchSoundCloudUrl, matchYoutubeUrl } from "./../utils/util.js";
   import { getDateDiff } from "../utils/util";
   import { userStore, globalPopOver } from "../stores";
-	import { fade, scale } from 'svelte/transition';
-	import { flip } from 'svelte/animate';
-  import {myUnreadIds} from "../stores"
-
-
+  import { fade, scale } from "svelte/transition";
+  import { flip } from "svelte/animate";
+  import { myUnreadIds } from "../stores";
 
   let isUserMenuShowing = false;
   export let onCellClick = () => {};
@@ -31,17 +29,19 @@
     var components = [];
     for (var i = 0; i < words.length; i++) {
       const word = words[i].trim();
-      if (word == "") {continue;}
+      if (word == "") {
+        continue;
+      }
       const url = isValidHttpUrl(word);
       if (url === false) {
-        if(regexEmoji.test(word)){
+        if (regexEmoji.test(word)) {
           components.push({ type: "emoji" });
-        }else if(regexMarkdownImage.test(word)){
+        } else if (regexMarkdownImage.test(word)) {
           components.push({ type: "image" });
-        } else{
+        } else {
           components.push({ type: "word", value: word });
         }
-        
+
         continue;
       }
       if (
@@ -58,7 +58,6 @@
       } else {
         components.push({ type: "link", value: url.hostname });
       }
-    
     }
     return components;
   }
@@ -72,76 +71,82 @@
   </div>
 {/if}
 
-
 {#each timeline as cellData (cellData.id)}
+  <article
+    class="media cell"
+    class:isUnread={$myUnreadIds.includes(cellData.id)}
+    animate:flip={{ duration: 300 }}
+    out:scale={{ duration: 250 }}
+    in:scale={{ duration: 250 }}
+  >
+    {#if cellData.nor > 0}
+      <div class="nor">{cellData.nor}</div>
+    {/if}
+    <figure class="media-left is-hidden-mobile">
+      <div
+        on:click={() => {
+          var topPos = imgDom.getBoundingClientRect().top + window.scrollY;
+          var leftPos = imgDom.getBoundingClientRect().left + window.scrollX;
 
+          $globalPopOver = {
+            isShow: true,
+            top: topPos,
+            left: leftPos,
+            title: $userStore.username[cellData.user_id],
+            content: $userStore.username[cellData.user_id],
+          };
+        }}
+      >
+        <img
+          bind:this={imgDom}
+          src={$userStore.avatar[cellData.user_id] ??
+            "/assets/anonymous-avatar-sm.jpg"}
+          class="avatars"
+          alt="avatar"
+          width="32"
+          aria-haspopup="true"
+          aria-controls="dropdown-menu7"
+        />
+      </div>
+    </figure>
+    <div class="media-content">
+      <div class="content" on:click={() => onCellClick(cellData)}>
+        <strong class="name" title="@{$userStore.username[cellData.user_id]}"
+          >{$userStore.displayname[cellData.user_id]}</strong
+        >
+        <small>{getDateDiff(cellData.created_at)}</small>
 
-<article class="media cell" class:isUnread={$myUnreadIds.includes(cellData.id)} animate:flip="{{ duration: 300 }}" out:scale="{{ duration: 250 }}" in:scale="{{ duration: 250 }}">
-  {#if cellData.nor > 0}
-    <div class="nor">{cellData.nor}</div>
-  {/if}
-  <figure class="media-left is-hidden-mobile">
-    <div
-      on:click={() => {
-        var topPos = imgDom.getBoundingClientRect().top + window.scrollY;
-        var leftPos = imgDom.getBoundingClientRect().left + window.scrollX;
-
-        $globalPopOver = {
-          isShow: true,
-          top: topPos,
-          left: leftPos,
-          title: $userStore.username[cellData.user_id],
-          content: $userStore.username[cellData.user_id],
-        };
-      }}>
-      <img
-        bind:this={imgDom}
-        src={$userStore.avatar[cellData.user_id] ??
-          "/assets/anonymous-avatar-sm.jpg"}
-        class="avatars"
-        alt="avatar"
-        width="32"
-        aria-haspopup="true"
-        aria-controls="dropdown-menu7" />
-    </div>
-  </figure>
-  <div class="media-content">
-    <div class="content" on:click={()=>onCellClick(cellData)}>
-      <strong class="name" title="@{$userStore.username[cellData.user_id]}"
-        >{$userStore.displayname[cellData.user_id]}</strong>
-      <small>{getDateDiff(cellData.created_at)}</small>
-
-      <div class="description">
-        <!-- {@html myMarked(cellData["content"])} -->
-        {#each processContent(cellData["content"]) as component}
-          {#if component.type == "word"}
-            {component.value.trim()}
-          {/if}
-          {#if component.type == "image"}
-            <i class="fa fa-image" />
-          {/if}
-          {#if component.type == "youtube"}
-            <i class="fab fa-youtube" />
-          {/if}
-          {#if component.type == "soundcloud"}
-            <i class="fab fa-soundcloud" />
-          {/if}
-          {#if component.type == "emoji"}
-            <i class="fa fa-smile" />
-          {/if}
-          {#if component.type == "link"}
-            <i class="fa fa-link" />
-          {/if}
-        {/each}
+        <div class="description">
+          <!-- {@html myMarked(cellData["content"])} -->
+          {#each processContent(cellData["content"]) as component}
+            {#if component.type == "word"}
+              {component.value.trim()}
+            {/if}
+            {#if component.type == "image"}
+              <i class="fa fa-image" />
+            {/if}
+            {#if component.type == "youtube"}
+              <i class="fab fa-youtube" />
+            {/if}
+            {#if component.type == "soundcloud"}
+              <i class="fab fa-soundcloud" />
+            {/if}
+            {#if component.type == "emoji"}
+              <i class="fa fa-smile" />
+            {/if}
+            {#if component.type == "link"}
+              <i class="fa fa-link" />
+            {/if}
+          {/each}
+        </div>
       </div>
     </div>
-  </div>
-  <!-- <div class="media-right">
+    <!-- <div class="media-right">
     <button class="delete"></button>
   </div> -->
-</article>
-
+  </article>
 {/each}
+
 <style>
   .content {
     font-size: 14px;
@@ -154,7 +159,7 @@
   }
   .description i {
     display: inline-block;
-    background:#CCC;
+    background: #ccc;
     color: white;
     padding: 2px 3px 2px 3px;
     border-radius: 3px;

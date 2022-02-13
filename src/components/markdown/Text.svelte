@@ -91,7 +91,8 @@
     {" " + component.text + " "}
   {:else}
     <svelte:component this={component.component} {...component.props}
-      >{component.slot}</svelte:component>
+      >{component.slot}</svelte:component
+    >
   {/if}
 {/each}
 

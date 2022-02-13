@@ -31,7 +31,8 @@ const apiRequest = (method, url, params, data) => {
 };
 
 const get = (url, params) => apiRequest("get", url, params, null);
-const deleteRequest = (url, request) => apiRequest("delete", url, request, null);
+const deleteRequest = (url, request) =>
+  apiRequest("delete", url, request, null);
 const post = (url, request) => apiRequest("post", url, null, request);
 const formPost = (url, request) => {
   return axiosAPI
@@ -50,7 +51,7 @@ const formPostFile = (url, formData, progressUpdateCallback) => {
         "Content-Type": "multipart/form-data",
         "m2np-token": localStorage.getItem("M2NP_TOKEN"),
       },
-      onUploadProgress: progressUpdateCallback
+      onUploadProgress: progressUpdateCallback,
     })
     .then((res) => {
       return Promise.resolve(res.data);

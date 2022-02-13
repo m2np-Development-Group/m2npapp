@@ -5,9 +5,14 @@
   export let userId;
 </script>
 
-<a class='un' href={"/user/" + $userStore.username[userId]} use:link>
+<a class="un" href={"/user/" + $userStore.username[userId]} use:link>
   <span style={"color: #" + colorMap[$userStore.color[userId]]}
-    >{$userStore.displayname[userId]}</span>
+    >{$userStore.displayname[userId]}</span
+  >
 </a>
 
-<style>.un{font-weight: bold;}</style>
+<style>
+  .un {
+    font-weight: bold;
+  }
+</style>

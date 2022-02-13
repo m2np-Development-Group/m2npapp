@@ -42,13 +42,15 @@
       {#if beforeReg}
         <Field
           label="@Username (alphabet/0-9/_)"
-          message={invalidUsernameMessage}>
+          message={invalidUsernameMessage}
+        >
           <Input
             type="username"
             placeholder="Username"
             bind:value={username}
             on:keypress={onKp}
-            autocomplete="off" />
+            autocomplete="off"
+          />
         </Field>
 
         <Field label="Email (其他人不會看到)" message={invalidEmailMessage}>
@@ -58,7 +60,8 @@
             bind:value={email}
             on:keypress={onKp}
             autocomplete="off"
-            icon="envelope" />
+            icon="envelope"
+          />
         </Field>
 
         <Field label="Password" message={invalidPasswordMessage}>
@@ -69,7 +72,8 @@
             on:keypress={onKp}
             autocomplete="new-password"
             icon="key"
-            passwordReveal={true} />
+            passwordReveal={true}
+          />
         </Field>
         <Button type="is-primary" on:click={register}>Register</Button>
       {:else}
@@ -84,7 +88,7 @@
 </HeroFullHeight>
 
 <style>
-  a:hover{
+  a:hover {
     text-decoration: underline;
   }
   a {

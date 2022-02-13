@@ -49,7 +49,8 @@
       const link = generateYoutubeEmbedUrl(ytid);
       pushPlayerLink(link, "yt");
     }}
-    title={title}><i class="fab fa-youtube" /> {ytid}</span>
+    title={title}><i class="fab fa-youtube" /> {ytid}</span
+  >
 {:else if scid != ""}
   <span
     class="brand-link"
@@ -57,7 +58,8 @@
       const link = generateSoundCloudEmbedUrl(href);
       pushPlayerLink(link, "sc");
     }}
-    title={title}><i class="fab fa-soundcloud" /> {scid}</span>
+    title={title}><i class="fab fa-soundcloud" /> {scid}</span
+  >
 {:else if ext == "jpg" || ext == "png" || ext == "gif" || ext == "jpeg"}
   <Image href={href} />
 {:else}

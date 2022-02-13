@@ -1,7 +1,7 @@
 <script>
   import AutoComplete from "./SimpleAutocomplete.svelte";
   import API from "../utils/Api";
-import { navigate } from "svelte-navigator";
+  import { navigate } from "svelte-navigator";
 
   let fetch = async (event) => {
     return await API.get("/search?username=" + event).then((res) => {
@@ -11,14 +11,14 @@ import { navigate } from "svelte-navigator";
   let selected;
 
   export let value;
-    function keyDownHandler(e) {
-    if (e.key === 'Enter'){
-//console.log(selected);
+  function keyDownHandler(e) {
+    if (e.key === "Enter") {
+      //console.log(selected);
     }
   }
 </script>
 
-<svelte:window on:keydown={keyDownHandler}/>
+<svelte:window on:keydown={keyDownHandler} />
 
 <AutoComplete
   noResultsText=""
@@ -30,8 +30,9 @@ import { navigate } from "svelte-navigator";
   valueFieldName="id"
   bind:text={value}
   bind:selectedItem={selected}
-  onChange={(e)=>{
-    if(e?.username){
-      navigate(`/user/${e?.username}`)}
+  onChange={(e) => {
+    if (e?.username) {
+      navigate(`/user/${e?.username}`);
     }
-  } />
+  }}
+/>

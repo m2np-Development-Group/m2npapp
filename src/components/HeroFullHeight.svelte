@@ -6,7 +6,7 @@
           <div class="box">
             <slot name="main" />
           </div>
-            <slot name="bottom" />
+          <slot name="bottom" />
         </div>
       </div>
     </div>
@@ -25,7 +25,7 @@ font-weight: lighter;
 text-decoration: overline;
 -webkit-user-select: none;
 user-select: none;
-">
+"
+>
   m2np v20211031
 </div>
-

@@ -5,7 +5,7 @@ export function autoresize(node) {
 
   const sizer = document.createElement("div");
   const style = getComputedStyle(node);
-  
+
   Object.assign(sizer.style, {
     fontFamily: style.fontFamily,
     fontSize: style.fontSize,

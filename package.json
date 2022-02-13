@@ -6,7 +6,7 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv public -s",
-    "format": "prettier --write '{public,src}/**/*.{css,html,js,svelte}'",
+    "format": "prettier --write src/**/*.{css,js,svelte}",
     "lint": "eslint --fix --quiet src --ext .js,.svelte"
   },
   "devDependencies": {

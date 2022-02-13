@@ -33,7 +33,8 @@
         if (e.key === "Enter") {
           changeTab(currentType);
         }
-      }} />
+      }}
+    />
     <span class="icon is-small is-left">
       <i class="fas fa-search" />
     </span>
@@ -46,10 +47,12 @@
       class:is-active={currentType == 0}
       on:click={() => {
         changeTab(0);
-      }}>
+      }}
+    >
       <a>
         <span class="icon is-small"
-          ><i class="fas fa-grin-squint" aria-hidden="true" /></span>
+          ><i class="fas fa-grin-squint" aria-hidden="true" /></span
+        >
         <span>人</span>
       </a>
     </li>
@@ -57,10 +60,12 @@
       class:is-active={currentType == 1}
       on:click={() => {
         changeTab(1);
-      }}>
+      }}
+    >
       <a>
         <span class="icon is-small"
-          ><i class="fas fa-file-alt" aria-hidden="true" /></span>
+          ><i class="fas fa-file-alt" aria-hidden="true" /></span
+        >
         <span>文</span>
       </a>
     </li>
@@ -68,10 +73,12 @@
       class:is-active={currentType == 2}
       on:click={() => {
         changeTab(2);
-      }}>
+      }}
+    >
       <a>
         <span class="icon is-small"
-          ><i class="fas fa-music" aria-hidden="true" /></span>
+          ><i class="fas fa-music" aria-hidden="true" /></span
+        >
         <span>音</span>
       </a>
     </li>
@@ -79,10 +86,12 @@
       class:is-active={currentType == 3}
       on:click={() => {
         changeTab(3);
-      }}>
+      }}
+    >
       <a>
         <span class="icon is-small"
-          ><i class="far fa-file-image" aria-hidden="true" /></span>
+          ><i class="far fa-file-image" aria-hidden="true" /></span
+        >
         <span>圖</span>
       </a>
     </li>

@@ -1,5 +1,5 @@
 <script>
-  import SvelteMarkdown from 'svelte-markdown'
+  import SvelteMarkdown from "svelte-markdown";
   import Link from "./markdown/Link.svelte";
   import Text from "./markdown/Text.svelte";
   import Image from "./markdown/Image.svelte";
@@ -8,13 +8,23 @@
   import Paragraph from "./markdown/Paragraph.svelte";
   import Code from "./markdown/Code.svelte";
 
-  export let content="";
-
+  export let content = "";
 </script>
-<SvelteMarkdown source={content} options={{
-    gfm:true,
-    breaks:true,
+
+<SvelteMarkdown
+  source={content}
+  options={{
+    gfm: true,
+    breaks: true,
   }}
   isInline={false}
-  renderers={{"link": Link, "text": Text, "image": Image, "html": Html, "codespan":CodeSpan, "paragraph": Paragraph, "code": Code}}
-  />  
+  renderers={{
+    link: Link,
+    text: Text,
+    image: Image,
+    html: Html,
+    codespan: CodeSpan,
+    paragraph: Paragraph,
+    code: Code,
+  }}
+/>

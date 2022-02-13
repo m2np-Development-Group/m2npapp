@@ -8,14 +8,15 @@
 </script>
 
 {#if userId}
-  <div style='display:flex' class="avatar_box">
+  <div style="display:flex" class="avatar_box">
     <div>
       {#if $userStore.avatar[userId] != null}
         <img
           width="33"
           src={$userStore.avatar[userId]}
           class="avatars"
-          alt="avatar" />
+          alt="avatar"
+        />
       {/if}
     </div>
     <div class="names">
@@ -28,11 +29,11 @@
 
 <style>
   .names {
-    padding: 0 .5em 0 .2em;
+    padding: 0 0.5em 0 0.2em;
     line-height: 1em;
     margin-top: -3px;
   }
-  .avatar_box{
+  .avatar_box {
     padding-bottom: 6px;
   }
   .avatar_box * {

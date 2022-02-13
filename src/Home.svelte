@@ -223,14 +223,16 @@
   {#if $playerLinks.links.length > 0}
     <div id="media-player">
       <span
-        style="display: inline-block;height: 100%;vertical-align: middle;" />
+        style="display: inline-block;height: 100%;vertical-align: middle;"
+      />
       <Button
         style="position: absolute;right: 0.5em; top:.5em; z-index:4;"
         size="is-small"
         on:click={() => {
           $playerLinks.links = [];
         }}
-        iconRight="times">關閉</Button>
+        iconRight="times">關閉</Button
+      >
       <Button
         style="position: absolute;right: 7em; top: .5em; z-index:4;"
         size="is-small"
@@ -240,7 +242,8 @@
             .open($playerLinks.links[$playerLinks.currentIndex][0], "_blank")
             .focus();
         }}
-        iconRight="external-link-alt">開新</Button>
+        iconRight="external-link-alt">開新</Button
+      >
       {#if $playerLinks.links[$playerLinks.currentIndex][1] != "img"}
         <iframe
           style="width:95%; height:calc(100% - 80px); vertical-align: middle;"
@@ -248,12 +251,14 @@
           title="YouTube video player"
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen />
+          allowfullscreen
+        />
       {:else}
         <img
           src={$playerLinks.links[$playerLinks.currentIndex][0]}
           alt="carousel"
-          style="max-width:95%; max-height:calc(100% - 80px); vertical-align: middle;" />
+          style="max-width:95%; max-height:calc(100% - 80px); vertical-align: middle;"
+        />
       {/if}
     </div>
   {/if}
@@ -261,7 +266,8 @@
   {#if $globalPopOver.isShow}
     <article
       class="message is-dark"
-      style="position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; background:white; z-index:5">
+      style="position:fixed;top:{$globalPopOver.top}px;left:{$globalPopOver.left}px ; background:white; z-index:5"
+    >
       <div class="message-header">
         <p>{$globalPopOver.title}</p>
         <button
@@ -269,7 +275,8 @@
           aria-label="delete"
           on:click={() => {
             $globalPopOver = {};
-          }} />
+          }}
+        />
       </div>
       <div class="message-body">
         {$globalPopOver.content}
@@ -309,18 +316,18 @@
       isNotificationMenuShowing = false;
       isUserMenuShowing = false;
     }}
-    style="position:fixed; top:40px;left:3px;bottom:3px;right:3px;margin:0">
+    style="position:fixed; top:40px;left:3px;bottom:3px;right:3px;margin:0"
+  >
     <div class="column is-2 is-hidden-mobile">
-
-      <div
-        class="app-box">
+      <div class="app-box">
         <div class="columnSwitcher" style="margin-left:.5em">
           {#if isMyself}
             <div
               on:click={() => {
                 changeToTab("inbox");
               }}
-              class:active={currentChannel == "inbox"}>
+              class:active={currentChannel == "inbox"}
+            >
               <i class="fas fa-inbox" /> 主頻道
             </div>
           {/if}
@@ -328,7 +335,8 @@
             on:click={() => {
               changeToTab("outbox");
             }}
-            class:active={currentChannel == "outbox"}>
+            class:active={currentChannel == "outbox"}
+          >
             <i class="fas fa-newspaper" /> 我發表的
           </div>
           <div
@@ -336,7 +344,8 @@
               changeToTab("public");
             }}
             class:active={currentChannel == "public"}
-            ><i class="fas fa-water" /> 公開頻道
+          >
+            <i class="fas fa-water" /> 公開頻道
           </div>
           {#if $myUnreadIds.length > 0 || currentChannel == "updated"}
             <div
@@ -345,7 +354,8 @@
               }}
               style="color:red"
               class:active={currentChannel == "updated"}
-              ><i class="fas fa-comment-dots" /> 未讀
+            >
+              <i class="fas fa-comment-dots" /> 未讀
             </div>
 
             <div class="columnSwitcher" style="float:right;padding-right:3px">
@@ -356,33 +366,30 @@
                 ><i class="fas fa-check" /> 全部標記為已讀
               </span>
             </div>
-
           {/if}
         </div>
 
-
-
-
         <div style="clear:both" />
       </div>
-
-
     </div>
     <div
       class="column"
       class:is-4={$playerLinks.links.length == 0}
       class:is-6={$playerLinks.links.length > 0}
-      style="position:relative">
+      style="position:relative"
+    >
       <ArticleSelector
         bind:dom={cellsSection}
         style="background:white; overflow-y: auto; height:100%; overflow-x:hidden; border-radius:.3em;border:2px solid #CCC;"
         bind:timeline
         hasMore={newBatch.length > 0}
         loadMore={() => fetchData("append")}
-        onCellClick={showArticle} />
+        onCellClick={showArticle}
+      />
       <div
         style="position:absolute; bottom:1em;right:2em"
-        class="is-hidden-mobile">
+        class="is-hidden-mobile"
+      >
         <Button
           size="is-small"
           on:click={() => {
@@ -390,7 +397,8 @@
             fetchData("prepend");
           }}
           rounded
-          iconRight="arrow-up">Prepend</Button>
+          iconRight="arrow-up">Prepend</Button
+        >
         <Button
           size="is-small"
           on:click={() => {
@@ -398,7 +406,8 @@
             fetchData("append");
           }}
           rounded
-          iconRight="arrow-down">Append</Button>
+          iconRight="arrow-down">Append</Button
+        >
       </div>
     </div>
     <div class="column">
@@ -411,11 +420,13 @@
               showingArticle = {};
             }}
             iconRight="times"
-            rounded>關閉</Button>
+            rounded>關閉</Button
+          >
           <div
             class="app-box"
             style="max-height: calc(100% - 83px);padding: 3px;
-            background: #f0f0f0;">
+            background: #f0f0f0;"
+          >
             <ArticleDetail
               style="padding:3px"
               onArticleContentChanged={(content) => {
@@ -434,15 +445,17 @@
                 }
               }}
               article={showingArticle}
-              replies={replies} />
+              replies={replies}
+            />
           </div>
         {:else}
-        <!-- if not showing an article, show profile-->
-        <div
-        class="app-box"
-        style="overflow-y: auto; padding:3px;max-height:100%;">
-        <Profile bind:profile />
-        </div>
+          <!-- if not showing an article, show profile-->
+          <div
+            class="app-box"
+            style="overflow-y: auto; padding:3px;max-height:100%;"
+          >
+            <Profile bind:profile />
+          </div>
         {/if}
 
         <div
@@ -455,7 +468,8 @@
         padding: 3px;
         background: white;
         "
-          class="app-box">
+          class="app-box"
+        >
           <Postbox
             onSubmit={(txt) => {
               if (exists(showingArticle.id)) {
@@ -474,15 +488,15 @@
                 refreshReplies(showingArticle.id);
               } else {
                 //create
-                
+
                 fetchData("prepend");
-                
 
                 if (profile.user.id == $myInfoStore.user.id) {
                   profile.user.article_count++;
                 }
               }
-            }} />
+            }}
+          />
         </div>
       </div>
     </div>
@@ -490,73 +504,75 @@
 
   <div
     class="columns is-mobile is-variable is-1"
-    style="position:fixed; top:0;left:3px;right:3px;margin:0">
+    style="position:fixed; top:0;left:3px;right:3px;margin:0"
+  >
     <div class="column is-2 is-hidden-mobile">
       <a href="/" use:link style="display:block;margin:.5em 0 0 .5em;color:#333"
         ><i
           class="fa fa-home"
           aria-hidden="false"
-          style="filter: drop-shadow(2px 4px 6px white);" /></a>
+          style="filter: drop-shadow(2px 4px 6px white);"
+        /></a
+      >
     </div>
     <div class="column is-4">
-<!-- top box , top bar -->
-<div class='app-box'>
-
-<div style='margin:0 1em'>
-  <i
-  class="fa fa-search"
-  aria-hidden="true" 
-  on:click={() =>{
-searchInputRef.focus()
-  }}
-  />
-  <input
-  disabled={!isShowFilterBox}
-    style="font-size: 13px;
+      <!-- top box , top bar -->
+      <div class="app-box">
+        <div style="margin:0 1em">
+          <i
+            class="fa fa-search"
+            aria-hidden="true"
+            on:click={() => {
+              searchInputRef.focus();
+            }}
+          />
+          <input
+            disabled={!isShowFilterBox}
+            style="font-size: 13px;
   margin: 4px;
     border: none;"
-    type="text"
-    placeholder=""
-    bind:this={searchInputRef}
-    bind:value={rightSearchTerm}
-    on:keypress={(e) => {
-      if (e.key === "Enter") {
-        fetchData("fresh");
-      }
-    }}
-    autocomplete="off" />
-</div>
-
-</div>
-      
-
-
-
+            type="text"
+            placeholder=""
+            bind:this={searchInputRef}
+            bind:value={rightSearchTerm}
+            on:keypress={(e) => {
+              if (e.key === "Enter") {
+                fetchData("fresh");
+              }
+            }}
+            autocomplete="off"
+          />
+        </div>
+      </div>
     </div>
     <div class="column">
       <div class="app-box thin small_nav" style="">
         <div
           class="dropdown is-right userMenu"
-          class:is-active={isUserMenuShowing}>
+          class:is-active={isUserMenuShowing}
+        >
           <div
             style="padding-right:1em;display: inline-block;cursor:pointer"
             class="dropdown-trigger"
             on:click={() => {
               isNotificationMenuShowing = false;
               isUserMenuShowing = !isUserMenuShowing;
-            }}>
+            }}
+          >
             <div
               style="cursor:pointer
               overflow: hidden;
               height: 24.25px;
               "
               aria-haspopup="true"
-              aria-controls="dropdown-menu2">
+              aria-controls="dropdown-menu2"
+            >
               {#if $myInfoStore?.user?.avatar}
                 <img
                   src={$myInfoStore?.user?.avatar}
                   alt="avatar"
-                  style="border-radius:3px;width:20px" />
+                  style="border-radius:3px;width:20px"
+                />
               {/if}
               <span>{$myInfoStore?.user?.display_name}</span>
             </div>
@@ -567,14 +583,16 @@ searchInputRef.focus()
                 class="dropdown-item"
                 on:click={() => {
                   isSettingsShowing = true;
-                }}>
+                }}
+              >
                 <i class="fa fa-cog" aria-hidden="true" alt="設定" />
                 設定
               </div>
               <hr class="dropdown-divider" />
               <div class="dropdown-item">
                 <a href="/logout" use:link
-                  ><i class="fa fa-sign-out-alt" aria-hidden="true" /> Sign Out</a>
+                  ><i class="fa fa-sign-out-alt" aria-hidden="true" /> Sign Out</a
+                >
               </div>
             </div>
           </div>
@@ -582,7 +600,8 @@ searchInputRef.focus()
 
         <div
           class="dropdown is-right userMenu"
-          class:is-active={isNotificationMenuShowing}>
+          class:is-active={isNotificationMenuShowing}
+        >
           <i
             class="fa fa-bell dropdown-trigger"
             aria-hidden="true"
@@ -592,16 +611,16 @@ searchInputRef.focus()
               isNotificationLoading = true;
               API.get("/notifications")
                 .then((res) => {
-                  
                   notifications = res.notifications.map((notification) => {
                     notification.user = res.users[notification.user_id];
                     return notification;
-                  })
+                  });
                 })
                 .finally(() => {
                   isNotificationLoading = false;
                 });
-            }} />
+            }}
+          />
           <div class="dropdown-menu" id="dropdown-menu3" role="menu">
             <div class="dropdown-content">
               <div class="dropdown-item">
@@ -609,18 +628,21 @@ searchInputRef.focus()
                   <i class="fas fa-spinner fa-pulse" /> Loading...
                 {:else if notifications.length > 0}
                   {#each notifications as v}
-                    <div on:click={()=>{
-                      //get article content
-                      API.get("/get_post/?post_id="+v.object.post_id).then((res)=>{
-                        showArticle(res)
-                      }).finally(()=>{
-                        isNotificationMenuShowing=false;
-                      });
-                      
-                    }}
-                    style='border-bottom:1px solid #ccc; padding:3px'
-                    
-                    >{JSON.stringify(v)}</div>
+                    <div
+                      on:click={() => {
+                        //get article content
+                        API.get("/get_post/?post_id=" + v.object.post_id)
+                          .then((res) => {
+                            showArticle(res);
+                          })
+                          .finally(() => {
+                            isNotificationMenuShowing = false;
+                          });
+                      }}
+                      style="border-bottom:1px solid #ccc; padding:3px"
+                    >
+                      {JSON.stringify(v)}
+                    </div>
                   {/each}
                 {:else}
                   🤗沒有通知很棒棒
@@ -636,7 +658,8 @@ searchInputRef.focus()
             aria-hidden="true"
             on:click={() => {
               showSearch = !showSearch;
-            }} />
+            }}
+          />
         </div>
       </div>
     </div>

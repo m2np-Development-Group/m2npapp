@@ -39,7 +39,6 @@
   let editor;
 
   onMount(function () {
-
     window.onbeforeunload = function () {
       if (editor.getValue() != "") {
         if (overridden != true) {
@@ -58,73 +57,75 @@
   <CodeMirror bind:editor onSubmit={submitPost} initialText={initialText} />
 
   {#if isShowEmojiSelector}
-  <div style='margin-top:3px'>
-    <EmojiSelector onInsert={(id) => editor.replaceSelection(` \$${id} `)} />
+    <div style="margin-top:3px">
+      <EmojiSelector onInsert={(id) => editor.replaceSelection(` \$${id} `)} />
     </div>
   {/if}
   {#if isShowFileUploader}
-  <div style='margin-top:3px'>
-    FS (WIP)
-    </div>
+    <div style="margin-top:3px">FS (WIP)</div>
   {/if}
   <div class="toolbar">
     <div class="toolbar-left">
-
-
       <label for="smiley">
         <i
           class="fas fa-smile big-icon"
           on:click={() => {
             isShowEmojiSelector = !isShowEmojiSelector;
-          }} />
+          }}
+        />
       </label>
 
-      
-      <i class="fas fa-file-image big-icon"
-      on:click={() => {
-        fileinput.click();
-      }}
+      <i
+        class="fas fa-file-image big-icon"
+        on:click={() => {
+          fileinput.click();
+        }}
       />
-      
+
       <input
-      style="display:none"
-      type="file"
-      accept=".jpg, .jpeg, .png"
-      bind:this={fileinput}
-      on:change={(e) => {
-        let image = e.target.files[0];
-        let reader = new FileReader();
-        if(image && image.type.match('image.*')){
-          reader.readAsDataURL(image);
-        }
-        reader.onload = (e) => {
-          if (e.target.result.length > 3000 * 1000) {
-            alert("file is too large");
-            return;
+        style="display:none"
+        type="file"
+        accept=".jpg, .jpeg, .png"
+        bind:this={fileinput}
+        on:change={(e) => {
+          let image = e.target.files[0];
+          let reader = new FileReader();
+          if (image && image.type.match("image.*")) {
+            reader.readAsDataURL(image);
           }
-          //avatar = e.target.result;
-
-          let data = new FormData()
-          data.append('file', files[0])
-
-          API.formPostFile("/upload_image", data,(e)=>{
-            uploadPercentage = Math.round( (e.loaded * 100.0) / e.total)
-          }).then((res) => {
-            
-            if(res.msg=="ok"){
-              editor.replaceSelection(res.filename);
-            }else{
-              console.log(res)
+          reader.onload = (e) => {
+            if (e.target.result.length > 3000 * 1000) {
+              alert("file is too large");
+              return;
             }
-            
-          }).finally(()=>{files=null;uploadPercentage=null})
+            //avatar = e.target.result;
 
-        };
-      }}
-      bind:files />
+            let data = new FormData();
+            data.append("file", files[0]);
+
+            API.formPostFile("/upload_image", data, (e) => {
+              uploadPercentage = Math.round((e.loaded * 100.0) / e.total);
+            })
+              .then((res) => {
+                if (res.msg == "ok") {
+                  editor.replaceSelection(res.filename);
+                } else {
+                  console.log(res);
+                }
+              })
+              .finally(() => {
+                files = null;
+                uploadPercentage = null;
+              });
+          };
+        }}
+        bind:files
+      />
       {#if files && files[0]}
         <p>
-          {files[0].name} : {uploadPercentage!=100?uploadPercentage+"%":"Processing..."}
+          {files[0].name} : {uploadPercentage != 100
+            ? uploadPercentage + "%"
+            : "Processing..."}
         </p>
       {/if}
 
@@ -133,7 +134,8 @@
     <div class="submit_buttons">
       {#if exists(onCancel)}
         <Button size="is-small" rounded on:click={onCancel(editor.getValue())}
-          >取消</Button>
+          >取消</Button
+        >
       {/if}
       {#if exists(onSubmit)}
         <Button
@@ -141,11 +143,12 @@
           rounded
           type="is-success"
           iconLeft="paper-plane"
-          on:click={submitPost(editor.getValue())}>提交</Button>
+          on:click={submitPost(editor.getValue())}>提交</Button
+        >
       {/if}
     </div>
   </div>
-  <div style='clear:both'></div>
+  <div style="clear:both" />
 </div>
 
 <style>
@@ -158,15 +161,15 @@
     padding: 3px 0 0 3px;
   }
   .toolbar-left i {
-    padding-right:3px;
-    cursor:pointer;
+    padding-right: 3px;
+    cursor: pointer;
   }
   .submit_buttons {
     float: right;
     padding: 0;
   }
-  .big-icon{
-    font-size:16px;
-    color:dimgray;
+  .big-icon {
+    font-size: 16px;
+    color: dimgray;
   }
 </style>

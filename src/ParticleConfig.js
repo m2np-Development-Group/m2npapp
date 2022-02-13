@@ -5,24 +5,24 @@ export default {
       value: 2000,
       density: {
         enable: true,
-        area: 800
-      }
+        area: 800,
+      },
     },
     color: {
-      value: ["#ffffff"]
+      value: ["#ffffff"],
     },
     shape: {
-      type: "circle"
+      type: "circle",
     },
     opacity: {
-      value: 1
+      value: 1,
     },
     size: {
       value: 3,
       random: {
         enable: true,
-        minimumValue: 1
-      }
+        minimumValue: 1,
+      },
     },
     move: {
       size: true,
@@ -32,35 +32,35 @@ export default {
       random: false,
       straight: false,
       outModes: {
-        default: "out"
+        default: "out",
       },
       attract: {
         enable: false,
         rotateX: 600,
-        rotateY: 1200
+        rotateY: 1200,
       },
       trail: {
         enable: true,
         length: 5,
-        fillColor: "#222"
+        fillColor: "#222",
       },
-      warp: true
-    }
+      warp: true,
+    },
   },
   interactivity: {
     detectsOn: "canvas",
     events: {
       onclick: {
         enable: true,
-        mode: "push"
+        mode: "push",
       },
-      resize: true
+      resize: true,
     },
     modes: {
       push: {
-        quantity: 4
-      }
-    }
+        quantity: 4,
+      },
+    },
   },
   detectRetina: true,
   absorbers: {
@@ -72,14 +72,14 @@ export default {
       value: 5,
       limit: 10,
       random: false,
-      density: 50
+      density: 50,
     },
     position: {
       x: 50,
-      y: 50
-    }
+      y: 50,
+    },
   },
   background: {
-    color: "#222"
-  }
-}
+    color: "#222",
+  },
+};

@@ -1,6 +1,6 @@
 <script>
-  import {trim} from '../../utils/util'
-  export let raw
+  import { trim } from "../../utils/util";
+  export let raw;
 </script>
 
-<code>{trim(raw,'`')}</code>
+<code>{trim(raw, "`")}</code>

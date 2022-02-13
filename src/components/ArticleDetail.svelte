@@ -48,7 +48,8 @@
             class="fa fa-pencil-alt smallButtons editButton"
             on:click={() => {
               editingArticle = article;
-            }} />
+            }}
+          />
         {/if}
 
         {#if isLiked}
@@ -59,7 +60,8 @@
               API.post("/unlike", { postId: article.id }).then((res) => {
                 isLiked = false;
               });
-            }} />
+            }}
+          />
         {:else}
           <i
             class="far fa-heart likeButton smallButtons"
@@ -67,7 +69,8 @@
               API.post("/like", { postId: article.id }).then((res) => {
                 isLiked = true;
               });
-            }} />
+            }}
+          />
         {/if}
 
         {#if article.user_id == $myInfoStore.user.id}
@@ -83,13 +86,15 @@
                 });
               }
             }}
-            class="fa fa-trash trashButton smallButtons" />
+            class="fa fa-trash trashButton smallButtons"
+          />
         {/if}
         <i
           on:click={() => {
             window.open(`/p/${article.id}`, "_blank");
           }}
-          class="fas fa-external-link-alt externalLinkButton smallButtons" />
+          class="fas fa-external-link-alt externalLinkButton smallButtons"
+        />
       </div>
     {:else}
       <Postbox
@@ -110,7 +115,8 @@
         }}
         onSubmit={(txt) =>
           API.post("update_post", { id: article.id, content: txt })}
-        initialText={article["content"]} />
+        initialText={article["content"]}
+      />
     {/if}
   </article>
 
@@ -119,7 +125,8 @@
     use:watchResize={(node) => {
       height = articleDom.clientHeight;
     }}
-    style="max-height:calc(100vh - {height + 145}px)">
+    style="max-height:calc(100vh - {height + 145}px)"
+  >
     {#if replies === undefined}
       <i class="fas fa-spinner fa-pulse" /> LOADING...
     {:else}
@@ -133,14 +140,16 @@
               replies = replies.filter((v) => {
                 return v.id != id;
               });
-            }} />
+            }}
+          />
         {/each}
       {/if}
       {#if replies.length == 0}
         <div
           style="font-size: 13px;
       text-align: center;
-      color: #CCC; padding:1em">
+      color: #CCC; padding:1em"
+        >
           還沒有人回應哦，趕快來搶頭香囉！:)
         </div>
       {/if}
@@ -170,7 +179,7 @@
   .smallButtons {
     border-radius: 3px;
     padding: 3px;
-    cursor:pointer;
+    cursor: pointer;
   }
   .externalLinkButton:hover {
     background: #333;
