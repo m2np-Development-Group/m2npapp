@@ -22,7 +22,7 @@
   export let url = "";
 
   onMount(async () => {
-    console.log("%cM2NP WebFrontEnd v20220213 : TNPM", "font-weight:bold");
+    console.log("%cM2NP WebFrontEnd v20220214 : 情人", "font-weight:bold");
     unsub = globalHistory.listen(({ location, action }) => {
       $currentPath = location.pathname;
 
