@@ -1,5 +1,5 @@
 <script>
-    import {myUnreadIds} from "../stores"
+    
     import Cell from "./Cell.svelte"
     import InfiniteScroll from "../components/InfiniteScroll.svelte"
 
@@ -14,14 +14,7 @@
 </script>
 
 <section class="cells" style={style} bind:this={dom}>
-    {#each timeline as v}
-      <Cell
-        isUnread={$myUnreadIds.includes(v.id)}
-        onCellClick={()=>{
-          onCellClick(v)
-        }}
-        cellData={v} />
-    {/each}
+  <Cell onCellClick={onCellClick} timeline={timeline} />
   <InfiniteScroll
     hasMore={hasMore}
     threshold={500}

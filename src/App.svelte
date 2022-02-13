@@ -1,4 +1,3 @@
-<!-- App.svelte -->
 <script>
   import { onMount, onDestroy } from "svelte";
   import { globalHistory } from "svelte-navigator/src/history";
@@ -24,7 +23,7 @@
   export let url = "";
 
   onMount(async () => {
-    console.log("%cM2NP WebFrontEnd v20210901 : 幽城", "font-weight:bold");
+    console.log("%cM2NP WebFrontEnd v20220213 : TNPM", "font-weight:bold");
     unsub = globalHistory.listen(({ location, action }) => {
       $currentPath = location.pathname;
 

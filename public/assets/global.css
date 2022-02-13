@@ -61,6 +61,8 @@ pre {
     padding: 0
 }
 
+.hljs {padding:.5em}
+
 .marked th {
     border-bottom: 1px solid;
     text-align: left;

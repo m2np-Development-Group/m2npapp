@@ -5,7 +5,9 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start": "sirv public -s"
+    "start": "sirv public -s",
+    "format": "prettier --write '{public,src}/**/*.{css,html,js,svelte}'",
+    "lint": "eslint --fix --quiet src --ext .js,.svelte"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.1.0",
@@ -13,9 +15,14 @@
     "axios": "^0.21.1",
     "bulma": "^0.9.2",
     "codemirror": "^5.62.3",
+    "eslint": "^8.9.0",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-svelte3": "^3.4.0",
     "html-minifier": "^4.0.0",
     "node-sass": "^6.0.1",
     "postcss": "^8.2.8",
+    "prettier": "^2.5.1",
+    "prettier-plugin-svelte": "^2.6.0",
     "qs": "^6.9.6",
     "rollup": "^2.40.0",
     "rollup-plugin-css-only": "^3.1.0",

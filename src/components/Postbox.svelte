@@ -94,7 +94,9 @@
       on:change={(e) => {
         let image = e.target.files[0];
         let reader = new FileReader();
-        reader.readAsDataURL(image);
+        if(image && image.type.match('image.*')){
+          reader.readAsDataURL(image);
+        }
         reader.onload = (e) => {
           if (e.target.result.length > 3000 * 1000) {
             alert("file is too large");

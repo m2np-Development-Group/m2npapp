@@ -2,10 +2,15 @@
   import { matchSoundCloudUrl, matchYoutubeUrl } from "./../utils/util.js";
   import { getDateDiff } from "../utils/util";
   import { userStore, globalPopOver } from "../stores";
+	import { fade, scale } from 'svelte/transition';
+	import { flip } from 'svelte/animate';
+  import {myUnreadIds} from "../stores"
+
+
+
   let isUserMenuShowing = false;
-  export let cellData;
-  export let isUnread;
   export let onCellClick = () => {};
+  export let timeline = [];
   const regexEmoji = new RegExp(/^\$([\u4e00-\u9fa5_a-zA-Z0-9()-]+)/);
   const regexMarkdownImage = new RegExp(/^!\[(.*)\]\((.*)\)/);
   let imgDom;
@@ -66,7 +71,12 @@
     <p>testing1</p>
   </div>
 {/if}
-<article class="media cell" class:isUnread>
+
+
+{#each timeline as cellData (cellData.id)}
+
+
+<article class="media cell" class:isUnread={$myUnreadIds.includes(cellData.id)} animate:flip="{{ duration: 300 }}" out:scale="{{ duration: 250 }}" in:scale="{{ duration: 250 }}">
   {#if cellData.nor > 0}
     <div class="nor">{cellData.nor}</div>
   {/if}
@@ -96,7 +106,7 @@
     </div>
   </figure>
   <div class="media-content">
-    <div class="content" on:click={onCellClick}>
+    <div class="content" on:click={()=>onCellClick(cellData)}>
       <strong class="name" title="@{$userStore.username[cellData.user_id]}"
         >{$userStore.displayname[cellData.user_id]}</strong>
       <small>{getDateDiff(cellData.created_at)}</small>
@@ -131,6 +141,7 @@
   </div> -->
 </article>
 
+{/each}
 <style>
   .content {
     font-size: 14px;

@@ -3,7 +3,7 @@
   import Postbox from "./components/Postbox.svelte";
   import { exists } from "./utils/util";
   import API from "./utils/Api";
-  import LeftBar from "./home/LeftBar.svelte";
+  import Profile from "./home/Profile.svelte";
   import ArticleSelector from "./home/ArticleSelector.svelte";
   import { onMount } from "svelte";
 
@@ -44,6 +44,8 @@
   let isShowFilterBox = true;
   let isUserMenuShowing = false;
   let isNotificationMenuShowing = false;
+
+  let searchInputRef;
 
   const source = new EventSource(
     "https://m2np.com/api/streams/" + localStorage.getItem("M2NP_TOKEN"),
@@ -309,11 +311,62 @@
     }}
     style="position:fixed; top:40px;left:3px;bottom:3px;right:3px;margin:0">
     <div class="column is-2 is-hidden-mobile">
+
       <div
-        class="app-box"
-        style="overflow-y: auto; padding:3px;max-height:100%;">
-        <LeftBar bind:profile />
+        class="app-box">
+        <div class="columnSwitcher" style="margin-left:.5em">
+          {#if isMyself}
+            <div
+              on:click={() => {
+                changeToTab("inbox");
+              }}
+              class:active={currentChannel == "inbox"}>
+              <i class="fas fa-inbox" /> 主頻道
+            </div>
+          {/if}
+          <div
+            on:click={() => {
+              changeToTab("outbox");
+            }}
+            class:active={currentChannel == "outbox"}>
+            <i class="fas fa-newspaper" /> 我發表的
+          </div>
+          <div
+            on:click={() => {
+              changeToTab("public");
+            }}
+            class:active={currentChannel == "public"}
+            ><i class="fas fa-water" /> 公開頻道
+          </div>
+          {#if $myUnreadIds.length > 0 || currentChannel == "updated"}
+            <div
+              on:click={() => {
+                changeToTab("updated");
+              }}
+              style="color:red"
+              class:active={currentChannel == "updated"}
+              ><i class="fas fa-comment-dots" /> 未讀
+            </div>
+
+            <div class="columnSwitcher" style="float:right;padding-right:3px">
+              <span
+                on:click={() => {
+                  markAllAsRead();
+                }}
+                ><i class="fas fa-check" /> 全部標記為已讀
+              </span>
+            </div>
+
+          {/if}
+        </div>
+
+
+
+
+        <div style="clear:both" />
       </div>
+
+
     </div>
     <div
       class="column"
@@ -383,6 +436,13 @@
               article={showingArticle}
               replies={replies} />
           </div>
+        {:else}
+        <!-- if not showing an article, show profile-->
+        <div
+        class="app-box"
+        style="overflow-y: auto; padding:3px;max-height:100%;">
+        <Profile bind:profile />
+        </div>
         {/if}
 
         <div
@@ -414,9 +474,9 @@
                 refreshReplies(showingArticle.id);
               } else {
                 //create
-                if (currentChannel != "inbox") {
-                  fetchData("prepend");
-                }
+                
+                fetchData("prepend");
+                
 
                 if (profile.user.id == $myInfoStore.user.id) {
                   profile.user.article_count++;
@@ -438,80 +498,40 @@
           aria-hidden="false"
           style="filter: drop-shadow(2px 4px 6px white);" /></a>
     </div>
-    <div class="column is-6">
-      <div
-        class="app-box thin"
-        style="
-      border:2px solid #CCC;border-radius:.3em;
-      overflow:hidden;
-      ">
-        <div class="columnSwitcher" style="margin-left:.5em">
-          {#if isMyself}
-            <span
-              on:click={() => {
-                changeToTab("inbox");
-              }}
-              class:active={currentChannel == "inbox"}>
-              <i class="fas fa-inbox" /> 進口
-            </span>
-          {/if}
-          <span
-            on:click={() => {
-              changeToTab("outbox");
-            }}
-            class:active={currentChannel == "outbox"}>
-            <i class="fas fa-newspaper" /> 出口
-          </span>
-          <span
-            on:click={() => {
-              changeToTab("public");
-            }}
-            class:active={currentChannel == "public"}
-            ><i class="fas fa-water" /> 海洋
-          </span>
-          {#if $myUnreadIds.length > 0 || currentChannel == "updated"}
-            <span
-              on:click={() => {
-                changeToTab("updated");
-              }}
-              style="color:red"
-              class:active={currentChannel == "updated"}
-              ><i class="fas fa-comment-dots" /> 未讀
-            </span>
-          {/if}
-        </div>
-        {#if isShowFilterBox}
-          <div
-            style="
-          right: 0;
-          float: right;clear:none">
-            <input
-              style="font-size: 13px;
-            margin: 4px;
-            border: 2px dotted #CCC;
-            color: #333;"
-              type="text"
-              placeholder=""
-              bind:value={rightSearchTerm}
-              on:keypress={(e) => {
-                if (e.key === "Enter") {
-                  fetchData("fresh");
-                }
-              }}
-              autocomplete="off" />
-          </div>
-        {:else}
-          <div class="columnSwitcher" style="float:right;padding-right:3px">
-            <span
-              on:click={() => {
-                markAllAsRead();
-              }}
-              ><i class="fas fa-check" /> 全部標記為已讀
-            </span>
-          </div>
-        {/if}
-        <div style="clear:both" />
-      </div>
+    <div class="column is-4">
+<!-- top box , top bar -->
+<div class='app-box'>
+
+<div style='margin:0 1em'>
+  <i
+  class="fa fa-search"
+  aria-hidden="true" 
+  on:click={() =>{
+searchInputRef.focus()
+  }}
+  />
+  <input
+  disabled={!isShowFilterBox}
+    style="font-size: 13px;
+  margin: 4px;
+    border: none;"
+    type="text"
+    placeholder=""
+    bind:this={searchInputRef}
+    bind:value={rightSearchTerm}
+    on:keypress={(e) => {
+      if (e.key === "Enter") {
+        fetchData("fresh");
+      }
+    }}
+    autocomplete="off" />
+</div>
+
+</div>
+      
+
+
+
     </div>
     <div class="column">
       <div class="app-box thin small_nav" style="">

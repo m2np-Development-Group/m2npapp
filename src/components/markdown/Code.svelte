@@ -2,6 +2,7 @@
   import Highlight from "svelte-highlight";
 
   import * as languages from "svelte-highlight/src/languages";
+  import github from "svelte-highlight/src/styles/github-dark-dimmed";
 
   const langMap = {
     "bash": languages.bash,
@@ -12,8 +13,7 @@
     "dockerfile": languages.dockerfile,
     "fsharp": languages.fsharp,
     "go": languages.go,
-    "graphql": languages.graphql,
-    "html": languages.html,
+    "html": languages.vbscriptHtml,
     "java": languages.java,
     "javascript": languages.javascript,
     "json": languages.json,
@@ -36,4 +36,7 @@
   export let lang
   export let text
 </script>
+<svelte:head>
+  {@html github}
+</svelte:head>
 <Highlight language={(lang in langMap)?langMap[lang]:'plaintext'} code={text} />
