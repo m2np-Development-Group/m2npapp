@@ -2,7 +2,7 @@
   import { myInfoStore } from "../stores";
   import { getDateDiff } from "../utils/util";
   import { Button } from "svelma";
-  import Image from "../components/markdown/Image.svelte"
+  import Image from "../components/markdown/Image.svelte";
   import Username from "../components/Username.svelte";
   import Markdown from "../components/Markdown.svelte";
 
@@ -50,18 +50,20 @@
   {#if profile.user}
     <div style="padding:1em;background:white">
       <table>
-
         <tr>
           <td>
             {#if profile?.user?.avatar}
-            <Image width="80" href={profile?.user?.avatar} alt="avatar" />
-          {/if}
+              <Image width="80" href={profile?.user?.avatar} alt="avatar" />
+            {/if}
           </td>
-          <td style='padding-left:1em'>
-
-            <a href={`/user/${profile.user.username}`}>{profile?.user?.display_name}</a>
+          <td style="padding-left:1em">
+            <a href={`/user/${profile.user.username}`}
+              >{profile?.user?.display_name}</a
+            >
             <!-- {JSON.stringify($myInfoStore?.followers)} -->
-            {#if $myInfoStore?.followers?.map((x) => x.id).includes(profile.user.id)}
+            {#if $myInfoStore?.followers
+              ?.map((x) => x.id)
+              .includes(profile.user.id)}
               <small>(正在跟隨你)</small>
             {/if}
             <br />
@@ -86,9 +88,6 @@
                 >
               {/if}
             {/if}
-
-            
-
           </td>
         </tr>
 
@@ -103,7 +102,7 @@
               沒有
             {/if}
             <br />
-            <div style="font-weight:bold;font-size:small">粉絲: </div>
+            <div style="font-weight:bold;font-size:small">粉絲:</div>
             {#if profile.followers.length > 0}
               {#each profile.followers as v}
                 <Username userId={v.id} /><br />
@@ -112,10 +111,10 @@
               沒有
             {/if}
           </td>
-          <td style='padding-left:1em'>
-            <div style="font-weight:bold;font-size:small">自介: </div>
+          <td style="padding-left:1em">
+            <div style="font-weight:bold;font-size:small">自介:</div>
             <Markdown content={profile?.user?.description} />
-    
+
             <br />
             <br />
             <span style="font-weight:bold;font-size:small">最後登入:</span>
@@ -123,11 +122,9 @@
 
             <span style="font-weight:bold;font-size:small">Po文:</span>
             {profile.user?.article_count}則
-
           </td>
         </tr>
       </table>
-
     </div>
   {/if}
 </div>

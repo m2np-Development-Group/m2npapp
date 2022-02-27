@@ -22,7 +22,10 @@
   export let url = "";
 
   onMount(async () => {
-    console.log("%cM2NP WebFrontEnd v20220214 : 情人", "font-weight:bold");
+    console.log(
+      "%cM2NP WebFrontEnd v20220228 : 不會再有更二的了",
+      "font-weight:bold"
+    );
     unsub = globalHistory.listen(({ location, action }) => {
       $currentPath = location.pathname;
 
@@ -67,7 +70,10 @@
     </Route>
 
     <PrivateRoute path="/home">
-      <Home username={$myInfoStore.user.username} />
+      <Home username={$myInfoStore.user.username} currentChannel="inbox" />
+    </PrivateRoute>
+    <PrivateRoute path="/home/:box" let:params>
+      <Home username={$myInfoStore.user.username} currentChannel={params.box} />
     </PrivateRoute>
     <PrivateRoute path="/settings">
       <Settings />

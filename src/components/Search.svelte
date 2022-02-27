@@ -7,7 +7,7 @@
 
   let fetch = async (txt, type) => {
     content = "Loading...";
-    
+
     API.get("/search?username=" + txt).then((res) => {
       content = res;
     });
@@ -41,7 +41,8 @@
 <div class="block">
   {#if Array.isArray(content)}
     {#each content as v}
-      <a href={`/user/` + v.username} use:link>{v.display_name}({v.username})</a><br />
+      <a href={`/user/` + v.username} use:link>{v.display_name}({v.username})</a
+      ><br />
     {/each}
   {:else}
     {content}

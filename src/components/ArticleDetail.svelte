@@ -13,7 +13,7 @@
   export let onArticleContentChanged = (content) => {};
   export let article;
   export let style;
-  export let classes;
+  export let classes = "";
   $: if (article.id) {
     if (editingArticle.id != article.id) {
       editingArticle = {};
@@ -146,9 +146,7 @@
       {/if}
       {#if replies.length == 0}
         <div
-          style="font-size: 13px;
-      text-align: center;
-      color: #CCC; padding:1em"
+          style="font-size: 13px; text-align: center; color: #CCC; padding:1em"
         >
           還沒有人回應哦，趕快來搶頭香囉！:)
         </div>

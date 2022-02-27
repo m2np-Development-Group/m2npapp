@@ -1,15 +1,17 @@
 <script>
   import { link } from "svelte-navigator";
   import Postbox from "./components/Postbox.svelte";
-  import { exists } from "./utils/util";
+  import { exists, getDateDiff } from "./utils/util";
   import API from "./utils/Api";
   import Profile from "./home/Profile.svelte";
   import ArticleSelector from "./home/ArticleSelector.svelte";
   import { onMount } from "svelte";
+  import { navigate } from "svelte-navigator";
 
   import {
     myInfoStore,
     filluserStore,
+    userStore,
     docClicked,
     myUnreadIds,
     wallpaper,
@@ -24,17 +26,21 @@
 
   import { Button, Modal } from "svelma";
 
+  //let currentChannel = "";
   export let username = null;
+  export let currentChannel = "";
+  $: if (currentChannel) {
+    console.log("C: " + currentChannel);
+    //mount();
+  }
 
-  let coinSound = new Audio("/assets/coin.mp3");
-  let flipCoinSound = new Audio("/assets/flipcoin.mp3");
+  //let coinSound = new Audio("/assets/coin.mp3");
+  //let flipCoinSound = new Audio("/assets/flipcoin.mp3");
   let newBatch = [];
   let timeline = [];
   let maxTS = { inbox: null, outbox: null, public: null, search: null };
   let minTS = { inbox: null, outbox: null, public: null, search: null };
   let replies;
-
-  let currentChannel = "outbox";
   let isMyself = false;
   let profile = {};
   let notifications = [];
@@ -57,7 +63,6 @@
     function (event) {
       const obj = JSON.parse(event.data);
       $myUnreadIds = obj;
-      //console.log(event.data);
       if (event.data == "") {
         source.close(); // disconnect stream
       }
@@ -80,6 +85,9 @@
   $: if (username) {
     if (username != null && username != "") {
       isMyself = username == $myInfoStore?.user?.username;
+
+      console.log("username is " + username);
+
       mount();
     }
   }
@@ -152,12 +160,18 @@
         (res.posts.length > 0 || mode == "fresh")
       ) {
         newBatch = res.posts;
-        timeline =
+        const _tmpTimeline =
           mode == "append"
             ? [...timeline, ...newBatch]
             : mode == "prepend"
             ? [...newBatch, ...timeline]
             : newBatch;
+
+        //remove duplicates by id
+        timeline = _tmpTimeline.filter(
+          (item, index, self) =>
+            index === self.findIndex((t) => t.id === item.id)
+        );
 
         maxTS[channel] = timeline[0]?.created_at;
         minTS[channel] = timeline[timeline.length - 1]?.created_at;
@@ -165,9 +179,9 @@
         if ($docClicked) {
           //sounds
           if (mode == "append") {
-            coinSound.play();
+            //coinSound.play();
           } else {
-            flipCoinSound.play();
+            //flipCoinSound.play();
           }
         }
       }
@@ -322,26 +336,35 @@
     <div class="column is-2 is-hidden-mobile">
       <div class="app-box">
         <div class="columnSwitcher" style="margin-left:.5em">
-          {#if isMyself}
-            <div
-              on:click={() => {
-                changeToTab("inbox");
-              }}
-              class:active={currentChannel == "inbox"}
-            >
-              <i class="fas fa-inbox" /> 主頻道
-            </div>
-          {/if}
           <div
             on:click={() => {
-              changeToTab("outbox");
+              navigate("/home");
+              changeToTab("inbox");
             }}
-            class:active={currentChannel == "outbox"}
+            class:active={currentChannel == "inbox"}
           >
-            <i class="fas fa-newspaper" /> 我發表的
+            <i class="fas fa-inbox" /> 主頻道
           </div>
           <div
             on:click={() => {
+              navigate("/home/outbox");
+              changeToTab("outbox");
+            }}
+            class:active={currentChannel == "outbox" && isMyself}
+          >
+            <i class="fas fa-newspaper" /> 我發表的
+          </div>
+
+          {#if !isMyself}
+            <div class:active={!isMyself}>
+              <i class="fas fa-newspaper" />
+              {username}發表的
+            </div>
+          {/if}
+
+          <div
+            on:click={() => {
+              navigate("/home/public");
               changeToTab("public");
             }}
             class:active={currentChannel == "public"}
@@ -537,7 +560,7 @@
     <div class="column is-4">
       <!-- top box , top bar -->
       <div class="app-box">
-        <div style="margin:0 1em">
+        <div style="margin:0 0.5em; padding:2px;">
           <i
             class="fa fa-search"
             aria-hidden="true"
@@ -549,7 +572,7 @@
             disabled={!isShowFilterBox}
             style="font-size: 13px;
   margin: 4px;
-    border: none;"
+    border: none; width: calc(100% - 30px);"
             type="text"
             placeholder=""
             bind:this={searchInputRef}
@@ -658,13 +681,37 @@
                             isNotificationMenuShowing = false;
                           });
                       }}
-                      style="border-bottom:1px solid #ccc; padding:3px"
+                      style="border-bottom:1px solid #ccc; padding:3px;width:330px"
                     >
-                      {JSON.stringify(v)}
+                      <img
+                        src={v.user.avatar}
+                        alt="avatar"
+                        style="width:40px;float:left; border-radius:4px;"
+                      />
+
+                      <div style="width:280px;float:left;padding-left:.3em">
+                        {#if v.object.type == 1}
+                          {v.user.display_name} ({v.user.username})
+                          回覆了你的信息。<br />
+                          {getDateDiff(v.created_at)}
+                        {/if}
+                        {#if v.object.type == 2}
+                          {v.user.display_name} ({v.user.username}) 開始跟隨你。
+                        {/if}
+                        {#if v.object.type == 3}
+                          {v.user.display_name} ({v.user.username})
+                          喜歡你的信息。
+                        {/if}
+                        {#if v.object.type == 4}
+                          {v.user.display_name} ({v.user.username})
+                          向你提出交友請求。
+                        {/if}
+                      </div>
+                      <div style="clear:both" />
                     </div>
                   {/each}
                 {:else}
-                  🤗沒有通知很棒棒
+                  🤗 沒有通知很棒棒
                 {/if}
               </div>
             </div>

@@ -78,7 +78,6 @@
   <article
     class="media cell"
     class:isUnread={$myUnreadIds.includes(cellData.id)}
-
     in:scale={{ duration: 250 }}
   >
     {#if cellData.nor > 0}

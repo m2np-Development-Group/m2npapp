@@ -10,22 +10,23 @@
 
   export let content = "";
 </script>
+
 {#if content}
-<SvelteMarkdown
-  source={content}
-  options={{
-    gfm: true,
-    breaks: true,
-  }}
-  isInline={false}
-  renderers={{
-    link: Link,
-    text: Text,
-    image: Image,
-    html: Html,
-    codespan: CodeSpan,
-    paragraph: Paragraph,
-    code: Code,
-  }}
-/>
+  <SvelteMarkdown
+    source={content}
+    options={{
+      gfm: true,
+      breaks: true,
+    }}
+    isInline={false}
+    renderers={{
+      link: Link,
+      text: Text,
+      image: Image,
+      html: Html,
+      codespan: CodeSpan,
+      paragraph: Paragraph,
+      code: Code,
+    }}
+  />
 {/if}

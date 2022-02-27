@@ -1,35 +1,45 @@
 <script>
   //import LazyImage from 'svelte-lazy-image';
-  import {playerLinks} from "../../stores.js";
-  export let href = ''
-  export let title = undefined
-  export let text = ''
-  export let raw=''; raw;
+  import { playerLinks } from "../../stores.js";
+  export let href = "";
+  export let title = undefined;
+  export let alt = "";
+  export let text = "";
+  export let raw = "";
+  raw;
+  export let width = "";
 </script>
-  
-  <img src={href} {title} alt={text} on:click={()=>{
-    if(!$playerLinks.links.includes(href)){
-      $playerLinks.links.push([href,'img']);
-      $playerLinks.currentIndex = $playerLinks.links.length-1;
-    }else{
-      $playerLinks.currentIndex = $playerLinks.links.indexOf([href,'img']);
+
+<img
+  src={href}
+  title={title}
+  alt={alt | text}
+  width={width}
+  on:click={() => {
+    if (!$playerLinks.links.includes(href)) {
+      $playerLinks.links.push([href, "img"]);
+      $playerLinks.currentIndex = $playerLinks.links.length - 1;
+    } else {
+      $playerLinks.currentIndex = $playerLinks.links.indexOf([href, "img"]);
     }
-    $playerLinks=$playerLinks;
-  }} />
-  <!-- <LazyImage
+    $playerLinks = $playerLinks;
+  }}
+/>
+<!-- <LazyImage
   src={href}
   placeholder={href}
   title={title}
   alt={text}
 /> -->
-  {#if href==""}
+{#if href == ""}
   <!-- should not happen -->
   <slot />
-  {/if}
+{/if}
+
 <style>
-  img{
+  img {
     cursor: pointer;
     max-width: 100px;
-    border-radius:3px;
+    border-radius: 3px;
   }
 </style>
