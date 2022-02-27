@@ -2,6 +2,7 @@
   import { myInfoStore } from "../stores";
   import { getDateDiff } from "../utils/util";
   import { Button } from "svelma";
+  import Image from "../components/markdown/Image.svelte"
   import Username from "../components/Username.svelte";
   import Markdown from "../components/Markdown.svelte";
 
@@ -53,7 +54,7 @@
         <tr>
           <td>
             {#if profile?.user?.avatar}
-            <img width="80" src={profile?.user?.avatar} alt="avatar" />
+            <Image width="80" href={profile?.user?.avatar} alt="avatar" />
           {/if}
           </td>
           <td style='padding-left:1em'>
@@ -90,39 +91,43 @@
 
           </td>
         </tr>
+
+        <tr>
+          <td>
+            <div style="font-weight:bold;font-size:small">跟蹤:</div>
+            {#if profile.followings.length > 0}
+              {#each profile.followings as v}
+                <Username userId={v.id} /><br />
+              {/each}
+            {:else}
+              沒有
+            {/if}
+            <br />
+            <div style="font-weight:bold;font-size:small">粉絲: </div>
+            {#if profile.followers.length > 0}
+              {#each profile.followers as v}
+                <Username userId={v.id} /><br />
+              {/each}
+            {:else}
+              沒有
+            {/if}
+          </td>
+          <td style='padding-left:1em'>
+            <div style="font-weight:bold;font-size:small">自介: </div>
+            <Markdown content={profile?.user?.description} />
+    
+            <br />
+            <br />
+            <span style="font-weight:bold;font-size:small">最後登入:</span>
+            {getDateDiff(profile.user?.last_login)}<br />
+
+            <span style="font-weight:bold;font-size:small">Po文:</span>
+            {profile.user?.article_count}則
+
+          </td>
+        </tr>
       </table>
 
-
-
-
-      <div style="font-size:13px;color:#666">
-        跟蹤:<br />
-        {#if profile.followings.length > 0}
-          {#each profile.followings as v}
-            <Username userId={v.id} /><br />
-          {/each}
-        {:else}
-          沒有
-        {/if}
-        <br />
-        粉絲: <br />
-        {#if profile.followers.length > 0}
-          {#each profile.followers as v}
-            <Username userId={v.id} /><br />
-          {/each}
-        {:else}
-          沒有
-        {/if}
-        <br />
-        自介: <br />
-
-        <Markdown content={profile?.user?.description} />
-
-        <br />
-        <br />
-        最後登入: <strong>{getDateDiff(profile.user?.last_login)}</strong><br />
-        Po文: <strong>{profile.user?.article_count}</strong>則
-      </div>
     </div>
   {/if}
 </div>
