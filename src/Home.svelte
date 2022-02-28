@@ -382,14 +382,12 @@
               <i class="fas fa-comment-dots" /> 未讀
             </div>
 
-            <div class="columnSwitcher" style="float:right;padding-right:3px">
-              <span
+              <div
                 on:click={() => {
                   markAllAsRead();
                 }}
                 ><i class="fas fa-check" /> 全部標記為已讀
-              </span>
-            </div>
+              </div>
           {/if}
         </div>
 
