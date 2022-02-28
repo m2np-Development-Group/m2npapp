@@ -5,6 +5,7 @@
   import Image from "../components/markdown/Image.svelte";
   import Username from "../components/Username.svelte";
   import Markdown from "../components/Markdown.svelte";
+  import { link } from "svelte-navigator";
 
   const unfollow = (user) => {
     API.post("/unfollow", { user_id: user.id }).then((res) => {
@@ -121,7 +122,7 @@
             {getDateDiff(profile.user?.last_login)}<br />
 
             <span style="font-weight:bold;font-size:small">Po文:</span>
-            {profile.user?.article_count}則
+            <a href={`/user/${profile.user?.username}`} use:link>{profile.user?.article_count}則</a>
           </td>
         </tr>
       </table>
