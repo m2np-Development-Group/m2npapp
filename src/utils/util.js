@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 import { userStore } from "../stores.js";
-import { listen } from "svelte/internal";
+import { listen, bubble } from "svelte/internal";
 
 //import Link from "../components/markdown/Link.svelte";
 
@@ -78,18 +78,17 @@ const parseIntToChinese = (num) => {
 
 export function omit(obj, ...keysToOmit) {
   return Object.keys(obj).reduce((acc, key) => {
-    if (keysToOmit.indexOf(key) === -1) acc[key] = obj[key]
-    return acc
-  }, {})
+    if (keysToOmit.indexOf(key) === -1) acc[key] = obj[key];
+    return acc;
+  }, {});
 }
-
 
 export const getDateDiff = (dateTimeStamp) => {
   dateTimeStamp = dateTimeStamp * 1000;
   const minute = 1000 * 60;
   const hour = minute * 60;
   const day = hour * 24;
-  const halfamonth = day * 15;
+  //const halfamonth = day * 15;
   const month = day * 30;
   const now = new Date().getTime();
   const diffValue = now - dateTimeStamp;
@@ -149,16 +148,16 @@ export const generateYoutubeEmbedUrl = (id) => {
 };
 
 export function getEventsAction(component) {
-  return node => {
+  return (node) => {
     const events = Object.keys(component.$$.callbacks);
     const listeners = [];
-    events.forEach(event =>
-      listeners.push(listen(node, event, e => bubble(component, e)))
+    events.forEach((event) =>
+      listeners.push(listen(node, event, (e) => bubble(component, e)))
     );
     return {
       destroy: () => {
-        listeners.forEach(listener => listener());
-      }
+        listeners.forEach((listener) => listener());
+      },
     };
   };
 }

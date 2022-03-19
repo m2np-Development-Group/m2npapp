@@ -318,7 +318,6 @@
 
   <Settings bind:active={isSettingsShowing} />
 
-
   <div
     class="columns is-mobile is-variable is-1"
     on:click={() => {
@@ -376,12 +375,13 @@
               <i class="fas fa-comment-dots" /> 未讀
             </div>
 
-              <div
-                on:click={() => {
-                  markAllAsRead();
-                }}
-                ><i class="fas fa-check" /> 全部標記為已讀
-              </div>
+            <div
+              on:click={() => {
+                markAllAsRead();
+              }}
+            >
+              <i class="fas fa-check" /> 全部標記為已讀
+            </div>
           {/if}
         </div>
 
@@ -715,7 +715,7 @@
             class="fa fa-search"
             aria-hidden="true"
             on:click={() => {
-              alert("TODO : search user")
+              alert("TODO : search user");
             }}
           />
         </div>

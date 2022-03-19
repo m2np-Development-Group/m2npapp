@@ -122,7 +122,9 @@
             {getDateDiff(profile.user?.last_login)}<br />
 
             <span style="font-weight:bold;font-size:small">Po文:</span>
-            <a href={`/user/${profile.user?.username}`} use:link>{profile.user?.article_count}則</a>
+            <a href={`/user/${profile.user?.username}`} use:link
+              >{profile.user?.article_count}則</a
+            >
           </td>
         </tr>
       </table>
