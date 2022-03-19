@@ -9,7 +9,7 @@
   import { myInfoStore, userStore } from "./stores";
 
   let avatar, fileinput, wallpaper, files;
-  export let active;
+  export let active = false;
   $: {
     if (active) {
       console.log("load setting");

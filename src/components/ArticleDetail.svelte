@@ -10,7 +10,7 @@
   import Markdown from "./Markdown.svelte";
   import { watchResize } from "svelte-watch-resize";
 
-  export let onArticleContentChanged = (content) => {};
+  export let onArticleContentChanged = () => {};
   export let article;
   export let style;
   export let classes = "";

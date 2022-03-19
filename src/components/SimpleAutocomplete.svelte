@@ -518,7 +518,6 @@
     {showClear ? 'show-clear' : ''} autocomplete select is-fullwidth {uniqueId}"
 >
   <input
-    autofocus
     type="text"
     class="{inputClassName ? inputClassName : ''} input autocomplete-input"
     id={inputId ? inputId : ""}

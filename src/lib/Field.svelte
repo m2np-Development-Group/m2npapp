@@ -51,8 +51,6 @@
   let labelEl;
   let messageEl;
   let fieldType = "";
-  let hasIcons = false;
-  let iconType = "";
   let mounted = false;
   let newPosition = "";
 

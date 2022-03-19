@@ -12,8 +12,8 @@
   export let href = "";
   export let title = undefined;
 
-  export let raw = "";
-  export let text = "";
+  export const raw = "";
+  export const text = "";
 
   let ytid;
   let scid;

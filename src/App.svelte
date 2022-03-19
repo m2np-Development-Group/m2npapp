@@ -1,7 +1,6 @@
-<script>
+<script lang="ts">
   import { onMount, onDestroy } from "svelte";
-  import { globalHistory } from "svelte-navigator/src/history";
-  import { Router, Route } from "svelte-navigator";
+  import { Router, Route, globalHistory } from "svelte-navigator";
 
   import PrivateRoute from "./PrivateRoute.svelte";
 
@@ -15,15 +14,15 @@
 
   import { docClicked, myInfoStore, wallpaper } from "./stores";
   import { SvelteToast } from "@zerodevx/svelte-toast";
-
   import { currentPath, exists } from "./utils/util";
+  import type { Unlisten } from "svelte-navigator/types/NavigatorHistory";
 
-  let unsub;
+  let unsub: Unlisten;
   export let url = "";
 
   onMount(async () => {
     console.log(
-      "%cM2NP WebFrontEnd v20220228 : 不會再有更二的了",
+      "%cM2NP WebFrontEnd v20220320 : 衫易綾",
       "font-weight:bold"
     );
     unsub = globalHistory.listen(({ location, action }) => {

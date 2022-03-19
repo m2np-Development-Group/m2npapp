@@ -6,7 +6,7 @@
   export let tag = "button";
   export let type = "";
   export let size = "";
-  export let href = "";
+  export const href = "";
   export let nativeType = "button";
 
   export let loading = false;
