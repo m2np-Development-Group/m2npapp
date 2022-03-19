@@ -192,7 +192,7 @@
   }
   .media-left {
     margin: 0px 5px;
-    cursor: pointer;
+    cursor: alias;
   }
   .cell {
     padding: 6px 0 2px 0;

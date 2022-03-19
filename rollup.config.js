@@ -4,8 +4,6 @@ import resolve from '@rollup/plugin-node-resolve';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import css from 'rollup-plugin-css-only';
-import postcss from 'rollup-plugin-postcss';
-import preprocess from 'svelte-preprocess';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -40,7 +38,7 @@ export default {
 	},
 	plugins: [
 		svelte({
-			preprocess: preprocess(),
+			//preprocess: preprocess(),
 			compilerOptions: {
 				hydratable: true,
 				// enable run-time checks when not in production
@@ -75,7 +73,6 @@ export default {
 		// instead of npm run dev), minify
 		production && terser(),
 
-		postcss({minified:true})//for bulma
 	],
 	watch: {
 		clearScreen: false

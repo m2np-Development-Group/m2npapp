@@ -2,7 +2,7 @@
   import Username from "./Username.svelte";
   import { exists } from "../utils/util";
   import API from "../utils/Api";
-  import { Warning } from "./Notification";
+  import { Warning } from "../lib/Notification";
   import Postbox from "./Postbox.svelte";
   import Markdown from "./Markdown.svelte";
   import { myInfoStore } from "../stores";

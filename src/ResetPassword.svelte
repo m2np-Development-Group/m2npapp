@@ -1,11 +1,9 @@
 <script>
   import API from "./utils/Api";
   import { navigate, useLocation, Link } from "svelte-navigator";
-  import { Warning } from "./components/Notification";
+  import { Warning } from "./lib/Notification";
   import { myInfoStore } from "./stores";
   import { onMount } from "svelte";
-  import { Field, Input } from "svelma";
-  import { slide } from "svelte/transition";
 
   let email = "";
   let password = "";

@@ -3,7 +3,7 @@
   import { myInfoStore } from "../stores.js";
   import { exists } from "../utils/util";
   import API from "../utils/Api";
-  import { Warning } from "./Notification";
+  import { Warning } from "../lib/Notification";
   import AvatarBox from "./AvatarBox.svelte";
   import Postbox from "./Postbox.svelte";
   import ReplyEntry from "./ReplyEntry.svelte";
@@ -22,6 +22,7 @@
   export let replies = [];
   export let onDelete = () => {};
   export let isLiked = false;
+  export let isMuted = false;
   let editingArticle = {};
   let height;
   let articleDom;
@@ -89,6 +90,28 @@
             class="fa fa-trash trashButton smallButtons"
           />
         {/if}
+
+        {#if isMuted}
+          <i
+            class="fas fa-volume smallButtons"
+            style="color:cornflowerblue"
+            on:click={() => {
+              API.post("/unmute", { postId: article.id }).then((res) => {
+                isMuted = false;
+              });
+            }}
+          />
+        {:else}
+          <i
+            class="fas fa-volume-mute muteButton smallButtons"
+            on:click={() => {
+              API.post("/mute", { postId: article.id }).then((res) => {
+                isMuted = true;
+              });
+            }}
+          />
+        {/if}
+
         <i
           on:click={() => {
             window.open(`/p/${article.id}`, "_blank");
@@ -189,6 +212,10 @@
   }
   .likeButton:hover {
     background: red;
+    color: white;
+  }
+  .muteButton:hover {
+    background: cornflowerblue;
     color: white;
   }
   .editButton:hover {

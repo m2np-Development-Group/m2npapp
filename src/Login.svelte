@@ -2,13 +2,9 @@
   import HeroFullHeight from "./components/HeroFullHeight.svelte";
   import API from "./utils/Api";
   import { navigate, link } from "svelte-navigator";
-  import { Warning } from "./components/Notification";
+  import { Warning } from "./lib/Notification";
   import { myInfoStore, filluserStore } from "./stores";
   import { onMount } from "svelte";
-  //import Particles from "svelte-particles";
-  //import Config from "./ParticleConfig"
-
-  //export let location;
 
   let email = "";
   let password = "";

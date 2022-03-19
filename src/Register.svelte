@@ -2,13 +2,15 @@
   import API from "./utils/Api";
   import HeroFullHeight from "./components/HeroFullHeight.svelte";
   import { link } from "svelte-navigator";
-  import { Warning } from "./components/Notification";
-  import { Field, Input, Button } from "svelma";
+  import { Warning } from "./lib/Notification";
+  import Input from "./lib/Input.svelte";
+  import Button from "./lib/Button.svelte";
+  import Field from "./lib/Field.svelte";
+
   let email = "";
   let password = "";
   let username = "";
   let beforeReg = true;
-
   let invalidPasswordMessage = "";
   let invalidEmailMessage = "";
   let invalidUsernameMessage = "";

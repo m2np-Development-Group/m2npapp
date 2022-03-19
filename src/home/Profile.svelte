@@ -1,7 +1,7 @@
 <script>
   import { myInfoStore } from "../stores";
   import { getDateDiff } from "../utils/util";
-  import { Button } from "svelma";
+  import Button from "../lib/Button.svelte";
   import Image from "../components/markdown/Image.svelte";
   import Username from "../components/Username.svelte";
   import Markdown from "../components/Markdown.svelte";

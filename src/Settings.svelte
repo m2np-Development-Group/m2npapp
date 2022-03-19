@@ -1,9 +1,11 @@
 <script>
   import { onMount } from "svelte";
-  import { Select, Field, Input, Button } from "svelma";
+  import Input from "./lib/Input.svelte";
+  import Field from "./lib/Field.svelte";
+  import Button from "./lib/Button.svelte";
   import { colorMap } from "./utils/util";
   import API from "./utils/Api";
-  import { Warning, Success } from "./components/Notification";
+  import { Warning, Success } from "./lib/Notification";
   import { myInfoStore, userStore } from "./stores";
 
   let avatar, fileinput, wallpaper, files;

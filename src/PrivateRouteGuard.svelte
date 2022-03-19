@@ -4,7 +4,7 @@
   import { exists } from "./utils/util";
 
   import API from "./utils/Api";
-  import { Warning } from "./components/Notification";
+  import { Warning } from "./lib/Notification";
   const navigate = useNavigate();
   const location = useLocation();
   // const getCookieValue = (name) => (

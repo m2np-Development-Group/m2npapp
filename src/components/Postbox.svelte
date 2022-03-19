@@ -1,8 +1,8 @@
 <script>
   import { onMount } from "svelte";
-  import { Button } from "svelma";
+  import Button from "../lib/Button.svelte";
   import CodeMirror from "./CodeMirror.svelte";
-  import { Warning } from "../components/Notification";
+  import { Warning } from "../lib/Notification";
   import EmojiSelector from "./EmojiSelector.svelte";
   import { exists } from "../utils/util";
   import API from "../utils/Api";

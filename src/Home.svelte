@@ -23,8 +23,7 @@
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./Settings.svelte";
   import Search from "./components/Search.svelte";
-
-  import { Button, Modal } from "svelma";
+  import Button from "./lib/Button.svelte";
 
   //let currentChannel = "";
   export let username = null;
@@ -319,11 +318,6 @@
 
   <Settings bind:active={isSettingsShowing} />
 
-  <Modal bind:active={showSearch}>
-    <div style="background:white;padding:1em;border-radius:1em">
-      <Search />
-    </div>
-  </Modal>
 
   <div
     class="columns is-mobile is-variable is-1"
@@ -721,7 +715,7 @@
             class="fa fa-search"
             aria-hidden="true"
             on:click={() => {
-              showSearch = !showSearch;
+              alert("TODO : search user")
             }}
           />
         </div>

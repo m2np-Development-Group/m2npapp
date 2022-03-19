@@ -1,5 +1,7 @@
 import { writable } from "svelte/store";
 import { userStore } from "../stores.js";
+import { listen } from "svelte/internal";
+
 //import Link from "../components/markdown/Link.svelte";
 
 //trim specific characters
@@ -73,6 +75,15 @@ const parseIntToChinese = (num) => {
   }
   return k;
 };
+
+export function omit(obj, ...keysToOmit) {
+  return Object.keys(obj).reduce((acc, key) => {
+    if (keysToOmit.indexOf(key) === -1) acc[key] = obj[key]
+    return acc
+  }, {})
+}
+
+
 export const getDateDiff = (dateTimeStamp) => {
   dateTimeStamp = dateTimeStamp * 1000;
   const minute = 1000 * 60;
@@ -137,31 +148,20 @@ export const generateYoutubeEmbedUrl = (id) => {
   return "https://www.youtube.com/embed/" + id;
 };
 
-// const renderer = new marked.Renderer();
-// renderer.link = (href, title, text) => Link;
-// // renderer.blockquote = (text) => text;
-// const tokenizer = new marked.Tokenizer();
-// tokenizer.blockquote = ()=>{};
-// const markedOptions = { tokenizer:tokenizer, renderer: renderer, breaks: true };
-
-// export const myMarked = (str) => {
-// 	if (str == undefined || str == null) {
-// 		return "";
-// 	}
-// 	return marked(str, markedOptions)
-// 		.replaceAll("&#39;", "&apos;")
-// 		.replace(/@([a-z\d_]+)/gi, (match,capture)=>
-// 		{
-// 			return `<a href="/user/${capture}">`+displaynames[capture]+"</a>"
-// 		}
-// 		)//mention
-// 		.replaceAll("<p>", "")
-// 		.replaceAll("</p>", "<br />")
-// 		.replace(
-// 			/\B#([\u4e00-\u9fa5_a-zA-Z0-9]+)/g,
-// 			'<a href="/hashtag/$1">#$1</a>'
-// 		);
-// };
+export function getEventsAction(component) {
+  return node => {
+    const events = Object.keys(component.$$.callbacks);
+    const listeners = [];
+    events.forEach(event =>
+      listeners.push(listen(node, event, e => bubble(component, e)))
+    );
+    return {
+      destroy: () => {
+        listeners.forEach(listener => listener());
+      }
+    };
+  };
+}
 
 export const colorMap = [
   "1abc9c",
