@@ -1,11 +1,27 @@
-var inlineAttachment = function (options, instance) {
-  this.settings = inlineAttachment.util.merge(
-    options,
-    inlineAttachment.defaults
-  );
-  this.editor = instance;
-  this.filenameTag = "{filename}";
-  this.lastValue = null;
+class inlineAttachment {
+  settings: any;
+  static util: any;
+  editor: any;
+  filenameTag: string;
+  lastValue: any;
+  static editors: any = {};
+  uploadFile: (file: any) => XMLHttpRequest;
+  isFileAllowed: (file: any) => boolean;
+  onFileUploadResponse: (xhr: any) => void;
+  onFileUploadError: (xhr: any) => void;
+  onFileInserted: (file: any) => void;
+  onPaste: (e: any) => boolean;
+  onDrop: (e: any) => boolean;
+  constructor (options, instance) {
+    this.settings = inlineAttachment.util.merge(
+      options,
+      inlineAttachment.defaults
+    );
+    this.editor = instance;
+    this.filenameTag = "{filename}";
+    this.lastValue = null;
+  }
+  static defaults : any;
 };
 
 /**
@@ -59,18 +75,18 @@ inlineAttachment.util = {
   insertTextAtCursor: function (el, text) {
     var scrollPos = el.scrollTop,
       strPos = 0,
-      browser = false,
+      browser = "",
       range;
 
     if (el.selectionStart || el.selectionStart === "0") {
       browser = "ff";
-    } else if (document.selection) {
+    } else if (document.getSelection()) {
       browser = "ie";
     }
 
     if (browser === "ie") {
       el.focus();
-      range = document.selection.createRange();
+      range = document.createRange();
       range.moveStart("character", -el.value.length);
       strPos = range.text.length;
     } else if (browser === "ff") {
@@ -83,7 +99,7 @@ inlineAttachment.util = {
     strPos = strPos + text.length;
     if (browser === "ie") {
       el.focus();
-      range = document.selection.createRange();
+      range = document.createRange();
       range.moveStart("character", -el.value.length);
       range.moveStart("character", strPos);
       range.moveEnd("character", 0);
@@ -179,7 +195,7 @@ inlineAttachment.defaults = {
    *
    * @return {Boolean} when false is returned it will prevent default upload behavior
    */
-  onFileUploadResponse: function () {
+  onFileUploadResponse: function (): boolean {
     return true;
   },
 
@@ -189,7 +205,7 @@ inlineAttachment.defaults = {
    *
    * @return {Boolean} when false is returned it will prevent default error behavior
    */
-  onFileUploadError: function () {
+  onFileUploadError: function (): boolean {
     return true;
   },
 
@@ -388,12 +404,19 @@ inlineAttachment.prototype.onDrop = function (e) {
 
 //////below is plugin
 
-var codeMirrorEditor = function (instance) {
+class codeMirrorEditor {
+  codeMirror: any;
+  getValue: () => any;
+  insertValue: (val: any) => void;
+  setValue: (val: any) => void;
+  static attach: (codeMirror: any, options: any) => void;
+  constructor (instance) {
   if (!instance.getWrapperElement) {
     throw "Invalid CodeMirror object given";
   }
 
   this.codeMirror = instance;
+  }
 };
 
 codeMirrorEditor.prototype.getValue = function () {
@@ -439,9 +462,11 @@ codeMirrorEditor.attach = function (codeMirror, options) {
   });
 };
 
-var codeMirrorEditor4 = function (instance) {
+class codeMirrorEditor4 {
+  static attach: (codeMirror: any, options: any) => void;constructor (instance) {
   codeMirrorEditor.call(this, instance);
 };
+}
 
 codeMirrorEditor4.attach = function (codeMirror, options) {
   options = options || {};

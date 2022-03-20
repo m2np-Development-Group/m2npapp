@@ -29,23 +29,30 @@ const index_time = index.replace(/\?_=\d+/, "?_=" + time);
 //write the new index.html
 fs.writeFileSync(path.join(__dirname, "public/index.html"), index_time);
 
-console.log("Copying new files...");
 
-//use node-scp
-const { Client } = require("node-scp");
-async function upload() {
-  const client = await Client({
-    host: "208.87.131.252",
-    port: 22,
-    username: "root",
-    privateKey: fs.readFileSync("C:/Users/abby/.ssh/id_rsa"),
-    // passphrase: 'your key passphrase',
-  });
 
-  await client.uploadDir("./public", "/home/wwwroot/m2np.com");
-  //close the connection
-  client.close();
-}
 
-//upload and check if upload() timeout
-upload();
+
+
+
+// console.log("Copying new files...");
+
+// //use node-scp
+// const { Client } = require("node-scp");
+// async function upload() {
+//   const client = await Client({
+//     host: "208.87.131.252",
+//     port: 22,
+//     username: "root",
+//     privateKey: fs.readFileSync("C:/Users/abby/.ssh/id_rsa"),
+//     // passphrase: 'your key passphrase',
+//   });
+
+//   await client.uploadDir("./public", "/home/wwwroot/m2np.com");
+//   //close the connection
+//   client.close();
+// }
+
+// //upload and check if upload() timeout
+// upload();
+console.log("Done!");

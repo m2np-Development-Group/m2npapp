@@ -1,6 +1,6 @@
 import { toast } from "@zerodevx/svelte-toast";
 
-export const Success = (m) =>
+export const Success = (m: string) =>
   toast.push(m, {
     theme: {
       "--toastBackground": "green",
@@ -9,7 +9,7 @@ export const Success = (m) =>
     },
   });
 
-export const Warning = (m) =>
+export const Warning = (m: string) =>
   toast.push(m, {
     theme: {
       "--toastBackground": "#F56565",
@@ -17,7 +17,7 @@ export const Warning = (m) =>
     },
   });
 
-export const Failure = (m) =>
+export const Failure = (m: string) =>
   toast.push(m, {
     theme: {
       "--toastBackground": "#F56565",

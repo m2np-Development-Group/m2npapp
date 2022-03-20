@@ -7,6 +7,7 @@
   import CodeSpan from "./markdown/CodeSpan.svelte";
   import Paragraph from "./markdown/Paragraph.svelte";
   import Code from "./markdown/Code.svelte";
+  import Br from "./markdown/Br.svelte";
 
   export let content = "";
 </script>
@@ -27,6 +28,7 @@
       codespan: CodeSpan,
       paragraph: Paragraph,
       code: Code,
+      br: Br,
     }}
   />
 {/if}
