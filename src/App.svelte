@@ -21,10 +21,7 @@
   export let url = "";
 
   onMount(async () => {
-    console.log(
-      "%cM2NP WebFrontEnd v20220320 : 衫易綾",
-      "font-weight:bold"
-    );
+    console.log("%cM2NP WebFrontEnd v20220320 : 衫易綾", "font-weight:bold");
     unsub = globalHistory.listen(({ location, action }) => {
       $currentPath = location.pathname;
 

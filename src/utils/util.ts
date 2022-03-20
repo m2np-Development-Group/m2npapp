@@ -64,13 +64,13 @@ export const timeConverter = (UNIX_timestamp) => {
 export const currentPath = writable(window.location.pathname);
 const parseIntToChinese = (num) => {
   const k = parseInt(num);
-  if (k == "1") {
+  if (k == 1) {
     return "一";
   }
-  if (k == "2") {
+  if (k == 2) {
     return "兩";
   }
-  if (k == "3") {
+  if (k == 3) {
     return "三";
   }
   return k;
@@ -83,7 +83,7 @@ export function omit(obj, ...keysToOmit) {
   }, {});
 }
 
-export const getDateDiff = (dateTimeStamp) => {
+export const getDateDiff = (dateTimeStamp: number) => {
   dateTimeStamp = dateTimeStamp * 1000;
   const minute = 1000 * 60;
   const hour = minute * 60;

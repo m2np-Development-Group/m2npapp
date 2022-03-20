@@ -1,9 +1,8 @@
 <script>
-  import { matchSoundCloudUrl, matchYoutubeUrl } from "./../utils/util.js";
+  import { matchSoundCloudUrl, matchYoutubeUrl } from "../utils/util.js";
   import { getDateDiff } from "../utils/util";
   import { userStore, requestedProfile, requestedArticle } from "../stores";
-  import { fade, scale } from "svelte/transition";
-  import { flip } from "svelte/animate";
+  import { scale } from "svelte/transition";
   import { myUnreadIds } from "../stores";
   import API from "../utils/Api";
 

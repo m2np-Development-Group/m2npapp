@@ -1,58 +1,80 @@
-<script>
+<script lang="ts">
+  import HeroFullHeight from "./components/HeroFullHeight.svelte";
   import API from "./utils/Api";
-  import { navigate, useLocation, Link } from "svelte-navigator";
-  import { Warning } from "./lib/Notification";
+  import { navigate, link } from "svelte-navigator";
+  import { Success, Warning } from "./lib/Notification";
   import { myInfoStore } from "./stores";
   import { onMount } from "svelte";
+  import Field from "./lib/Field.svelte";
+  import Input from "./lib/Input.svelte";
+  import Button from "./lib/Button.svelte";
 
   let email = "";
-  let password = "";
-  // const navigate = useNavigate();
-  // const location = useLocation();
+  let beforeReset = true;
+  let invalidEmailMessage = "";
   onMount(() => {
     if ($myInfoStore) {
       navigate("/home");
     }
   });
   const reset = () => {
-    if (trim(email) == "") {
-      invalidEmailMessage = "Cannot be empty";
-    } else if (password == "") {
-      invalidPasswordMessage = "Cannot be empty";
+    if (email.trim() == "") {
+      Warning("請輸入電郵信箱。");
     } else {
-      API.post("/reset-password", { email: email, password: password })
+      console.log("reset");
+      API.post("/reset-password", { email: email })
         .then((res) => {
           if (res.msg == "ok") {
-            Warning("請去檢查一下郵箱以進行下一步。");
+            Success("請去檢查一下郵箱以進行下一步。");
+            //redirect to login page
+            navigate("/login");
           } else {
-            Warning("賬戶或密碼有誤。");
+            Warning("找不到該使用者。");
           }
         })
-        .catch((e) => {
-          Warning(JSON.stringify(e));
+        .catch((_e) => {
+          Warning("此服務目前暫不提供。");
         });
     }
   };
-  const onKp = (e) => {
-    // console.log(e.srcElement.checkValidity())
-    if (e.key === "Enter") login();
+  const onKp = (e : any) => {
+    if (e.key === "Enter") reset();
   };
-  let emailInput;
-  let invalidEmailMessage;
-  let invalidPasswordMessage;
 </script>
 
-<section class="hero is-info">
-  <div class="hero-body">
-    <div class="container">
-      <h1 class="title">Reset Password?</h1>
-      <h2 class="subtitle">mm... it sometimes happens.</h2>
-    </div>
+<HeroFullHeight>
+  <div slot="main">
+    <form autocomplete="off">
+      {#if beforeReset}
+        <Field label="Email" message={invalidEmailMessage}>
+          <Input
+            required
+            type="email"
+            placeholder="E-Mail"
+            bind:value={email}
+            on:keypress={onKp}
+            autocomplete="off"
+            icon="envelope"
+          />
+        </Field>
+
+        <Button type="is-primary" on:click={reset}>Send OTP</Button>
+      {:else}
+        註冊成功，請檢查郵箱。
+      {/if}
+    </form>
   </div>
-</section>
-<div style="padding:1em">
-  <a href="/reset-pw">按我進入重設用的臨時頁面</a>
-  <hr />
-  <Link to="/register">未有賬戶？按此登記。</Link><br />
-  <Link to="/login">突然記起？按此登入。</Link><br />
-</div>
+  <div slot="bottom">
+    已有賬戶？<a href="/login" use:link>按我登入</a><br />
+    <a href="/reset-password" use:link>重設密碼</a>
+  </div>
+</HeroFullHeight>
+
+<style>
+  a:hover {
+    text-decoration: underline;
+  }
+  a {
+    font-weight: bold;
+  }
+</style>

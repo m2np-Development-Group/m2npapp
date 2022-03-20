@@ -3,7 +3,7 @@
   import InfiniteScroll from "../components/InfiniteScroll.svelte";
 
   export let timeline = [];
-  export let onCellClick = (id) => {};
+  export let onCellClick = () => {};
   export let loadMore = () => {};
   export let hasMore = false;
 

@@ -85,7 +85,7 @@
   </div>
   <div slot="bottom">
     已有賬戶？<a href="/login" use:link>按我登入</a><br />
-    <a href="https://m2np.com/reset-pw" target="_blank">重設密碼(暫用)</a>
+    <a href="/reset-password" use:link>重設密碼</a>
   </div>
 </HeroFullHeight>
 

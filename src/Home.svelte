@@ -11,7 +11,6 @@
   import {
     myInfoStore,
     filluserStore,
-    userStore,
     docClicked,
     myUnreadIds,
     wallpaper,
@@ -22,7 +21,6 @@
   } from "./stores.js";
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./Settings.svelte";
-  import Search from "./components/Search.svelte";
   import Button from "./lib/Button.svelte";
 
   //let currentChannel = "";
@@ -46,7 +44,6 @@
   let isSettingsShowing = false;
   let cellsSection;
   let coverMessage = "";
-  let showSearch = false;
   let isShowFilterBox = true;
   let isUserMenuShowing = false;
   let isNotificationMenuShowing = false;

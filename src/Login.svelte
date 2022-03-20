@@ -91,7 +91,7 @@
   </div>
   <div slot="bottom">
     沒有賬號？<a href="/register" use:link>按我註冊</a><br />
-    <a href="https://m2np.com/reset-pw" target="_blank">重設密碼(暫用)</a>
+    <a href="/reset-password" use:link>重設密碼</a>
   </div>
 </HeroFullHeight>
 
