@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   //import LazyImage from 'svelte-lazy-image';
   import { playerLinks } from "../../stores.js";
   export let href = "";
@@ -13,7 +13,7 @@
 <img
   src={href}
   title={title}
-  alt={alt | text}
+  alt={alt ?? text}
   width={width}
   on:click={() => {
     if (!$playerLinks.links.includes(href)) {

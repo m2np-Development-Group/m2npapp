@@ -34,7 +34,6 @@
       <small>
         {getDateDiff(article.created_at)}
       </small>
-      <!-- class:red={article.nor > 0} -->
       | <small class="reply_count">{replies?.length ?? 0} 則回應</small>
     </AvatarBox>
 
@@ -79,7 +78,7 @@
             on:click={() => {
               if (confirm("你確定要刪除嗎?" + article.id)) {
                 API.post("/delete_post", { id: article.id }).then((res) => {
-                  if (res.msg == "ok") {
+                  if (res.status == 200) {
                     onDelete();
                   } else {
                     Warning(res.msg);

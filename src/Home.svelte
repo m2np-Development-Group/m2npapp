@@ -7,7 +7,6 @@
   import ArticleSelector from "./home/ArticleSelector.svelte";
   import { onMount } from "svelte";
   import { navigate } from "svelte-navigator";
-
   import {
     myInfoStore,
     filluserStore,
@@ -18,17 +17,29 @@
     globalPopOver,
     requestedProfile,
     requestedArticle,
+    visitStack,
   } from "./stores.js";
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./Settings.svelte";
   import Button from "./lib/Button.svelte";
+  import { cometDomain } from "./utils/const";
 
   //let currentChannel = "";
   export let username = null;
   export let currentChannel = "";
   $: if (currentChannel) {
     console.log("C: " + currentChannel);
+
     //mount();
+  }
+  function prepend(array, value) {
+    var newArray = array.slice();
+    newArray.unshift(value);
+    return newArray;
+  }
+  $: if (username) {
+    console.log("U: " + username);
+    $visitStack = [...new Set(prepend($visitStack, username))];
   }
 
   //let coinSound = new Audio("/assets/coin.mp3");
@@ -38,39 +49,26 @@
   let maxTS = { inbox: null, outbox: null, public: null, search: null };
   let minTS = { inbox: null, outbox: null, public: null, search: null };
   let replies;
-  let isMyself = false;
   let profile = {};
   let notifications = [];
   let isSettingsShowing = false;
   let cellsSection;
   let coverMessage = "";
+  let searchInputRef;
+  let isMyself = false;
   let isShowFilterBox = true;
   let isUserMenuShowing = false;
   let isNotificationMenuShowing = false;
 
-  let searchInputRef;
 
-  const source = new EventSource(
-    "https://m2np.com/api/streams/" + localStorage.getItem("M2NP_TOKEN"),
-    { withCredentials: true }
-  );
-  source.addEventListener(
-    "news",
-    function (event) {
-      const obj = JSON.parse(event.data);
-      $myUnreadIds = obj;
-      if (event.data == "") {
-        source.close(); // disconnect stream
-      }
-    },
-    false
-  );
   // Get the data from the api, after the page is mounted.
-  onMount(async () => {});
+  onMount(async () => {
+
+  });
   function mount() {
     timeline = [];
 
-    if (isMyself) {
+    if (isMyself && username != "") {
       currentChannel = "inbox";
     } else {
       currentChannel = "outbox";
@@ -79,9 +77,9 @@
     fetchData("fresh");
   }
   $: if (username) {
+    console.log("U: " + username);
     if (username != null && username != "") {
       isMyself = username == $myInfoStore?.user?.username;
-
       console.log("username is " + username);
 
       mount();
@@ -98,7 +96,7 @@
     API.get("/get_profile", {
       username: username,
     }).then((res) => {
-      if (res.msg != "ok") {
+      if (res.status != 200) {
         if (res.msg == "user not found") {
           coverMessage = "查無此人";
         }
@@ -112,7 +110,7 @@
 
   function markAllAsRead() {
     API.post("/mark_all_as_read", { postId: postId }).then((res) => {
-      if (res.msg != "ok") {
+      if (res.status != 200) {
         return;
       }
       $myUnreadIds = [];
@@ -120,7 +118,7 @@
   }
   // function fetchUnreadIds() {
   //   API.get("/get_unread").then((res) => {
-  //     if (res.msg != "ok") {
+  //     if (res.status != 200) {
   //       return;
   //     }
   //     $myUnreadIds = res.data;
@@ -190,12 +188,15 @@
   async function refreshReplies(post_id) {
     replies = undefined;
     await API.get("/get_replies", { post_id: post_id }).then((res) => {
-      replies = res;
+      if (res.status != 200) {
+        return;
+      }
+      replies = res.data;
     });
   }
   function markAsRead(postId) {
     API.post("/mark_as_read", { postId: postId }).then((res) => {
-      if (res.msg != "ok") {
+      if (res.status != 200) {
         return;
       }
       $myUnreadIds = $myUnreadIds.filter((m) => m != postId);
@@ -335,6 +336,7 @@
           >
             <i class="fas fa-inbox" /> 主頻道
           </div>
+
           <div
             on:click={() => {
               navigate("/home/outbox");
@@ -344,13 +346,6 @@
           >
             <i class="fas fa-newspaper" /> 我發表的
           </div>
-
-          {#if !isMyself}
-            <div class:active={!isMyself}>
-              <i class="fas fa-newspaper" />
-              {username}發表的
-            </div>
-          {/if}
 
           <div
             on:click={() => {
@@ -380,6 +375,20 @@
               <i class="fas fa-check" /> 全部標記為已讀
             </div>
           {/if}
+
+          <hr />
+
+          {#each $visitStack as _u}
+            <div
+              class:active={username == _u}
+              on:click={() => {
+                navigate("/user/" + _u);
+              }}
+            >
+              <i class="fas fa-newspaper" />
+              {_u}發表的
+            </div>
+          {/each}
         </div>
 
         <div style="clear:both" />
@@ -393,7 +402,12 @@
     >
       <ArticleSelector
         bind:dom={cellsSection}
-        style="background:white; overflow-y: auto; height:100%; overflow-x:hidden; border-radius:.3em;border:2px solid #CCC;"
+        style="background: white; 
+        overflow-y: auto; 
+        height: 100%; 
+        overflow-x: hidden; 
+        border-radius: .3em;
+        border:2px solid #CCC;"
         bind:timeline
         hasMore={newBatch.length > 0}
         loadMore={() => fetchData("append")}
@@ -491,14 +505,14 @@
 
         <div
           style="
-        width: 100%;
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        left: 0;
-        padding: 3px;
-        background: white;
-        "
+          width: 100%;
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          left: 0;
+          padding: 3px;
+          background: white;
+          "
           class="app-box"
         >
           <Postbox
@@ -560,8 +574,9 @@
           <input
             disabled={!isShowFilterBox}
             style="font-size: 13px;
-  margin: 4px;
-    border: none; width: calc(100% - 30px);"
+              margin: 4px;
+              border: none; 
+              width: calc(100% - 30px);"
             type="text"
             placeholder=""
             bind:this={searchInputRef}
@@ -640,7 +655,7 @@
               isUserMenuShowing = false;
               isNotificationMenuShowing = !isNotificationMenuShowing;
               isNotificationLoading = true;
-              API.get("/notifications")
+              API.get("/get_notifications")
                 .then((res) => {
                   notifications = res.notifications.map((notification) => {
                     notification.user = res.users[notification.user_id];

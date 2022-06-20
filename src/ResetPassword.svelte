@@ -24,7 +24,7 @@
       console.log("reset");
       API.post("/reset-password", { email: email })
         .then((res) => {
-          if (res.msg == "ok") {
+          if (res.status == 200) {
             Success("請去檢查一下郵箱以進行下一步。");
             //redirect to login page
             navigate("/login");

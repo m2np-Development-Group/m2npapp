@@ -28,7 +28,7 @@
         username: username,
         password: password,
       }).then((res) => {
-        if (res.msg != "ok") {
+        if (res.status != 200) {
           Warning("請填入所有的欄位。");
         } else {
           beforeReg = false;

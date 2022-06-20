@@ -7,7 +7,7 @@
   onMount(() => {
     API.get("/logout")
       .then((res) => {
-        if (res.msg == "ok") {
+        if (res.status == 200) {
           message = "你已成功登出。";
         } else {
           message = "你經已成功登出。";

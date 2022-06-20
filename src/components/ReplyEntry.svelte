@@ -53,7 +53,7 @@
           on:click={() => {
             if (confirm("你確定要刪除嗎?" + reply.id)) {
               API.post("/delete_reply", { id: reply.id }).then((res) => {
-                if (res.msg == "ok") {
+                if (res.status == 200) {
                   onDelete(reply.id);
                 } else {
                   Warning(res.msg);

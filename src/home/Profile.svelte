@@ -9,7 +9,7 @@
 
   const unfollow = (user) => {
     API.post("/unfollow", { user_id: user.id }).then((res) => {
-      if (res.msg == "ok") {
+      if (res.status == 200) {
         $myInfoStore.followings = $myInfoStore.followings.filter(
           (x) => x.id != user.id
         );
@@ -22,7 +22,7 @@
   };
   const follow = (user) => {
     API.post("/follow", { user_id: user.id }).then((res) => {
-      if (res.msg == "ok") {
+      if (res.status == 200) {
         let smallUser = {
           display_name: user.display_name,
           id: user.id,

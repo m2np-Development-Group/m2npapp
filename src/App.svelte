@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { cometDomain } from "./utils/const";
   import { onMount, onDestroy } from "svelte";
   import { Router, Route, globalHistory } from "svelte-navigator";
 
@@ -11,23 +12,52 @@
   import Settings from "./Settings.svelte";
   import ResetPassword from "./ResetPassword.svelte";
   import HashTag from "./HashTag.svelte";
-
   import { docClicked, myInfoStore, wallpaper } from "./stores";
   import { SvelteToast } from "@zerodevx/svelte-toast";
   import { currentPath, exists } from "./utils/util";
   import type { Unlisten } from "svelte-navigator/types/NavigatorHistory";
+  import { myUnreadIds } from "./stores";
 
   let unsub: Unlisten;
   export let url = "";
 
   onMount(async () => {
-    console.log("%cM2NP WebFrontEnd v20220320 : 衫易綾", "font-weight:bold");
+    console.log("%cM2NP WebFrontEnd v20220522 : 禾生日", "font-weight:bold");
     unsub = globalHistory.listen(({ location, action }) => {
       $currentPath = location.pathname;
 
       url = $currentPath;
     });
   });
+  var eventSource:EventSource;
+  //loop per 1 second
+  var initial = setInterval(() => {
+    if(localStorage.getItem("M2NP_TOKEN") == null || localStorage.getItem("M2NP_TOKEN") == ""){
+      return;
+    }
+    console.log("listener is going to be added")
+    eventSource = new EventSource(
+      `https://${cometDomain}/` + localStorage.getItem("M2NP_TOKEN"),
+      { withCredentials: true }
+    );
+    eventSource.addEventListener(
+      "message",
+      function (event) {
+        
+        const obj = JSON.parse(event.data);
+        $myUnreadIds = obj;
+        console.log(obj)
+        
+        if (event.data === "") {
+          console.log(event.data)
+          //eventSource.close(); // disconnect stream
+        }
+      },
+      false
+    );
+    clearInterval(initial);
+  }, 1000);
+
   onDestroy(() => {
     unsub();
   });

@@ -24,7 +24,7 @@
       return;
     }
     onSubmit(editor.getValue()).then((res) => {
-      if (res.msg == "ok") {
+      if (res.status == 200) {
         finishHandler(editor.getValue());
         editor.setValue("");
         editor.clearHistory();
@@ -107,7 +107,7 @@
               uploadPercentage = Math.round((e.loaded * 100.0) / e.total);
             })
               .then((res) => {
-                if (res.msg == "ok") {
+                if (res.status == 200) {
                   editor.replaceSelection(res.filename);
                 } else {
                   console.log(res);

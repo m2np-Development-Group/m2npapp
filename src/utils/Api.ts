@@ -1,10 +1,10 @@
 // Api.js
 import axios from "axios";
 import qs from "Qs";
-
+import { apiDomain } from "./const";
 // Create a instance of axios to use the same base url.
 const axiosAPI = axios.create({
-  baseURL: "https://m2np.com/api",
+  baseURL: `https://${apiDomain}/`,
   // withCredentials: true,
   // headers:{"m2np-token": "TEST"}
 });

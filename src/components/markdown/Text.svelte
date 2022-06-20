@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Link from "./Link.svelte";
   import Image from "./Image.svelte";
   import { userIdEmojiMap } from "../../stores";

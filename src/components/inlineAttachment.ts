@@ -1,3 +1,4 @@
+import { apiDomain } from "../utils/const";
 class inlineAttachment {
   settings: any;
   static util: any;
@@ -122,7 +123,7 @@ inlineAttachment.defaults = {
   /**
    * URL where the file will be send
    */
-  uploadUrl: "https://m2np.com/api/upload_image",
+  uploadUrl: `https://${apiDomain}/api/upload_image`,
 
   /**
    * Which method will be used to send the file to the upload URL

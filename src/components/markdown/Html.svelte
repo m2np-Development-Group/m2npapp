@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   export let inRawBlock;
   inRawBlock;
   export let inLink;

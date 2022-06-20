@@ -60,7 +60,7 @@
     API.formPostFile("/update_personal_info", data, (e) => {
       loadingPercentage = Math.round((e.loaded * 100.0) / e.total);
     }).then((res) => {
-      if (res.msg == "ok") {
+      if (res.status == 200) {
         const data = res.update;
         const id = $myInfoStore.user.id;
         // console.log($myInfoStore.user.id)

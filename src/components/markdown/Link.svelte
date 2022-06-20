@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { playerLinks } from "../../stores.js";
   import Image from "./Image.svelte";
 
@@ -15,9 +15,9 @@
   export const raw = "";
   export const text = "";
 
-  let ytid;
-  let scid;
-  let ext;
+  let ytid="";
+  let scid="";
+  let ext="";
 
   $: if (href) {
     ytid = matchYoutubeUrl(href);

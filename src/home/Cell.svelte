@@ -101,7 +101,7 @@
           API.get("/get_profile", {
             user_id: cellData.user_id,
           }).then((res) => {
-            if (res.msg != "ok") {
+            if (res.status != 200) {
               if (res.msg == "user not found") {
                 console.log("查無此人");
               }

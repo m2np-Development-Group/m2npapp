@@ -52,3 +52,6 @@ export const BasicStickers = {
 
 export const BasicStickersUrlPrefix =
   "https://cdn0.m2np.com/file/kiyomi/smilies/";
+
+export const apiDomain = "beta-api.m2np.com/v1";
+export const cometDomain = "beta-api.m2np.com/comet";

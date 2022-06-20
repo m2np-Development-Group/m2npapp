@@ -1,8 +1,8 @@
-<script>
+<script lang="ts">
   import Highlight from "svelte-highlight";
 
-  import * as languages from "svelte-highlight/src/languages";
-  import github from "svelte-highlight/src/styles/github-dark-dimmed";
+  import * as languages from "svelte-highlight/languages";
+  import github from "svelte-highlight/styles/github-dark-dimmed";
 
   const langMap = {
     bash: languages.bash,

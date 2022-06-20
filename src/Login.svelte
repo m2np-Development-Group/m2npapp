@@ -20,7 +20,7 @@
       invalidPasswordMessage = "Cannot be empty";
     } else {
       API.post("/login", { email: email, password: password }).then((res) => {
-        if (res.msg == "ok") {
+        if (res.status == 200) {
           $myInfoStore = res.user;
           filluserStore(res.user.followings);
           filluserStore(res.user.followers);
