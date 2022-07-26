@@ -20,7 +20,7 @@
     visitStack,
   } from "./stores.js";
   import ArticleDetail from "./components/ArticleDetail.svelte";
-  import Settings from "./Settings.svelte";
+  import Settings from "./components/SettingDialog/Settings.svelte";
   import Button from "./lib/Button.svelte";
   import { cometDomain } from "./utils/const";
 

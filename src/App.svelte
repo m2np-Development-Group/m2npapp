@@ -9,7 +9,7 @@
   import Logout from "./Logout.svelte";
   import Login from "./Login.svelte";
   import Register from "./Register.svelte";
-  import Settings from "./Settings.svelte";
+  import Settings from "./components/SettingDialog/Settings.svelte";
   import ResetPassword from "./ResetPassword.svelte";
   import HashTag from "./HashTag.svelte";
   import { docClicked, myInfoStore, wallpaper } from "./stores";
@@ -37,7 +37,7 @@
     }
     console.log("listener is going to be added")
     eventSource = new EventSource(
-      `https://${cometDomain}/` + localStorage.getItem("M2NP_TOKEN"),
+      `${cometDomain}/` + localStorage.getItem("M2NP_TOKEN"),
       { withCredentials: true }
     );
     eventSource.addEventListener(
@@ -46,7 +46,6 @@
         
         const obj = JSON.parse(event.data);
         $myUnreadIds = obj;
-        console.log(obj)
         
         if (event.data === "") {
           console.log(event.data)

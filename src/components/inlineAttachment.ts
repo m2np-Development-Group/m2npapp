@@ -123,7 +123,7 @@ inlineAttachment.defaults = {
   /**
    * URL where the file will be send
    */
-  uploadUrl: `https://${apiDomain}/api/upload_image`,
+  uploadUrl: `${apiDomain}/api/upload_image`,
 
   /**
    * Which method will be used to send the file to the upload URL

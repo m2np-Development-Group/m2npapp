@@ -50,8 +50,8 @@ export const BasicStickers = {
   "(blush)": "8924117d7b11b5cec86e.gif",
 };
 
-export const BasicStickersUrlPrefix =
-  "https://cdn0.m2np.com/file/kiyomi/smilies/";
+export const BasicStickersUrlPrefix = "https://cdn0.m2np.com/file/kiyomi/smilies/";
 
-export const apiDomain = "beta-api.m2np.com/v1";
-export const cometDomain = "beta-api.m2np.com/comet";
+export const apiHost = "http://localhost:8888"; //https://beta-api.m2np.com;
+export const apiDomain = `${apiHost}/v1`;
+export const cometDomain = `${apiHost}/comet`;
