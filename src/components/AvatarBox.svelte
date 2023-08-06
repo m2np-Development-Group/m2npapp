@@ -1,7 +1,7 @@
 <script>
   import API from "../utils/Api";
   import Username from "./Username.svelte";
-  import { userStore } from "../stores.js";
+  import { userStore } from "../stores";
   export let userId;
 
   let userPopoverDetail;

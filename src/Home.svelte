@@ -19,7 +19,7 @@
     requestedProfile,
     requestedArticle,
     visitStack,
-  } from "./stores.js";
+  } from "./stores";
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./components/SettingDialog/Settings.svelte";
   import Button from "./lib/Button.svelte";
@@ -106,7 +106,7 @@
   }
 
   function markAllAsRead() {
-    API.post("/mark_all_as_read", { postId: postId }).then((res) => {
+    API.post("/mark_all_as_read", {}).then((res) => {
       if (res.status != 200) {
         return;
       }
@@ -625,19 +625,21 @@
           <div class="dropdown-menu" id="dropdown-menu2" role="menu">
             <div class="dropdown-content">
               <div class="dropdown-item">
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <!-- svelte-ignore a11y-missing-attribute -->
                 <a
                   on:click={() => {
                     isSettingsShowing = true;
                   }}
                 >
-                  <i class="fa fa-cog" aria-hidden="true" alt="設定" />
+                  <i class="fa fa-cog" aria-hidden="true" />
                   設定
                 </a>
                 
               </div>
               <div class="dropdown-item">
                 <a href={apiHost + "/settings"} target="_blank">
-                  <i class="fa fa-user" aria-hidden="true" alt="個人資料" />
+                  <i class="fa fa-user" aria-hidden="true" />
                   個人資料
                 </a>
               </div>
@@ -681,6 +683,7 @@
                   <i class="fas fa-spinner fa-pulse" /> Loading...
                 {:else if notifications.length > 0}
                   {#each notifications as v}
+                    <!-- svelte-ignore a11y-click-events-have-key-events -->
                     <div
                       on:click={() => {
                         //get article content

@@ -18,16 +18,17 @@ export const userStore = writable({
   color: {},
 });
 
-export const requestedProfile = writable({});
-export const requestedArticle = writable({});
+export const requestedProfile = writable<any>({});
+export const requestedArticle = writable<any>({});
 
 export const wallpaper = writable("");
 export const playerLinks = writable({ links: [], currentIndex: 0 });
-export const globalPopOver = writable({
+export const globalPopOver = writable<any>({
   isShow: false,
   top: 0,
   left: 0,
   content: "html",
+  title: ""
 });
 export const userIdEmojiMap = writable({});
 

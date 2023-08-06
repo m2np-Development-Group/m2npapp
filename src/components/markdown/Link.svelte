@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { playerLinks } from "../../stores.js";
+  import { playerLinks } from "../../stores";
   import Image from "./Image.svelte";
 
   import {

@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import { userStore } from "../stores.js";
+import { userStore } from "../stores";
 import { listen, bubble } from "svelte/internal";
 
 //import Link from "../components/markdown/Link.svelte";

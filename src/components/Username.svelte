@@ -1,6 +1,6 @@
 <script>
   import { colorMap } from "../utils/util";
-  import { userStore } from "../stores.js";
+  import { userStore } from "../stores";
   import { link } from "svelte-navigator";
   export let userId;
 </script>

@@ -2,10 +2,14 @@
   import { myInfoStore } from "../stores";
   import { getDateDiff } from "../utils/util";
   import Button from "../lib/Button.svelte";
-  import Image from "../components/markdown/Image.svelte";
+  
   import Username from "../components/Username.svelte";
   import Markdown from "../components/Markdown.svelte";
+  import Image from "../components/markdown/Image.svelte";
   import { link } from "svelte-navigator";
+  import API from "../utils/Api";
+  import { Warning } from "../lib/Notification";
+
 
   const unfollow = (user) => {
     API.post("/unfollow", { user_id: user.id }).then((res) => {

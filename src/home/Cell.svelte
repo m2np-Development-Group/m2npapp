@@ -1,5 +1,5 @@
 <script>
-  import { matchSoundCloudUrl, matchYoutubeUrl } from "../utils/util.js";
+  import { matchSoundCloudUrl, matchYoutubeUrl } from "../utils/util";
   import { getDateDiff } from "../utils/util";
   import { userStore, requestedProfile, requestedArticle } from "../stores";
   import { scale } from "svelte/transition";
@@ -7,7 +7,7 @@
   import API from "../utils/Api";
 
   let isUserMenuShowing = false;
-  export let onCellClick = () => {};
+  export let onCellClick = (p) => {console.log("virtual onCellClick:" + JSON.stringify(p))};
   export let timeline = [];
   const regexEmoji = new RegExp(/^\$([\u4e00-\u9fa5_a-zA-Z0-9()-]+)/);
   const regexMarkdownImage = new RegExp(/^!\[(.*)\]\((.*)\)/);

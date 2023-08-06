@@ -1,5 +1,3 @@
-import { c } from "svelte-highlight/languages";
-
 export const BasicStickers = {
   "(p-joyful)": "38692e95e30abcd59898.gif",
   "(p-smile)": "6622935828514f94a04f.gif",
@@ -64,7 +62,7 @@ if (process.env.NODE_ENV === "development") {
 } else if (process.env.NODE_ENV === "production") {
   _apiHost = "https://dev.m2np.com";
 } else {
-  console.error("process.env.NODE_ENV is not set");
+  console.error("NODE_ENV is not set");
 }
 
 export const apiHost = _apiHost; 

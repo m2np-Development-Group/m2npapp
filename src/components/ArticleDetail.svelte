@@ -1,6 +1,6 @@
 <script>
   import { getDateDiff } from "../utils/util";
-  import { myInfoStore } from "../stores.js";
+  import { myInfoStore } from "../stores";
   import { exists } from "../utils/util";
   import API from "../utils/Api";
   import { Warning } from "../lib/Notification";

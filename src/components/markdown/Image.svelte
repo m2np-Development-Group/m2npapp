@@ -1,6 +1,6 @@
 <script lang="ts">
   //import LazyImage from 'svelte-lazy-image';
-  import { playerLinks } from "../../stores.js";
+  import { playerLinks } from "../../stores";
   export let href = "";
   export let title = undefined;
   export let alt = "";
@@ -10,6 +10,7 @@
   export let width = "";
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <img
   src={href}
   title={title}
