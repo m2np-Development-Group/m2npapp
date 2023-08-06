@@ -1,9 +1,25 @@
 <script>
   import { createEventDispatcher, onMount, getContext, tick } from "svelte";
-  import { omit, getEventsAction } from "../utils/util";
+  import { omit } from "../utils/util";
   import { current_component } from "svelte/internal";
-
+  import { listen, bubble } from "svelte/internal";
+  
   import Icon from "./Icon.svelte";
+
+  function getEventsAction(component) {
+    return (node) => {
+      const events = Object.keys(component.$$.callbacks);
+      const listeners = [];
+      events.forEach((event) =>
+        listeners.push(listen(node, event, (e) => bubble(component, e)))
+      );
+      return {
+        destroy: () => {
+          listeners.forEach((listener) => listener());
+        },
+      };
+    };
+  }
 
   /** Binding value
    * @svelte-prop {String|Number} [value]

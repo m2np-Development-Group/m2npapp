@@ -1,6 +1,6 @@
 // Api.js
 import axios from "axios";
-import qs from "Qs";
+import qs from "qs";
 import { apiDomain } from "./const";
 // Create a instance of axios to use the same base url.
 const axiosAPI = axios.create({

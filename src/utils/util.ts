@@ -1,11 +1,9 @@
 import { writable } from "svelte/store";
 import { userStore } from "../stores";
-import { listen, bubble } from "svelte/internal";
 
-//import Link from "../components/markdown/Link.svelte";
 
 //trim specific characters
-export const trim = (str, char) => {
+export const trim = (str: string, char: string) => {
   let start = 0,
     end = str.length - 1;
   while (str[start] == char) start++;
@@ -17,23 +15,33 @@ let displaynames;
 const unsubscribe = userStore.subscribe((value) => {
   displaynames = value.displaynameOfUsername;
 });
-export const exists = (v) => {
+export const exists = (v:any) => {
+  // check if v is empty object
+  if (typeof v === "object" &&
+  v !== null &&
+  v !== undefined &&
+  Object.keys(v).length === 0) {
+    return false;
+  }
+  // check if v is empty array
+  if (Array.isArray(v) && v.length === 0) {
+    return false;
+  }
   if (
     v === undefined ||
     v === null ||
     v === 0 ||
     v === "0" ||
-    v === "" ||
-    v === {} ||
-    v === []
+    v === ""
   ) {
     return false;
   }
   return true;
 };
-export const getUrlExtension = (url) => {
+export const getUrlExtension = (url: string) => {
   return url.split(/[#?]/)[0].split(".").pop().trim();
 };
+
 export const timeConverter = (UNIX_timestamp) => {
   const a = new Date(UNIX_timestamp * 1000);
   const months = [
@@ -62,21 +70,24 @@ export const timeConverter = (UNIX_timestamp) => {
 };
 
 export const currentPath = writable(window.location.pathname);
-const parseIntToChinese = (num) => {
-  const k = parseInt(num);
-  if (k == 1) {
+const parseIntToChinese = (num: string | number) => {
+  let char = typeof num === "string" ? parseInt(num) : num;
+  // round to integer
+  char = Math.round(char);
+  if (char == 1) {
     return "一";
   }
-  if (k == 2) {
+  if (char == 2) {
     return "兩";
   }
-  if (k == 3) {
+  if (char == 3) {
     return "三";
   }
-  return k;
+  return char;
 };
 
-export function omit(obj, ...keysToOmit) {
+// omit is a function that returns a copy of an object without the specified keys.
+export function omit(obj: { [x: string]: any; }, ...keysToOmit: string[]) {
   return Object.keys(obj).reduce((acc, key) => {
     if (keysToOmit.indexOf(key) === -1) acc[key] = obj[key];
     return acc;
@@ -91,6 +102,7 @@ export const getDateDiff = (dateTimeStamp: number) => {
   //const halfamonth = day * 15;
   const month = day * 30;
   const now = new Date().getTime();
+  
   const diffValue = now - dateTimeStamp;
   const suffix = diffValue < 0 ? "後" : "前";
   const monthC = diffValue / month;
@@ -115,7 +127,7 @@ export const getDateDiff = (dateTimeStamp: number) => {
   return result;
 };
 
-export const matchYoutubeUrl = (url) => {
+export const matchYoutubeUrl = (url: string) => {
   var p =
     /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
   if (url.match(p)) {
@@ -124,7 +136,7 @@ export const matchYoutubeUrl = (url) => {
   return "";
 };
 
-export const matchSoundCloudUrl = (url) => {
+export const matchSoundCloudUrl = (url: string) => {
   var p =
     /^(?:https?:\/\/)?(?:m\.|www\.)?(?:soundcloud\.com\/|soundcloud\.com\/(?:tracks\/|playlists\/|users\/|groups\/|sounds\/|sets\/))((\w|-){11})(?:\S+)?$/;
   if (url.match(p)) {
@@ -134,7 +146,7 @@ export const matchSoundCloudUrl = (url) => {
 };
 
 //generate soundcloud embed url
-export const generateSoundCloudEmbedUrl = (url) => {
+export const generateSoundCloudEmbedUrl = (url: string) => {
   return (
     "https://w.soundcloud.com/player/?url=" +
     url +
@@ -143,24 +155,9 @@ export const generateSoundCloudEmbedUrl = (url) => {
 };
 
 //generate soundcloud embed url
-export const generateYoutubeEmbedUrl = (id) => {
+export const generateYoutubeEmbedUrl = (id: string) => {
   return "https://www.youtube.com/embed/" + id;
 };
-
-export function getEventsAction(component) {
-  return (node) => {
-    const events = Object.keys(component.$$.callbacks);
-    const listeners = [];
-    events.forEach((event) =>
-      listeners.push(listen(node, event, (e) => bubble(component, e)))
-    );
-    return {
-      destroy: () => {
-        listeners.forEach((listener) => listener());
-      },
-    };
-  };
-}
 
 export const colorMap = [
   "1abc9c",
@@ -172,7 +169,7 @@ export const colorMap = [
   "27ae60",
 ];
 
-export function setCookie(cname, cvalue, exdays) {
+export function setCookie(cname: string, cvalue: string, exdays: number) {
   const d = new Date();
   d.setTime(d.getTime() + (exdays*24*60*60*1000));
   let expires = "expires="+ d.toUTCString();
