@@ -5,11 +5,15 @@
   export let userId;
 </script>
 
-<a class="un" href={"/user/" + $userStore.username[userId]} use:link>
-  <span style={"color: #" + colorMap[$userStore.color[userId]]}
-    >{$userStore.displayname[userId]}</span
-  >
-</a>
+{#if $userStore.username[userId] == undefined}
+  <span style="color: #999">無名</span>
+{:else}
+  <a class="un" href={"/user/" + $userStore.username[userId]} use:link>
+    <span style={"color: #" + colorMap[$userStore.color[userId]]}
+      >{$userStore.displayname[userId]}</span
+    >
+  </a>
+{/if}
 
 <style>
   .un {

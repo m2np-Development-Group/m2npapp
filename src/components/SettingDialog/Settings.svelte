@@ -134,10 +134,7 @@ function hideAll(){
             </p>
             <ul class="menu-list">
               <!-- svelte-ignore a11y-missing-attribute -->
-              <li><a class:is-active={isPlurkInput} on:click={() => {
-                hideAll();
-                isPlurkInput = true;
-              }}>匯入Plurk 備份</a></li>
+              <li><a class:is-active={isPlurkInput} href="http://localhost/settings" target="_blank">匯入Plurk 備份</a></li>
             </ul>
           </aside>
         </div>

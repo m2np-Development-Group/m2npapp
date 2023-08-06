@@ -4,6 +4,7 @@
   import { navigate, link } from "svelte-navigator";
   import { Warning } from "./lib/Notification";
   import { myInfoStore, filluserStore } from "./stores";
+  import {setCookie} from "./utils/util"
   import { onMount } from "svelte";
 
   let email = "";
@@ -26,9 +27,16 @@
           filluserStore(res.user.followers);
 
           localStorage.setItem("M2NP_TOKEN", res.token);
+          
+          //set cookie
+          setCookie("M2NP_TOKEN", res.token, 1000)
+          
+          
+
           // const from = ($location.state && $location.state.from) || "/home";
           navigate("/home");
         } else {
+          console.log(res)
           Warning("賬戶或密碼有誤。");
         }
       });

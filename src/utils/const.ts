@@ -1,3 +1,5 @@
+import { c } from "svelte-highlight/languages";
+
 export const BasicStickers = {
   "(p-joyful)": "38692e95e30abcd59898.gif",
   "(p-smile)": "6622935828514f94a04f.gif",
@@ -52,6 +54,19 @@ export const BasicStickers = {
 
 export const BasicStickersUrlPrefix = "https://cdn0.m2np.com/file/kiyomi/smilies/";
 
-export const apiHost = "http://localhost:8888"; //https://beta-api.m2np.com;
+// when npm run dev: "http://localhost";
+// when npm run build: "https://dev.m2np.com";
+
+let _apiHost = "https://dev.m2np.com";
+
+if (process.env.NODE_ENV === "development") {
+  _apiHost = "http://localhost:3000";
+} else if (process.env.NODE_ENV === "production") {
+  _apiHost = "https://dev.m2np.com";
+} else {
+  console.error("process.env.NODE_ENV is not set");
+}
+
+export const apiHost = _apiHost; 
 export const apiDomain = `${apiHost}/v1`;
 export const cometDomain = `${apiHost}/comet`;

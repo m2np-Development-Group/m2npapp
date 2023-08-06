@@ -83,6 +83,7 @@
       <div class="nor">{cellData.nor}</div>
     {/if}
     <figure class="media-left is-hidden-mobile">
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div
         on:click={() => {
           // var topPos = imgDom.getBoundingClientRect().top + window.scrollY;
@@ -119,12 +120,12 @@
           class="avatars"
           alt="avatar"
           width="32"
-          aria-haspopup="true"
           aria-controls="dropdown-menu7"
         />
       </div>
     </figure>
     <div class="media-content">
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div
         class="content"
         on:click={() => {

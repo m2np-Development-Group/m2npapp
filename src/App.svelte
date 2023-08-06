@@ -31,31 +31,33 @@
   });
   var eventSource:EventSource;
   //loop per 1 second
-  var initial = setInterval(() => {
-    if(localStorage.getItem("M2NP_TOKEN") == null || localStorage.getItem("M2NP_TOKEN") == ""){
-      return;
-    }
-    console.log("listener is going to be added")
-    eventSource = new EventSource(
-      `${cometDomain}/` + localStorage.getItem("M2NP_TOKEN"),
-      { withCredentials: true }
-    );
-    eventSource.addEventListener(
-      "message",
-      function (event) {
+  // var initial = setInterval(() => {
+  //   if(localStorage.getItem("M2NP_TOKEN") == null || localStorage.getItem("M2NP_TOKEN") == ""){
+  //     console.log("not authenticated, waiting for login, will retry in 2 seconds")
+  //     return;
+  //   }
+  //   console.log("listener is going to be added")
+  //   eventSource = new EventSource(
+  //     `${cometDomain}/` + localStorage.getItem("M2NP_TOKEN"),
+  //     { withCredentials: true }
+  //   );
+  //   eventSource.addEventListener(
+  //     "message",
+  //     function (event) {
         
-        const obj = JSON.parse(event.data);
-        $myUnreadIds = obj;
+  //       const obj = JSON.parse(event.data);
+  //       $myUnreadIds = obj;
         
-        if (event.data === "") {
-          console.log(event.data)
-          //eventSource.close(); // disconnect stream
-        }
-      },
-      false
-    );
-    clearInterval(initial);
-  }, 1000);
+  //       if (event.data === "") {
+  //         console.log(event.data)
+  //         //eventSource.close(); // disconnect stream
+  //       }
+  //     },
+  //     false
+  //   );
+  //   clearInterval(initial);
+  //   console.log("listener is added")
+  // }, 2000);
 
   onDestroy(() => {
     unsub();

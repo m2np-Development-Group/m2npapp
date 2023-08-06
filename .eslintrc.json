@@ -14,5 +14,8 @@
       "ecmaVersion": 2019,
       "sourceType": "module"
     },
-    "plugins": ["svelte3"]
+    "plugins": ["svelte3"],
+    "rules": {
+      "a11y-click-events-have-key-events": "off"
+    }
   }

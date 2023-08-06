@@ -7,6 +7,7 @@
   import ArticleSelector from "./home/ArticleSelector.svelte";
   import { onMount } from "svelte";
   import { navigate } from "svelte-navigator";
+  import { apiHost } from "./utils/const";
   import {
     myInfoStore,
     filluserStore,
@@ -22,7 +23,6 @@
   import ArticleDetail from "./components/ArticleDetail.svelte";
   import Settings from "./components/SettingDialog/Settings.svelte";
   import Button from "./lib/Button.svelte";
-  import { cometDomain } from "./utils/const";
 
   //let currentChannel = "";
   export let username = null;
@@ -60,11 +60,8 @@
   let isUserMenuShowing = false;
   let isNotificationMenuShowing = false;
 
-
   // Get the data from the api, after the page is mounted.
-  onMount(async () => {
-
-  });
+  onMount(async () => {});
   function mount() {
     timeline = [];
 
@@ -316,6 +313,7 @@
 
   <Settings bind:active={isSettingsShowing} />
 
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
     class="columns is-mobile is-variable is-1"
     on:click={() => {
@@ -408,7 +406,7 @@
         overflow-x: hidden; 
         border-radius: .3em;
         border:2px solid #CCC;"
-        bind:timeline
+        bind:timeline={timeline}
         hasMore={newBatch.length > 0}
         loadMore={() => fetchData("append")}
         onCellClick={showArticle}
@@ -498,7 +496,7 @@
               </div>
               <Profile showWallpaper={false} profile={$requestedProfile} />
             {:else}
-              <Profile bind:profile />
+              <Profile bind:profile={profile} />
             {/if}
           </div>
         {/if}
@@ -597,6 +595,7 @@
           class="dropdown is-right userMenu"
           class:is-active={isUserMenuShowing}
         >
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
           <div
             style="padding-right:1em;display: inline-block;cursor:pointer"
             class="dropdown-trigger"
@@ -625,14 +624,22 @@
           </div>
           <div class="dropdown-menu" id="dropdown-menu2" role="menu">
             <div class="dropdown-content">
-              <div
-                class="dropdown-item"
-                on:click={() => {
-                  isSettingsShowing = true;
-                }}
-              >
-                <i class="fa fa-cog" aria-hidden="true" alt="設定" />
-                設定
+              <div class="dropdown-item">
+                <a
+                  on:click={() => {
+                    isSettingsShowing = true;
+                  }}
+                >
+                  <i class="fa fa-cog" aria-hidden="true" alt="設定" />
+                  設定
+                </a>
+                
+              </div>
+              <div class="dropdown-item">
+                <a href={apiHost + "/settings"} target="_blank">
+                  <i class="fa fa-user" aria-hidden="true" alt="個人資料" />
+                  個人資料
+                </a>
               </div>
               <hr class="dropdown-divider" />
               <div class="dropdown-item">
